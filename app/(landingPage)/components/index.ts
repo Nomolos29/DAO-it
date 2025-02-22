@@ -1,0 +1,12 @@
+export { default as HeroSection } from "./global/hero";
+export { default as FeatureSection } from "./global/features";
+export { default as FAQs } from "./global/faq";
+export { default as JoinCommunity } from "./global/community";
+export { default as HowItWorks } from "./global/works";
+export { default as Footer } from "./layout/Footer"
+export { default as Header } from "./layout/Header"
+export { default as LandingLayout } from "./layout/Layout"
+export { default as Sidebar } from "./layout/Sidebar"
+export { default as Community } from "./pages/communityPage"
+export { default as Documentation } from "./pages/documentationPage"
+export { default as Works } from "./pages/howItWorks"
