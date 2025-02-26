@@ -1,6 +1,9 @@
 import React from "react";
 import { HeroSection, HowItWorks, FAQs, FeatureSection, JoinCommunity } from "./components";
-function Home() {
+
+
+
+const Home = () => {
   return (
     <div className="flex flex-col items-center">
       <HeroSection />

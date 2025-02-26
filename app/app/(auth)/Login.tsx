@@ -4,7 +4,6 @@
 import { useState } from "react";
 import Logo from "../assets/smallLogo.svg"
 import { Modal } from "../components"
-import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
@@ -22,7 +21,7 @@ const Login: React.FC<LoginProps> = ({isOpen, onClose}) => {
   return (
     <Modal isOpen={isOpen} bgBlured onClose={onClose}>
       <main className="w-[560px] h-[420px] flex flex-col justify-between p-10">
-        <Image src={Logo} width={0} height={0} alt="logo" />
+        <img src={Logo} width={0} height={0} alt="logo" />
 
         <div className="flex flex-col items-center w-full gap-y-4">
           <h2 className="text-[36px] text-[#474747] font-medium">Sign in on <span className="text-[#F8B51C]">DAOIt</span></h2>
