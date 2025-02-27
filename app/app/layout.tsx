@@ -8,7 +8,7 @@ import { Header, SideBar } from "./components";
 import { usePathname } from "next/navigation";
 import { ThirdwebProvider } from "thirdweb/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import { AuthHandler } from "./(auth)/AuthHandler";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -36,6 +36,7 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
+            <AuthHandler onConnected={setIsConnected} />
             {isConnected ? (
               <>
                 <Header />
