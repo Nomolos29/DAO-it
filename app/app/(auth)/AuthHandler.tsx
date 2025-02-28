@@ -15,7 +15,7 @@ export const AuthHandler = ({
   useEffect(() => {
     if (account) {
       onConnected(true);
-      router.push("/app/create-proposal");
+      router.push("/app");
     }
   }, [account, router, onConnected]);
 
