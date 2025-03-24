@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { ThirdwebProvider } from "thirdweb/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthHandler } from "./(auth)/AuthHandler";
+import { ToastContainer } from "react-toastify";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -67,6 +68,17 @@ export default function RootLayout({
             )}
           </ThirdwebProvider>
         </QueryClientProvider>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000} // Close toast after 5 seconds
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </body>
     </html>
   );
