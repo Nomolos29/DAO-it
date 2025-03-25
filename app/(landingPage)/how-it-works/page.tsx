@@ -2,14 +2,14 @@
 
 
 import React from "react";
-import arrow from "../../../../public/sideArrow.svg";
-import vote from "../../../../public/vote.svg";
-import collaborate from "../../../../public/colab.svg";
-import create from "../../../../public/idea.svg";
-import execute from "../../../../public/join.svg";
-import wallet from "../../../../public/wallet.svg";
-import transparency from "../../../../public/transparency.svg";
-import Card from "../../../../components/card";
+import arrow from "../../../public/sideArrow.svg";
+import vote from "../../../public/vote.svg";
+import collaborate from "../../../public/colab.svg";
+import create from "../../../public/idea.svg";
+import execute from "../../../public/join.svg";
+import wallet from "../../../public/wallet.svg";
+import transparency from "../../../public/transparency.svg";
+import Card from "../../../components/card";
 import Link from "next/link";
 import Image from "next/image";
 

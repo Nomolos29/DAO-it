@@ -11,18 +11,18 @@ const MainApp = () => {
 
   return (
     <main className='bg-white grid grid-cols-5'>
-      <section className='flex col-span-3 flex-col items-center gap-y-5 px-1'>
-        <nav className='w-full flex justify-between'>
+      <section className='flex col-span-3 flex-col items-center gap-y-5 px-1 relative'>
+        <nav className='w-full flex justify-between bg-white/30 static shadow-md backdrop-blur-md'>
           {HomeNavTab.map((tab, index) => (
             <span 
               key={index} 
               onClick={() => (setActiveScreen(tab))}
-              className={`text-md text-[#ABABAB] w-1/3 text-center border-b-[2px] border-transparent py-3 ${activeScreen === tab ? "border-yellow-400 bg-[#fee4393d] text-black" : "hover:border-yellow-400 cursor-pointer hover:bg-[#fee4393d] hover:text-black"}`}
+              className={`text-md text-[#ABABAB] w-1/3 text-center border-b-[2px] border-transparent py-3 ${activeScreen === tab ? "border-yellow-400 text-black" : "hover:border-yellow-400 cursor-pointer  hover:text-black"}`}
             >{tab}</span>
           ))}
         </nav>
 
-        <article className='w-full flex justify-center items-center'>
+        <article className='w-full flex justify-center items-center overflow-y-auto min-h-screen h-full'>
           {activeScreen === "Proposals" ? <Proposal /> 
           : activeScreen === "Intending Proposals" ? <IntendingProposals />
           : activeScreen === "Community Post" && <CommunityPost />}

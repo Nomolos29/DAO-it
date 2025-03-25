@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Card from '../Card'
 import { IoIosPerson } from "react-icons/io";
+import { HiChatBubbleOvalLeft } from "react-icons/hi2";
+import { BiSolidLike, BiSolidDislike } from "react-icons/bi";
 import Modal from '../Modal';
 import { Proposals } from "../../lib/ScreenData"
 import Link from 'next/link';
@@ -10,7 +12,7 @@ const Proposal = () => {
     const [postComment, setPostComment] = useState(false);
 
   return (
-    <main className='w-full flex flex-col items-center gap-y-4'>
+    <main className='w-full flex flex-col items-center gap-y-4 overflow-y-scroll h-full'>
         <Card>
             <Link
                 href="/app/create-proposal"
@@ -40,14 +42,14 @@ const Proposal = () => {
                                 <div className='flex items-center gap-x-3 text-[14px] text-[#474747]'>
                                     <span 
                                         onClick={() => setPostComment(true)}
-                                        className='cursor-pointer'
-                                    >{proposal.comments}</span>
-                                    <span>{proposal.likes}</span>
-                                    <span>{proposal.dislikes}</span>
+                                        className='cursor-pointer flex items-center'
+                                    ><HiChatBubbleOvalLeft className='text-lg' />{proposal.comments}</span>
+                                    <span className='flex gap-x-1 '><BiSolidLike className='text-lg hover:text-yellow-500 bg-clip-text' />{proposal.likes}</span>
+                                    <span className='flex gap-x-1'><BiSolidDislike className='text-lg' />{proposal.dislikes}</span>
                                 </div>
 
                                 <div className='flex items-center gap-x-3 text-[#494445] text-[12px]'>
-                                    <span>{proposal.numberOfVotes}</span>
+                                    <span>{proposal.numberOfVotes} votes</span>
                                     <span>{proposal.endDate}</span>
                                 </div>
                             </section>
@@ -73,7 +75,7 @@ const Proposal = () => {
                                                 <span 
                                                     onClick={() => setPostComment(true)}
                                                     className='cursor-pointer'
-                                                >{proposal.comments}</span>
+                                                ><HiChatBubbleOvalLeft />{proposal.comments}</span>
                                                 <span>{proposal.likes}</span>
                                                 <span>{proposal.dislikes}</span>
                                             </div>

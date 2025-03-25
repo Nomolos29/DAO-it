@@ -6,10 +6,10 @@ import { IoWalletOutline } from "react-icons/io5";
 
 const Header = () => {
   return (
-    <header className='bg-white w-full flex justify-center items-center border-b-[1px] border-[#ABABAB] h-[75px]'>
+    <header className='bg-white w-full flex justify-center items-center z-50 border-b-[1px] border-[#ABABAB] h-[75px] mb-[75px]'>
         <main className='container grid grid-cols-6 h-full items-center gap-10'>
             <div className='grid col-span-1 items-center'>
-                <img src={Logo} alt="logo" className='' />
+                <img src="../../assets/smallLogo.svg" alt="logo" className='w-full' />
             </div>
 
             <div className='flex col-span-3 items-center justify-center'>

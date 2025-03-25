@@ -3,7 +3,7 @@
 
 import { HiArrowTurnRightDown } from "react-icons/hi2";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
-import { introduction } from "../../lib/documentation"
+import { introduction } from "../lib/documentation"
 import slugify from "slugify";
 import { useState } from 'react';
 import Link from "next/link";
