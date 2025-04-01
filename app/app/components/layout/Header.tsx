@@ -1,7 +1,9 @@
 
-import Logo from "../../assets/smallLogo.svg"
+// import Logo from "../../assets/smallLogo.svg"
+import Image from "next/image";
 import { CiSearch } from "react-icons/ci";
 import { IoWalletOutline } from "react-icons/io5";
+import logo from "@/app/app/assets/smallLogo.svg"
 
 
 const Header = () => {
@@ -9,7 +11,7 @@ const Header = () => {
     <header className='bg-white w-full flex justify-center items-center z-50 border-b-[1px] border-[#ABABAB] h-[75px] mb-[75px]'>
         <main className='container grid grid-cols-6 h-full items-center gap-10'>
             <div className='grid col-span-1 items-center'>
-                <img src="../../assets/smallLogo.svg" alt="logo" className='w-full' />
+                <Image src={logo} alt="logo" width={60} height={60} />
             </div>
 
             <div className='flex col-span-3 items-center justify-center'>

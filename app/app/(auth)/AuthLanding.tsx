@@ -5,6 +5,8 @@ import Login from "../(auth)/Login";
 import SignUp from "../(auth)/SignUp";
 import Logo from "../assets/BigLogo.svg";
 import WalletButton from "@/components/walletButton";
+import Image from "next/image";
+import Link from "next/link";
 
 const AuthLanding = () => {
   const [loginIsOpen, setLoginIsOpen] = useState(false);
@@ -14,9 +16,10 @@ const AuthLanding = () => {
     <div className="w-full h-screen flex justify-center items-center">
       <main className="container w-full flex justify-between items-center gap-x-[150px] px-8">
         <aside className="w-1/2 flex flex-col gap-y-4">
-          <img src={Logo} alt="logo" className="w-full" />
+          <Image src={Logo} alt="logo" width={1000} height={1000} className="w-full" />
+          
           <p className="text-center text-[16px] text-[#494445] font-medium px-5">
-            Take power to shape your school´s future. Join the
+            Take power to shape your school&apos;s future. Join the
             teacher-student-led movement for future-ready learning
           </p>
         </aside>
@@ -44,7 +47,7 @@ const AuthLanding = () => {
 
             <p className="text-[#474747]">
               By signing up, you agree to the{" "}
-              <span className="text-[#F8B51C]">Terms of Service</span> and{" "}
+              <Link href="/terms-and-conditions"><span className="text-[#F8B51C]">Terms of Service</span> and{" "}</Link>
               <span className="text-[#F8B51C]">Privacy Policy</span>
             </p>
           </div>

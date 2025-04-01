@@ -2,9 +2,9 @@
 
 
 import React from "react";
-import logo from "@/public/logo-white.svg";
+// import logo from "@/public/logo-white.svg";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import { usePathname } from "next/navigation";
 // import { useLocation } from "react-router-dom";
 
@@ -16,15 +16,15 @@ const Header = () => {
   const menu = "hover:text-black py-6 px-3"
 
   return (
-    <header className="flex items-center justify-center shadow sticky top-0 z-50 bg-white/70 backdrop-blur-smnp">
-      <div className="max-w-screen-2xl w-full flex justify-between items-center px-10">
+    <header className="flex items-center justify-center shadow sticky py-5 md:py-0 top-0 z-50 bg-white/70 backdrop-blur-md">
+      <div className="max-w-screen-2xl w-full flex justify-between items-center px-5 md:px-10">
         <div className="text-xl font-bold">
           <Link href="/">
             <img src="/logo-white.svg" alt="arrow" className="w-full" />
           </Link>
         </div>
 
-        <nav className="flex space-x-6">
+        <nav className="space-x-6 hidden md:flex">
           <Link
             href="/developer"
             className={`${menu} ${

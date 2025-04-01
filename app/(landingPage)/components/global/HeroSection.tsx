@@ -15,12 +15,12 @@ const HeroSection = () => {
   return (
     <div className="flex justify-center relative">
       {/* <div className="absolute inset-0 bg-header-pattern bg-no-repeat bg-left-top transform scale-x-[-1] bg-[length:150%]"></div> */}
-      <main className="flex justify-between max-w-screen-2xl w-full py-10 px-10">
-        <section className="flex justify-center flex-col w-1/2">
-          <h1 className="text-5xl md:text-5xl font-bold text-[#102325]">
+      <main className="flex flex-col-reverse md:flex-row items-center text-center md:text-left justify-between max-w-screen-2xl w-full py-10 md:px-10">
+        <section className="flex justify-center gap-y-3 flex-col w-[calc(100vw-30px)] md:w-1/2">
+          <h1 className="text-3xl md:text-5xl font-bold text-[#102325]">
             <span className="text-[#BA8100]">Building</span> a Collaborative Learning Community through Open & Inclusive Decision-Making
           </h1>
-          <p className="mt-4 text-lg">
+          <p className="mt-4 text-lg md:text-xl">
           Join our Educational Decentralized Autonomous Organization (DAO)  to Learn, Collaborate, and Grow. We are Focus on  Empowering Students, Educators, and Administrators In a Transparent, Open and Collaborative Decision-making Process.
           </p>
           <div className="mt-6 flex gap-4">
@@ -46,7 +46,7 @@ const HeroSection = () => {
           </div>
         </section>
 
-        <img src="/LandingPage/heroImage.png" alt="Hero Image" width={0} height={0} className="w-[40%]" />
+        <img src="/LandingPage/heroImage.png" alt="Hero Image" width={0} height={0} className="w-[90%] md:w-[40%]" />
       </main>
       {/* <Modal
         isOpen={activeModal === "wallet"}

@@ -5,6 +5,7 @@ import { useState } from "react";
 import Logo from "../assets/smallLogo.svg"
 import { Modal } from "../components"
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Image from "next/image";
 
 
 interface SignUpProps {
@@ -21,7 +22,7 @@ const SignUp: React.FC<SignUpProps> = ({isOpen, onClose}) => {
   return (
     <Modal isOpen={isOpen} bgBlured onClose={onClose}>
       <main className="w-[560px] h-[460px] flex flex-col justify-between px-10 py-3">
-        <img src={Logo} width={0} height={0} alt="logo" />
+        <Image src={Logo} width={60} height={60} alt="logo" />
 
         <div className="flex flex-col items-center w-full gap-y-4">
           <h2 className="text-[36px] text-[#474747] font-medium">Sign up on <span className="text-[#F8B51C]">DAOIt</span></h2>
