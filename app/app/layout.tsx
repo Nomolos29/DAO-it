@@ -27,7 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -39,19 +39,19 @@ export default function RootLayout({
           <ThirdwebProvider>
             <AuthHandler onConnected={setIsConnected} />
             {isConnected ? (
-              <div className="flex flex-col min-h-screen overflow-auto">
-                <header className="w-full fixed top-0">
+              <div className="flex flex-col h-screen overflow-auto">
+                <header className="w-full fixed top-0 z-50">
                   <Header />
                 </header>
-                <main className="flex w-full justify-center min-h-screen h-full overscroll-y-auto">
+                <main className="flex w-full justify-center h-full overscroll-y-auto">
                   {pathname === "/app/create-proposal" ? (
-                    <div className="container mt-[75px]">{children}</div>
+                    <div className="container mt-[65px]">{children}</div>
                   ) : (
-                    <div className="container grid grid-cols-6 fixed top-[75px]">
+                    <div className="container grid grid-cols-6 fixed top-[65px]">
                       <aside className="grid col-span-1">
                         <SideBar />
                       </aside>
-                      <article className="gray col-span-5 min-h-screen h-full overscroll-y-auto">{children}</article>
+                      <article className="gray col-span-5 h-screen overscroll-hidden">{children}</article>
                     </div>
                   )}
                 </main>

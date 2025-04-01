@@ -38,3 +38,4 @@ export const SideBarMenu: MenuItem[] = [
 ]
 
 export const HomeNavTab = ["Proposals", "Intending Proposals", "Community Post"]
+export const ProposalDetailsNav = ["Proposal details", "Comments"]

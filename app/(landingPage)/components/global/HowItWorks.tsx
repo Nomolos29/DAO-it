@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "@/components/card";
-import vote from "../../../../public/vote.svg";
 import Link from "next/link";
 // import collaborate from "../../../../../public/colab.svg";
 // import proposal from "../../../../../public/LandingPage/proposal.png"
