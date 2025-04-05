@@ -12,7 +12,7 @@ const MainApp = () => {
   return (
     <main className='bg-white grid grid-cols-5'>
       <section className='flex col-span-3 flex-col items-center'>
-        <nav className='w-full flex justify-evenly bg-white/20 static shadow-sm z-20 backdrop-blur-sm'>
+        <nav className='w-full flex justify-evenly bg-white/20 static shadow-md z-20 backdrop-blur-sm'>
           {HomeNavTab.map((tab, index) => (
             <div 
               key={index} 

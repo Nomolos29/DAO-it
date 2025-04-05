@@ -8,7 +8,7 @@ import logo from "@/app/app/assets/smallLogo.svg"
 
 const Header = () => {
   return (
-    <header className='bg-white w-full flex justify-center items-center z-50 border-b-[1px] border-[#ABABAB] py-2'>
+    <header className='bg-white w-full flex justify-center items-center z-30 border-b-[1px] border-[#ABABAB] py-2'>
         <main className='container grid grid-cols-6 h-full items-center gap-10'>
             <div className='grid col-span-1 items-center'>
                 <Image src={logo} alt="logo" width={60} height={60} />
