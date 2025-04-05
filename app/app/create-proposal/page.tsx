@@ -7,27 +7,9 @@ import { IoInformationCircle } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
 import { TiTickOutline } from "react-icons/ti";
 import { Modal } from "../components";
-import { useActiveAccount, useSendTransaction } from "thirdweb/react";
-import {
-  getContract,
-  prepareContractCall,
-  createThirdwebClient,
-  waitForReceipt,
-} from "thirdweb";
-import { sepolia } from "thirdweb/chains";
-import { DAOIT } from "../lib/constants";
+import { useActiveAccount } from "thirdweb/react";
 import { toast } from "react-toastify";
-
-// Thirdweb client and contract setup
-const client = createThirdwebClient({
-  clientId: "58cdb2d58aaf66e7872b6eb45c258fdd",
-});
-
-const daoitContract = getContract({
-  address: DAOIT,
-  chain: sepolia,
-  client,
-});
+import { useCreateProposal } from "../hooks/useCreateProposal";
 
 const CreateProposal = () => {
   const [walletAddress, setWalletAddress] = useState("");
@@ -50,8 +32,7 @@ const CreateProposal = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const account = useActiveAccount();
-  const { mutate: sendTransaction, isPending: proposalLoading } =
-    useSendTransaction();
+  const { createProposal, isLoading: proposalLoading } = useCreateProposal();
 
   const generateProposalId = (address: string) => {
     const timestamp = Date.now().toString(36);
@@ -102,39 +83,27 @@ const CreateProposal = () => {
     }
   };
 
-  const createProposalOnChain = async (title: string, description: string) => {
-    try {
-      const proposalTx = await prepareContractCall({
-        contract: daoitContract,
-        method:
-          "function createProposal(string memory title, string memory _description)",
-        params: [title, description],
-      });
-      const txHash = (await sendTransaction(
-        proposalTx
-      )) as unknown as `0x${string}`;
-      setSubmitStatus({ loading: false, error: null });
-      setShowSuccess(true);
-      waitForReceipt({
-        transactionHash: txHash,
-        client,
-        chain: sepolia,
-      }).then((receipt) => {
-        console.log("Receipt received:", receipt);
-      });
-      return true;
-    } catch (error) {
-      console.error("Error in createProposalOnChain:", error);
-      throw error;
-    }
-  };
-
   const onSubmit = async () => {
     setSubmitStatus({ loading: true, error: null });
     setShowConfirmation(false);
     try {
       toast.info("Please sign the transaction with your wallet");
-      await createProposalOnChain(proposalTitle, description);
+
+      // Convert dates to Unix timestamps (seconds)
+      const startTimestamp = Math.floor(new Date(startDate).getTime() / 1000);
+      const endTimestamp = Math.floor(new Date(endDate).getTime() / 1000);
+
+      // Call createProposal; success modal shows only after confirmation
+      await createProposal(
+        proposalTitle,
+        description,
+        shortDescription,
+        startTimestamp,
+        endTimestamp
+      );
+
+      setSubmitStatus({ loading: false, error: null });
+      setShowSuccess(true);
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
@@ -143,14 +112,12 @@ const CreateProposal = () => {
     }
   };
 
-  // Function to format the structured_proposal
   const formatStructuredProposal = (text: string) => {
-    const sections = text.split(/(?=[A-Z][a-z]+:)/).filter(Boolean); // Split by section headers like "Abstract:", "Rationale:", etc.
+    const sections = text.split(/(?=[A-Z][a-z]+:)/).filter(Boolean);
     return sections.map((section, index) => {
       const [header, content] = section.split(/:\s*/, 2);
       if (!content) return null;
 
-      // Handle numbered lists in "Specifications" section
       if (header === "Specifications") {
         const items = content.split(/\d+\.\s/).filter(Boolean);
         return (
@@ -260,7 +227,6 @@ const CreateProposal = () => {
               onChange={(e) => setProposalTitle(e.target.value)}
               className={`${inputStyle} h-[50px]`}
             />
-            {/* AI Suggestion Display Below Title */}
             {aiSuggestion && (
               <div className="p-4 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
                 <div className="flex items-start justify-between mb-3">
