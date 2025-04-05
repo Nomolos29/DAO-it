@@ -6,6 +6,3 @@ export { default as HowItWorks } from "./global/HowItWorks";
 export { default as Footer } from "./layout/Footer";
 export { default as Header } from "./layout/Header";
 export { default as Sidebar } from "./layout/Sidebar";
-export { default as CommunityPage } from "./pages/CommunityPage";
-export { default as DocumentationPage } from "./pages/DocumentationPage";
-export { default as HowItWorksPage } from "./pages/HowItWorksPage";

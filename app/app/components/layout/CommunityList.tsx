@@ -52,7 +52,7 @@ const CommunityList: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white w-full pl-5">
+    <div className="bg-white w-full">
       <CommunitySection
         title="Your communities"
         communities={yourCommunities}

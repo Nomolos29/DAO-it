@@ -1,15 +1,17 @@
 
-import Logo from "../../assets/smallLogo.svg"
+// import Logo from "../../assets/smallLogo.svg"
+import Image from "next/image";
 import { CiSearch } from "react-icons/ci";
 import { IoWalletOutline } from "react-icons/io5";
+import logo from "@/app/app/assets/smallLogo.svg"
 
 
 const Header = () => {
   return (
-    <header className='bg-white w-full flex justify-center items-center border-b-[1px] border-[#ABABAB] h-[75px]'>
+    <header className='bg-white w-full flex justify-center items-center z-30 border-b-[1px] border-[#ABABAB] py-2'>
         <main className='container grid grid-cols-6 h-full items-center gap-10'>
             <div className='grid col-span-1 items-center'>
-                <img src={Logo} alt="logo" className='' />
+                <Image src={logo} alt="logo" width={60} height={60} />
             </div>
 
             <div className='flex col-span-3 items-center justify-center'>

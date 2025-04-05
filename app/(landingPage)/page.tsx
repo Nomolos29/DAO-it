@@ -5,7 +5,7 @@ import { HeroSection, HowItWorks, FAQs, FeatureSection, JoinCommunity } from "./
 
 const Home = () => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center overflow-hidden">
       <HeroSection />
       <HowItWorks />
       <span className="bg-[#777777] h-[1px] w-[570px] my-28"></span>

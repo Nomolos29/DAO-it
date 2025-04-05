@@ -1,11 +1,11 @@
 import React from "react";
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   bgBlured?: boolean;
   bgDarkened?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, bgBlured, bgDarkened, children }) => {

@@ -27,7 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const pathname = usePathname();
 
   return (
@@ -39,31 +39,33 @@ export default function RootLayout({
           <ThirdwebProvider>
             <AuthHandler onConnected={setIsConnected} />
             {isConnected ? (
-              <>
-                <Header />
-                <main className="flex w-full justify-center h-screen">
+              <div className="flex flex-col h-screen overflow-auto">
+                <header className="w-full fixed top-0 z-50">
+                  <Header />
+                </header>
+                <main className="flex w-full justify-center h-full overscroll-y-auto">
                   {pathname === "/app/create-proposal" ? (
-                    <div className="container">{children}</div>
+                    <div className="container mt-[65px]">{children}</div>
                   ) : (
-                    <div className="container grid grid-cols-6">
+                    <div className="container grid grid-cols-6 fixed top-[65px]">
                       <aside className="grid col-span-1">
                         <SideBar />
                       </aside>
-                      <article className="grid col-span-5">{children}</article>
+                      <article className="gray col-span-5 h-screen overscroll-hidden">{children}</article>
                     </div>
                   )}
                 </main>
-              </>
+              </div>
             ) : (
               <div className="h-screen flex flex-col justify-center items-center">
                 <AuthLanding />
-                <button
+                {/* <button
                   type="button"
                   className="rounded-md px-2 h-[48px] w-[200px] bg-gradient-to-r from-[#F8B51C] to-[#FEE539] mt-4"
                   onClick={() => setIsConnected(true)}
                 >
                   Continue as Guest
-                </button>
+                </button> */}
               </div>
             )}
           </ThirdwebProvider>

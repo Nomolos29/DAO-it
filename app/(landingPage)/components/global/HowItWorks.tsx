@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "@/components/card";
-import vote from "../../../../public/vote.svg";
 import Link from "next/link";
 // import collaborate from "../../../../../public/colab.svg";
 // import proposal from "../../../../../public/LandingPage/proposal.png"
@@ -13,46 +12,46 @@ const HowItWorks = () => {
       title: "Connect Wallet",
       description:
         "To join the DAOIt you have to connect your wallet either Metamask, wallet connect and form of decentralized wallet which you have.",
-      Icon: '/LandingPage/wallet.svg',
+      Icon: "bg-[url('/LandingPage/wallet.svg')]",
     },
 
     {
       title: "Proposals and  Voting",
       description:
         "Create proposals, discuss and vote on new learning modules, school policies, learning methods which allows inclusivity of all participants in decision making.",
-      Icon: vote,
+      Icon: "bg-[url('/LandingPage/wallet.svg')]",
     },
 
     {
       title: " Creation Proposal",
       description:
         "Allow creation of proposal on smart contract based on new learning modules, school policies, learning methods and others. Proposal submissions, recording the proposal details which include it’s description, expiration date.",
-      Icon: '/LandingPage/proposal.png',
+      Icon: "bg-[url('/LandingPage/proposal.png')]",
     },
 
     {
       title: "Proposal Execution ",
       description:
         "Upon the conclusion of a vote, the smart contract automatically triggers the proposed action which ensures auditability and effectives of proposals.",
-      Icon: '/LandingPage/proposal.png',
+      Icon: "bg-[url('/LandingPage/proposal.png')]",
     }
   ];
 
   return (
     <section className="flex justify-center">
-      <div className="relative z-10 ">
-        <div className="max-w-screen-2xl w-full px-10 flex flex-col items-center gap-y-5">
-          <div className="flex flex-col items-center text-center w-[790px] py-10 gap-y-4">
+      <div className="relative">
+        <div className="max-w-screen-2xl w-full px-5 md:px-10 flex flex-col items-center gap-y-5">
+          <div className="flex flex-col items-center text-center w-full md:w-[790px] py-10 gap-y-4">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
               How <span className="text-[#BA8100]">DAOIt</span> Works
             </h2>
-            <p className="text-[#777777] text-lg">We&apos;ve simplified the entire process, so you can focus on what truly matters—collaborating, voting, and shaping the future of education with ease.</p>
+            <p className="text-[#777777] text-lg md:text-xl">We&apos;ve simplified the entire process, so you can focus on what truly matters—collaborating, voting, and shaping the future of education with ease.</p>
           </div>
 
 
-          <div className="flex flex-wrap justify-between w-[90%] gap-10 py-5 relative">
+          <div className="flex flex-wrap justify-between w-[calc(90vw-40px)] gap-10 py-5 relative">
             {cards.map((card, index) => (
-              <div key={index} className="w-[45%] h-[440px] z-10">
+              <div key={index} className="w-[calc(100vw-20px)] md:w-[45%] h-[440px] z-10">
                 <Card
                   key={index}
                   title={card.title}

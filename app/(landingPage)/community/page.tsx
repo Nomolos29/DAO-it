@@ -1,12 +1,12 @@
 import React from "react";
 // import { ReactSVG } from "react-svg";
-import arrow from "../../../../public/sideArrow.svg";
+import arrow from "../../../public/sideArrow.svg";
 import { IoIosArrowDown } from "react-icons/io";
-import { FAQs, JoinCommunity } from "..";
-import logo from "../../../../public/daoit.svg";
-import help from "../../../../public/help.svg";
-import more from "../../../../public/more.svg";
-import user from "../../../../public/user.svg";
+import { FAQs, JoinCommunity } from "../components";
+import logo from "../../../public/daoit.svg";
+import help from "../../../public/help.svg";
+import more from "../../../public/more.svg";
+import user from "../../../public/user.svg";
 import Link from "next/link";
 
 
