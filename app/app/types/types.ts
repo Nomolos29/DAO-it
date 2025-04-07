@@ -13,14 +13,26 @@ export interface Vote {
 }
 
 export interface Proposal {
-  id: bigint;
-  proposer: Address;
+  id: number;
   title: string;
   description: string;
   summary: string;
-  startDate: bigint;
-  endDate: bigint;
-  yesVotes: bigint;
-  noVotes: bigint;
-  abstainVotes: bigint;
+  startDate: number;
+  endDate: number;
+  yesVotes: number;
+  noVotes: number;
+  abstainVotes: number;
 }
+
+export type ProposalTuple = [
+  bigint, // id
+  string, // proposer (address as string)
+  string, // title
+  string, // description
+  string, // summary
+  bigint, // startDate
+  bigint, // endDate
+  bigint, // yesVotes
+  bigint, // noVotes
+  bigint // abstainVotes
+];

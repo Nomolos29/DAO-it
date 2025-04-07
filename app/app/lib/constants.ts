@@ -1,5 +1,6 @@
 import { getContract, createThirdwebClient } from "thirdweb";
 import { sepolia } from "thirdweb/chains";
+import daoitabi from "../abi/daoi.json";
 
 export const client = createThirdwebClient({
   clientId:
@@ -11,6 +12,7 @@ export const daoitContract = getContract({
   address: "0x807f4535F256eAD8a2bb3e3F9829BBEBF424c14f",
   chain: sepolia,
   client,
+  abi: daoitabi,
 });
 
 export const tokenContract = getContract({

@@ -1,30 +1,70 @@
 import { useReadContract } from "thirdweb/react";
 import { daoitContract } from "../lib/constants";
-import { Proposal } from "../types/types";
+import { resolveMethod } from "thirdweb";
 
-export const useGetAllProposals = () => {
+export interface Proposal {
+  id: number;
+  title: string;
+  description: string;
+  summary: string;
+  startDate: number; // Timestamp when voting starts
+  endDate: number; // Timestamp when voting ends
+  yesVotes: number; // Total votes for Yes
+  noVotes: number; // Total votes for No
+  abstainVotes: number; // Total votes for Abstain
+}
+
+export function useGetAllProposals() {
+  console.log("Initializing useAllProposals hook");
+  console.log("daoitContract:", daoitContract);
+
   const { data, isLoading, error } = useReadContract({
     contract: daoitContract,
-    method:
-      "function getAllProposals() view returns ((uint256 id, address proposer, string title, string description, string summary, uint256 startDate, uint256 endDate, uint256 yesVotes, uint256 noVotes, uint256 abstainVotes)[])",
-    params: [],
+    method: resolveMethod("getAllProposals"), // DO NOT EDIT THIS
   });
 
-  // Map the raw array data to an array of Proposal objects
-  const proposals: Proposal[] = data
-    ? data.map((p) => ({
-        id: p[0],
-        proposer: p[1],
-        title: p[2],
-        description: p[3],
-        summary: p[4],
-        startDate: p[5],
-        endDate: p[6],
-        yesVotes: p[7],
-        noVotes: p[8],
-        abstainVotes: p[9],
-      }))
-    : [];
+  console.log("Contract read state:", {
+    data: data,
+    isLoading: isLoading,
+    error: error ? error.toString() : "null",
+  });
 
-  return { proposals, isLoading, error };
-};
+  const proposals: Proposal[] = [];
+
+  if (data) {
+    console.log("Raw data from contract:", data);
+    try {
+      if (Array.isArray(data)) {
+        data.forEach((item, index) => {
+          console.log(`Processing item ${index}:`, item);
+
+          const proposal: Proposal = {
+            id: Number(item.id || 0),
+            title: item.title || "",
+            description: item.description || "",
+            summary: item.summary || "",
+            startDate: Number(item.startDate || 0),
+            endDate: Number(item.endDate || 0),
+            yesVotes: Number(item.yesVotes || 0),
+            noVotes: Number(item.noVotes || 0),
+            abstainVotes: Number(item.abstainVotes || 0),
+          };
+
+          proposals.push(proposal);
+        });
+      } else {
+        console.error("Contract data is not an array:", data);
+      }
+    } catch (transformError) {
+      console.error("Error transforming proposal data:", transformError);
+    }
+  }
+
+  console.log("Transformed proposals:", proposals);
+
+  return {
+    proposals,
+    isLoading,
+    error,
+  };
+}

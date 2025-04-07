@@ -87,8 +87,6 @@ const CreateProposal = () => {
     setSubmitStatus({ loading: true, error: null });
     setShowConfirmation(false);
     try {
-      toast.info("Please sign the transaction with your wallet");
-
       // Convert dates to Unix timestamps (seconds)
       const startTimestamp = Math.floor(new Date(startDate).getTime() / 1000);
       const endTimestamp = Math.floor(new Date(endDate).getTime() / 1000);
@@ -278,7 +276,6 @@ const CreateProposal = () => {
                           d="M6 18L18 6M6 6l12 12"
                         />
                       </svg>
-                      AI
                     </button>
                   </div>
                 </div>
