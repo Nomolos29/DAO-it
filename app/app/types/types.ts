@@ -1,5 +1,3 @@
-import { Address } from "thirdweb";
-
 export enum VoteOption {
   Yes = 0,
   No = 1,

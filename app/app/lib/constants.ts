@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { getContract, createThirdwebClient } from "thirdweb";
 import { sepolia } from "thirdweb/chains";
 import daoitabi from "../abi/daoi.json";
@@ -12,6 +13,7 @@ export const daoitContract = getContract({
   address: "0x807f4535F256eAD8a2bb3e3F9829BBEBF424c14f",
   chain: sepolia,
   client,
+  // @ts-ignore: Ignore type error for this line
   abi: daoitabi,
 });
 

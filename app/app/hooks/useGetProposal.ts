@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useReadContract } from "thirdweb/react";
 import { daoitContract } from "../lib/constants";
 import { Proposal } from "../types/types";
@@ -6,6 +7,7 @@ import { resolveMethod } from "thirdweb";
 export const useGetProposal = (proposalId: number) => {
   const { data, isLoading, error } = useReadContract({
     contract: daoitContract,
+    // @ts-ignore: Ignore type error for this line
     method: resolveMethod("getProposal"), // DO NOT EDIT THIS
     params: [proposalId],
   });

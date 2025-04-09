@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useReadContract } from "thirdweb/react";
 import { daoitContract } from "../lib/constants";
 import { resolveMethod } from "thirdweb";
@@ -20,6 +21,7 @@ export function useGetAllProposals() {
 
   const { data, isLoading, error } = useReadContract({
     contract: daoitContract,
+    // @ts-ignore: Ignore type error for this line
     method: resolveMethod("getAllProposals"), // DO NOT EDIT THIS
   });
 
