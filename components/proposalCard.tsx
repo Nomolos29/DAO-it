@@ -5,11 +5,16 @@ interface ProposalCardProps {
   description: string;
   username: string;
   avatar: string;
-  voteBreakdown?: {yes:number; no:number; abstain:number; totalScore:number};
+  voteBreakdown?: {
+    yes: number;
+    no: number;
+    abstain: number;
+    totalScore: number;
+  };
   votes: number;
   timeRemaining: number;
-  status: "opened"|"pending"|"closed";
-  activity: "yes"|"no"|"abstain";
+  status: "opened" | "pending" | "closed";
+  activity: "yes" | "no" | "abstain";
 }
 
 const ProposalCard: React.FC<ProposalCardProps> = ({
@@ -20,9 +25,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
   votes,
   voteBreakdown,
   timeRemaining,
-  status
+  status,
 }) => {
-  const getStatusColor = (status: "opened"|"pending"|"closed") => {
+  const getStatusColor = (status: "opened" | "pending" | "closed") => {
     switch (status) {
       case "opened":
         return "bg-green-500 hover:bg-green-600 text-white";
@@ -61,7 +66,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
             className="w-8 h-8 rounded-full"
           />
           <span className="text-sm text-gray-600 font-mono">
-            {username ? `${username.slice(0, 6)}...${username.slice(-4)}` : 'Anonymous'}
+            {username
+              ? `${username.slice(0, 6)}...${username.slice(-4)}`
+              : "Anonymous"}
           </span>
         </div>
         <span
@@ -92,7 +99,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
               <div className="h-1.5 bg-gray-100 rounded">
                 <div
                   className="h-1.5 bg-green-500 rounded"
-                  style={{ width: `${calculatePercentage(voteBreakdown.yes)}%` }}
+                  style={{
+                    width: `${calculatePercentage(voteBreakdown.yes)}%`,
+                  }}
                 ></div>
               </div>
             </div>
@@ -128,7 +137,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({
               <div className="h-1.5 bg-gray-100 rounded">
                 <div
                   className="h-1.5 bg-gray-400 rounded"
-                  style={{ width: `${calculatePercentage(voteBreakdown.abstain)}%` }}
+                  style={{
+                    width: `${calculatePercentage(voteBreakdown.abstain)}%`,
+                  }}
                 ></div>
               </div>
             </div>
