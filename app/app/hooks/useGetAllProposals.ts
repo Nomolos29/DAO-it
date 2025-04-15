@@ -4,7 +4,7 @@ import { daoitContract } from "../lib/constants";
 import { resolveMethod } from "thirdweb";
 
 export interface Proposal {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   summary: string;
@@ -61,6 +61,8 @@ export function useGetAllProposals() {
       console.error("Error transforming proposal data:", transformError);
     }
   }
+
+  proposals.reverse();
 
   console.log("Transformed proposals:", proposals);
 

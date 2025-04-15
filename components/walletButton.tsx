@@ -35,7 +35,7 @@ const WalletButton = () => {
       wallets={wallets}
       theme={lightTheme({
         colors: {
-          primaryButtonBg: "#FEE539",
+          primaryButtonBg: "#494949",
         },
       })}
       connectModal={{ size: "compact" }}
