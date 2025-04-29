@@ -10,7 +10,7 @@ export const client = createThirdwebClient({
 });
 
 export const daoitContract = getContract({
-  address: "0x807f4535F256eAD8a2bb3e3F9829BBEBF424c14f",
+  address: "0x117AdcBad2171Eb68E1E6bCf1C71376EA24c63Fc",
   chain: sepolia,
   client,
   // @ts-ignore: Ignore type error for this line
