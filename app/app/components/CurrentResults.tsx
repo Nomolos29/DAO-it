@@ -19,38 +19,38 @@ const CurrentResults = () => {
     },
     {
       title: "No",
-      votes: 5,
+      votes: 50,
     },
     {
       title: "abstain",
-      votes: 0,
+      votes: 5,
     },
   ]
 
-  const totalVotes= 240;
+  const totalVotes= 290;
   let percentage:number = 0;
 
   return (
-    <main className='py-5'>
-      <section className='flex flex-col gap-y-5'>
-        <h3>Current result</h3>
+    <main className='py-3'>
+      <section className='flex flex-col gap-y-5 rounded-[12px] bg-white p-[15px]'>
+        <h3 className='text-xl text-[#232426] font-semibold'>Current result</h3>
 
-        <div className='border border-[#ABABAB] rounded-[10px] py-5 px-[18px] w-full flex flex-col gap-y-5'>
+        <div className='w-full flex flex-col gap-y-2'>
           {votes.map((vote, index) => {
             percentage = Number(((vote.votes/totalVotes)*100).toFixed(2));
 
             return(
-              <div key={index} className='flex flex-col'>
-                <h6 className='capitalize font-medium pb-1'>{vote.title}</h6>
+              <div key={index} className='flex flex-col border-[#EDEDED] border rounded-[10px] p-3 gap-y-[12px]'>
+                <h6 className='capitalize pb-1'>{vote.title}</h6>
 
                 <div className='flex w-full items-center text-sm justify-between'>
-                  <p className='text-md font-medium'>{vote.votes} <span className='text-sm font-normal text-[#868686]'>credits</span></p>
-                  <p>{percentage}%</p>
+                  <p className='text-lg'>{vote.votes} <span className='text-md font-normal text-[#868686]'>credits</span></p>
+                  <p className='text-lg text-[#494445]'>{percentage}%</p>
                 </div>
 
-                <div className='w-full bg-black h-[7px] rounded-full overflow-hidden p-[1px]'>
+                <div className='w-full bg-[#DADADA] h-[10px] rounded-full overflow-hidden'>
                   <div 
-                    className="bg-[#FEE539] min-w-[2px] h-full"
+                    className={`${vote.title.toLowerCase() == "yes" ? "bg-[#09FF00]" : vote.title.toLowerCase() == "no" ? "bg-[#FF0000]" : "bg-[#FFD336]"} min-w-[2px] h-full`}
                     style={{width: `${percentage}%`}}
                   ></div>
                 </div>

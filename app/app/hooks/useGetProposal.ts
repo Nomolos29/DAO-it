@@ -8,25 +8,34 @@ export const useGetProposal = (proposalId: number) => {
   const { data, isLoading, error } = useReadContract({
     contract: daoitContract,
     // @ts-ignore: Ignore type error for this line
-    method: resolveMethod("getProposal"), // DO NOT EDIT THIS
+    method: resolveMethod("getProposal"),
     params: [proposalId],
   });
-
+  // @ts-ignore: Ignore type error for this line
   const proposal: Proposal | undefined = data
     ? {
-        id: Number(data[0]), // Convert to number
-        title: data[1] as string, // Cast to string
-        description: data[2] as string, // Cast to string
-        summary: data[3] as string, // Cast to string
-        startDate: Number(data[4]), // Convert to number
-        endDate: Number(data[5]), // Convert to number
-        yesVotes: Number(data[6]), // Convert to number
-        noVotes: Number(data[7]), // Convert to number
-        abstainVotes: Number(data[8]), // Convert to number
+        // @ts-ignore: Ignore type error for this line
+        id: data[0], // Convert to number
+        // @ts-ignore: Ignore type error for this line
+        title: data.title, // Cast to string
+        // @ts-ignore: Ignore type error for this line
+        description: data.description, // Cast to string
+        // @ts-ignore: Ignore type error for this line
+        summary: data.summary, // Cast to string
+        // @ts-ignore: Ignore type error for this line
+        startDate: Number(data.startDate), // Convert to number
+        // @ts-ignore: Ignore type error for this line
+        endDate: Number(data.endDate), // Convert to number
+        // @ts-ignore: Ignore type error for this line
+        yesVotes: Number(data.yesVotes), // Convert to number
+        // @ts-ignore: Ignore type error for this line
+        noVotes: Number(data.noVotes), // Convert to number
+        // @ts-ignore: Ignore type error for this line
+        abstainVotes: Number(data.abstainVotes), // Convert to number
       }
     : undefined;
 
-  console.log("pt", proposal);
+  // console.log("pt", data);
 
   return { proposal, isLoading, error };
 };

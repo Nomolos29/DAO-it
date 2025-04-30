@@ -21,39 +21,23 @@ const ProposalsHome = () => {
   if (error) {
     return <div>Error fetching proposals: {error.message}</div>;
   }
-
+// href="/app/create-proposal"
   return (
-    <main className="w-full px-2 flex flex-col items-center min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
-      <div className="flex flex-col h-[10px] gap-y-5">
+    <main className="w-full px-2 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
+      <div className="flex flex-col w-full h-[10px] gap-y-5">
         <Card>
-          <Link
-            href="/app/create-proposal"
-            className="flex bg-[#F8F8F8] items-center w-full h-[54px] px-5 gap-x-3 rounded-full cursor-pointer"
-          >
-            <div className="flex justify-center items-center rounded-full overflow-hidden">
-              <IoIosPerson className="text-[#ABABAB] text-2xl" />
-            </div>
-            <input
-              type="text"
-              placeholder="Create Proposal"
-              className="w-full bg-transparent outline-none cursor-pointer"
-            />
-          </Link>
-        </Card>
-
-        <Card>
-          <div className="flex gap-y-3">
-            <div className="flex flex-col gap-3">
-              {proposals?.map((proposal, index) => (
+          <div className="flex w-full gap-y-3">
+            <div className="flex flex-col w-full gap-3">
+              {proposals?.map((proposal) => (
                 <div
-                  key={index}
-                  className="flex flex-col h-fit gap-y-5 rounded-lg bg-[#F8F8F8] p-[30px]"
+                  key={proposal.id}
+                  className="flex w-full flex-col h-fit gap-y-5 rounded-lg bg-[#F8F8F8] p-[30px]"
                 >
                   {/* Placeholder for proposer (not stored in contract) */}
                   <div className="text-lg text-[#474747]">Username234</div>
 
                   <article className="flex flex-col gap-y-4">
-                    <Link href={`/app/proposals/${proposal.id.toString()}`}>
+                    <Link href={`/app/${proposal.id}`}>
                       <h3 className="text-lg text-[#474747]">
                         {proposal.title}
                       </h3>
