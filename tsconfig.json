@@ -4,7 +4,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "types": ["thirdweb/types"],
     "strict": true,
     "noEmit": true,
     "noImplicitAny": false,
@@ -24,6 +23,12 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/app/lib/NavsAndLinks.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/app/lib/NavsAndLinks.ts"
+  ],
   "exclude": ["node_modules"]
 }
