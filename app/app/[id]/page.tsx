@@ -5,6 +5,8 @@ import { ProposalDetail, ProposalComments, ProposalVoteDetails } from "../compon
 import { ProposalDetailsNav } from "../lib/NavsAndLinks";
 import { useGetProposal } from "../hooks/useGetProposal";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { HiOutlineArrowNarrowLeft } from "react-icons/hi";
 
 const Proposals = () => {
   const [activeScreen, setActiveScreen] = useState("Proposal details");
@@ -16,25 +18,33 @@ const Proposals = () => {
 
 
   return (
-    <main className="bg-white grid grid-cols-5">
-      <section className="flex col-span-3 flex-col items-center px-1">
-        <nav className="w-full flex justify-between bg-white/20 static shadow-md backdrop-blur-md px-10">
-          {ProposalDetailsNav.map((tab, index) => (
-            <span
-              key={index}
-              onClick={() => setActiveScreen(tab)}
-              className={`text-md text-[#ABABAB] px-2 text-center border-b-[4px] border-transparent py-3 ${
-                activeScreen === tab
-                  ? "border-yellow-400 text-black"
-                  : "hover:border-yellow-400 cursor-pointer  hover:text-black"
-              }`}
-            >
-              {tab}
-            </span>
-          ))}
-        </nav>
+    <main className="grid grid-cols-5">
+      <section className="flex col-span-3 flex-col h-full gap-y-3 p-[12px] mt-3 bg-white rounded-xl">
+        <Link href="/app">
+          <button type="button" className="flex rounded-[5px] transition-colors duration-200 text-[#1D54E1] gap-x-3 px-3 hover:bg-[#1d55e1a6] hover:text-white items-center justify-center w-[208px] h-[50px] bg-[#F7F3FF]">
+            <HiOutlineArrowNarrowLeft className="text-2xl" />
+            <p>Back to Proposals</p>
+          </button>
+        </Link>
 
-        <article className="w-full flex justify-center relative px-1 h-[calc(100vh-50px)]">
+        <article className="w-full flex flex-col gap-x-3 relative h-[calc(100vh-50px)]">
+
+          <nav className="w-full flex justify-between">
+            {ProposalDetailsNav.map((tab, index) => (
+              <span
+                key={index}
+                onClick={() => setActiveScreen(tab)}
+                className={`text-lg text-[#ABABAB] transition-colors duration-200 rounded-xl px-2 text-center w-[calc(50%-15px)] py-3 ${
+                  activeScreen === tab
+                    ? "bg-[#1D54E1] text-white"
+                    : "hover:bg-[#789eff] cursor-pointer hover:text-white bg-[#EEEEEE]"
+                }`}
+              >
+                {tab}
+              </span>
+            ))}
+          </nav>
+
           {isLoading ? <div>Loading proposal...</div> :
             error ? <div>Error loading proposal: {error.message}</div> :
             !proposal ? <div>Proposal not found</div> :
@@ -57,7 +67,8 @@ const Proposals = () => {
           }
         </article>
       </section>
-      <aside className="flex col-span-2 justify-end pl-10 overflow-auto h-[calc(100vh-80px)] scrollbar-hide">
+
+      <aside className="flex col-span-2 justify-end pl-4 overflow-auto h-[calc(100vh-80px)] scrollbar-hide">
         <ProposalVoteDetails />
       </aside>
     </main>

@@ -10,14 +10,18 @@ const MainApp = () => {
   const [activeScreen, setActiveScreen] = useState("Proposals");
 
   return (
-    <main className='bg-white grid grid-cols-5'>
-      <section className='flex col-span-3 flex-col items-center'>
-        <nav className='w-full flex justify-evenly bg-white/20 static shadow-md z-20 backdrop-blur-sm'>
+    <main className='flex w-full py-3'>
+      <section className='flex flex-col items-center bg-white px-[15px] rounded-[10px] overflow-hidden w-[calc(100%-370px)]'>
+        <nav className='w-full flex justify-between static bg-white z-20 py-[15px] border-b-[1px] border-[#D5D5D5] mb-1'>
           {HomeNavTab.map((tab, index) => (
             <div 
               key={index} 
               onClick={() => setActiveScreen(tab)}
-              className={`text-md text-[#ABABAB] px-2 text-center border-b-[4px] border-transparent py-3 ${activeScreen === tab ? "border-yellow-400 text-black" : "hover:border-yellow-400 cursor-pointer hover:text-black"}`}
+              className={`text-lg text-[#ABABAB] transition-colors duration-200 rounded-xl px-2 text-center w-[calc(100%/3-15px)] py-3 ${
+                  activeScreen === tab
+                    ? "bg-[#1D54E1] text-white"
+                    : "hover:bg-[#789eff] cursor-pointer hover:text-white bg-[#EEEEEE]"
+                }`}
             >{tab}</div>
           ))}
         </nav>
@@ -28,7 +32,9 @@ const MainApp = () => {
           : activeScreen === "Community Post" && <CommunityPost />}
         </article>
       </section>
-      <aside className='flex col-span-2 justify-end overflow-auto scrollbar-hide pl-10 h-[calc(100vh-80px)]'>
+
+
+      <aside className='flex justify-end overflow-auto scrollbar-hide pl-10 w-[380px] h-[calc(100vh-110px)]'>
         <CommunityList />
       </aside>
     </main>

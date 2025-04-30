@@ -8,20 +8,9 @@ import logo from "@/app/app/assets/smallLogo.svg"
 
 const Header = () => {
   return (
-    <header className='bg-white w-full flex justify-center items-center z-30 border-b-[1px] border-[#ABABAB] py-2'>
-        <main className='container grid grid-cols-6 h-full items-center gap-10'>
-            <div className='grid col-span-1 items-center'>
-                <Image src={logo} alt="logo" width={60} height={60} />
-            </div>
-
-            <div className='flex col-span-3 items-center justify-center'>
-                <div className='flex w-full items-center px-4 gap-x-3 hover:bg-gray-50 cursor-pointer rounded-full h-[40px] border border-[#ABABAB]'>
-                    <CiSearch className='text-[#ABABAB] text-2xl' />
-                    <input type="text" name="search" id="" placeholder='Search' className='outline-none w-full text-black bg-transparent cursor-pointer' />
-                </div>
-            </div>
-
-            <div className='flex col-span-2 justify-end'>
+    <header className='bg-white w-full flex justify-center items-center h-[80px] py-2'>
+        <main className='h-full flex justify-end w-full items-center gap-10'>
+            <div className='flex  justify-end'>
                 <span className='flex group items-center overflow-hidden translate-x-8 hover:translate-x-0 transition-all duration-500 cursor-pointer'>
                     <IoWalletOutline className='text-3xl text-[#000000] z-10 bg-white' />
                     <p className='text-[12px] text-black py-[1px] pr-2 pl-4 rounded-full border border-yellow-500 bg-yellow-200 -translate-x-[54px] group-hover:-translate-x-3 transition-all duration-500 font-semibold'>100.00 DAT</p>

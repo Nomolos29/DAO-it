@@ -14,7 +14,7 @@ export const useGetProposal = (proposalId: number) => {
 
   const proposal: Proposal | undefined = data
     ? {
-        id: data[0], // Convert to number
+        id: data.id, // Convert to number
         title: data.title, // Cast to string
         description: data.description, // Cast to string
         summary: data.summary, // Cast to string
