@@ -3,6 +3,7 @@ import React from "react";
 interface Community {
   name: string;
   members: string;
+  status: "joined" | "not joined";
 }
 
 interface CommunitySectionProps {
@@ -17,22 +18,35 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   showMoreText,
 }) => {
   return (
-    <div className="w-full flex flex-col gap-y-1 pt-6">
-      <h2 className="text-lg text-[#474747] mb-4">{title}</h2>
-      <div className="space-y-4 rounded-lg border p-3 w-full">
+    <div className="w-full flex flex-col gap-y-1 p-[15px] bg-white rounded-xl">
+      <h2 className="text-lg font-medium text-[#232426] pb-4 pt-2 mb-4 border-b-[1px] border-[#D5D5D5]">{title}</h2>
+      <div className="space-y-4 w-full">
         {communities.map((community, index) => (
           <div key={index} className="flex justify-between items-center w-full">
             <div>
-              <h3 className="font-semibold text-[#474747] text-md">{community.name}</h3>
-              <p className="text-sm text-[#ABABAB]">{community.members}</p>
+              <h3 className="text-[#232426] pb-1 text-md">{community.name}</h3>
+              <p className="text-md font-medium text-[#5B5E65]">{community.members}</p>
             </div>
-            <button type="button" className="text-sm text-white h-[25px] flex items-center justify-center bg-[#1B1B1B] w-[70px] rounded-full border border-[#F8B51C]">
-              Joined
+            <button type="button" className={`text-md flex items-center justify-center ${community.status == "joined" ? "bg-[#1D54E1] text-white hover:bg-[#1d55e14f]" : "bg-white border-[#D5D5D5] text-[#1D54E1] border hover:bg-[#1D54E11A] hover:border-[#1d55e14f]"} transition-all duration-200 w-[106px] h-[36px] rounded-[5px] gap-x-3`}>
+              {community.status == "joined" ? "Joined" : "Join"}
+
+              {community.status == "joined" ? (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.43461 0.0577536C5.07307 0.369292 4.02307 1.44237 3.75 2.80391C3.65384 3.27698 3.68461 4.01545 3.82307 4.47314C4.01154 5.10775 4.29615 5.56545 4.79615 6.03852C5.25 6.46929 5.78077 6.75775 6.40769 6.9116C6.80769 7.00775 7.57692 7.00006 8.01538 6.89237C8.83846 6.68852 9.60769 6.1616 10.0769 5.48083C10.7115 4.5616 10.8615 3.27698 10.4615 2.23852C10.0615 1.20391 9.21154 0.423138 8.15384 0.115446C7.78077 0.0039072 6.80384 -0.0268621 6.43461 0.0577536ZM7.75 1.33468C8.45769 1.50775 9.07692 2.09621 9.31154 2.81545C9.43077 3.18083 9.43846 3.78852 9.33077 4.11545C9.06154 4.91929 8.41923 5.50775 7.63461 5.67314C7.13461 5.77698 6.68461 5.71545 6.1923 5.47698C5.81538 5.29237 5.37692 4.8616 5.2 4.50006C4.60384 3.28468 5.17307 1.85006 6.4423 1.38852C6.85769 1.23852 7.28846 1.21929 7.75 1.33468Z" fill="white"/>
+                <path d="M4.71154 8.23467C3.15384 8.43852 1.99615 9.23467 1.34615 10.5578C1.08077 11.0885 0.953845 11.5116 0.861537 12.1231C0.776921 12.6962 0.803845 13.5385 0.919229 13.9808C1.12692 14.777 1.57308 15.3501 2.23461 15.6654C2.92692 15.9962 2.66154 15.977 6.47308 15.9924L9.85385 16.0039L9.98461 15.9193C10.3538 15.6924 10.3577 15.077 9.99231 14.8539C9.86538 14.777 9.8 14.7731 6.65384 14.7578C3.95769 14.7462 3.40769 14.7347 3.22692 14.6847C2.60769 14.5193 2.28077 14.1847 2.13461 13.5693C2.05 13.2001 2.05769 12.3308 2.15384 11.9347C2.44231 10.727 3.38846 9.80391 4.62692 9.51929C4.85384 9.46544 5.22308 9.4616 7.3 9.46929L9.71154 9.48083L10.0731 9.60775C10.7154 9.83083 11.2269 10.2001 11.6462 10.7424C11.9231 11.1039 12.2154 11.1962 12.5385 11.027C12.7308 10.927 12.8846 10.6808 12.8846 10.4847C12.8808 10.1501 12.3885 9.53083 11.7385 9.03468C11.4038 8.78083 10.7308 8.45391 10.2692 8.31929L9.90385 8.21544L7.44231 8.20775C6.08846 8.20391 4.86154 8.21544 4.71154 8.23467Z" fill="white"/>
+                <path d="M15.1154 12.35C15.0615 12.3693 14.6077 12.7962 14.1077 13.3L13.1962 14.2077L12.8 13.8193C12.4654 13.4923 12.3808 13.427 12.2462 13.4077C12.0269 13.3693 11.8077 13.4385 11.6654 13.5847C11.5462 13.7077 11.4462 13.9808 11.4769 14.0808C11.4846 14.1116 11.5038 14.1847 11.5192 14.25C11.5385 14.3308 11.7346 14.5577 12.1654 14.9923C12.5077 15.3385 12.8346 15.6462 12.8923 15.677C13.0269 15.7462 13.3577 15.7462 13.4923 15.677C13.55 15.6462 14.1269 15.0885 14.7769 14.4347C15.8038 13.4039 15.9577 13.2308 15.9808 13.1039C16.0615 12.677 15.8192 12.3462 15.4154 12.3193C15.3038 12.3154 15.1692 12.327 15.1154 12.35Z" fill="white"/>
+              </svg>) : (<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.43461 0.0615163C5.10769 0.349978 4.03846 1.4269 3.76538 2.74613C3.43846 4.33844 4.1923 5.90767 5.63461 6.6269C7.00384 7.31152 8.69615 7.00382 9.75 5.88075C10.1269 5.48075 10.4308 4.9269 10.5808 4.36536C10.6923 3.95767 10.7038 3.0769 10.6038 2.68075C10.2692 1.34998 9.21923 0.326901 7.91538 0.0615163C7.55384 -0.0115604 6.76923 -0.0154066 6.43461 0.0615163ZM7.83846 1.34998C8.32307 1.50382 8.78846 1.86536 9.07307 2.30767C9.90384 3.59229 9.14615 5.34998 7.62692 5.67305C7.29615 5.74229 7.08846 5.74229 6.75 5.67305C6.31154 5.58075 5.94615 5.3769 5.61538 5.04229C5.17307 4.59613 4.96154 4.09229 4.96154 3.49998C4.96538 2.16152 6.10384 1.13844 7.43461 1.2769C7.58077 1.29229 7.76154 1.32305 7.83846 1.34998Z" fill="#1D54E1"/>
+                <path d="M4.71154 8.23455C3.16538 8.43071 1.99615 9.2384 1.34615 10.5576C1.08077 11.0884 0.953845 11.5115 0.861537 12.123C0.776921 12.6961 0.803845 13.5384 0.919229 13.9807C1.12692 14.7769 1.57308 15.3499 2.23461 15.6653C2.92692 15.9961 2.66154 15.9769 6.47308 15.9922L9.85384 16.0038L9.98461 15.9192C10.3538 15.6922 10.3577 15.0769 9.99231 14.8538C9.86538 14.7769 9.8 14.773 6.65384 14.7576C3.95769 14.7461 3.40769 14.7346 3.22692 14.6846C2.60769 14.5192 2.28077 14.1846 2.13461 13.5692C2.05 13.1999 2.05769 12.3307 2.15384 11.9346C2.44231 10.7269 3.38846 9.80378 4.62692 9.51917C4.85384 9.46532 5.21538 9.46148 7.26154 9.46917C9.6 9.48455 9.63846 9.48455 9.91923 9.56917C10.3 9.6884 10.7038 9.87686 11.0038 10.0807C11.5 10.4153 11.9846 10.2961 12.1192 9.79609C12.1692 9.60763 12.1154 9.37686 11.9885 9.23455C11.7692 8.99609 11.0654 8.61148 10.5077 8.42302C9.85769 8.20378 9.66538 8.19225 7.21154 8.19609C5.98461 8.19994 4.86154 8.21917 4.71154 8.23455Z" fill="#1D54E1"/>
+                <path d="M13.4615 11.5461C13.1577 11.7038 13.1346 11.7615 13.1231 12.4807L13.1115 13.1115L12.4808 13.1231C11.9192 13.1346 11.8385 13.1423 11.7423 13.2154C11.6077 13.3115 11.4615 13.5923 11.4615 13.7538C11.4615 13.95 11.6154 14.1961 11.8077 14.2961C11.9577 14.3769 12.0231 14.3846 12.5462 14.3846H13.1154V14.9615C13.1154 15.4615 13.1269 15.5615 13.1923 15.6884C13.4 16.1 13.9923 16.1154 14.2846 15.7192C14.3577 15.6192 14.3654 15.5461 14.3769 15L14.3885 14.3923L15 14.3769C15.6769 14.3654 15.7308 14.3461 15.9154 14.0769C16.0308 13.9038 16.0346 13.5807 15.9192 13.3961C15.7731 13.1615 15.6192 13.1154 14.9615 13.1154H14.3846V12.5461C14.3846 12.0231 14.3769 11.9577 14.2962 11.8077C14.1962 11.6154 13.95 11.4615 13.7538 11.4615C13.6846 11.4615 13.5538 11.5 13.4615 11.5461Z" fill="#1D54E1"/>
+                </svg>
+              )}
+
             </button>
           </div>
         ))}
 
-        <button type="button">{showMoreText}</button>
+        <button type="button" className="text-center text-[#1D54E1] transition-colors duration-300 bg-[#1D54E11A] w-full rounded-[10px] h-[46px] flex justify-center items-center hover:bg-[#1D54E1] hover:text-white cursor-pointer">{showMoreText}</button>
       </div>
     </div>
   );
@@ -40,28 +54,29 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
 
 const CommunityList: React.FC = () => {
   const yourCommunities: Community[] = [
-    { name: "KBM Community", members: "2.5k members" },
-    { name: "Al School Community", members: "2.5k members" },
-    { name: "Techfare Al Community", members: "2.5k members" },
+    { name: "KBM Community", members: "2.5k members", status: "joined" },
+    { name: "Al Community", members: "2.5k members", status: "joined" },
+    { name: "Al School Community", members: "2.5k members", status: "joined" },
+    { name: "Techfare Al Community", members: "2.5k members", status: "joined" },
   ];
 
   const relevantCommunities: Community[] = [
-    { name: "KBM Community", members: "2.5k members" },
-    { name: "Al Community", members: "2.5k members" },
-    { name: "Tech Community", members: "2.5k members" },
+    { name: "KBM Community", members: "2.5k members", status: "not joined" },
+    { name: "Al Community", members: "2.5k members", status: "not joined" },
+    { name: "Tech Community", members: "2.5k members", status: "not joined" },
   ];
 
   return (
-    <div className="bg-white w-full">
+    <div className="w-full flex flex-col gap-y-5 pb-10">
       <CommunitySection
         title="Your communities"
         communities={yourCommunities}
-        showMoreText="Show more"
+        showMoreText="View more"
       />
       <CommunitySection
         title="Relevant communities"
         communities={relevantCommunities}
-        showMoreText="Show more"
+        showMoreText="View more"
       />
     </div>
   );

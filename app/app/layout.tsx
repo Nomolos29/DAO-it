@@ -27,47 +27,45 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const pathname = usePathname();
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-[#F8F8F8] antialiased flex justify-center w-full`}
       >
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
             <AuthHandler onConnected={setIsConnected} />
-            {isConnected ? (
-              <div className="flex flex-col h-screen overflow-auto">
-                <header className="w-full fixed top-0 z-50">
-                  <Header />
-                </header>
-                <main className="flex w-full justify-center h-full overscroll-y-auto">
-                  {pathname === "/app/create-proposal" ? (
-                    <div className="container mt-[65px]">{children}</div>
-                  ) : (
-                    <div className="container grid grid-cols-6 fixed top-[65px]">
-                      <aside className="grid col-span-1">
-                        <SideBar />
-                      </aside>
-                      <article className="gray col-span-5 h-screen overscroll-hidden">{children}</article>
-                    </div>
-                  )}
-                </main>
-              </div>
-            ) : (
-              <div className="h-screen flex flex-col justify-center items-center">
-                <AuthLanding />
-                {/* <button
-                  type="button"
-                  className="rounded-md px-2 h-[48px] w-[200px] bg-gradient-to-r from-[#F8B51C] to-[#FEE539] mt-4"
-                  onClick={() => setIsConnected(true)}
-                >
-                  Continue as Guest
-                </button> */}
-              </div>
-            )}
+              <main className="max-w-screen-2xl w-full flex justify-center h-screen overflow-hidden">
+                {isConnected ? (
+                  <main className="flex w-full justify-center h-full overscroll-y-auto">
+                    {pathname === "/app/create-proposal" ? (
+                      <div className="mt-[65px]">{children}</div>
+                    ) : (
+                      <div className="flex w-full">
+                        <aside className="">
+                          <SideBar />
+                        </aside>
+                        
+                        <div className="flex flex-col overflow-hidden relative w-full h-screen">
+                          <header className="w-full absolute z-30">
+                            <Header />
+                          </header>
+                          <article className="gray h-screen overscroll-hidden pt-[80px] p-3">
+                            {children}
+                          </article>
+                        </div>
+                      </div>
+                    )}
+                  </main>
+                ) : (
+                  <div className="h-screen flex flex-col justify-center items-center">
+                    <AuthLanding />
+                  </div>
+                )}
+              </main>
           </ThirdwebProvider>
         </QueryClientProvider>
         <ToastContainer

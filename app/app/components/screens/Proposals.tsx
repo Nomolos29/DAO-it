@@ -21,26 +21,10 @@ const ProposalsHome = () => {
   if (error) {
     return <div>Error fetching proposals: {error.message}</div>;
   }
-
+// href="/app/create-proposal"
   return (
     <main className="w-full px-2 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
       <div className="flex flex-col w-full h-[10px] gap-y-5">
-        <Card>
-          <Link
-            href="/app/create-proposal"
-            className="flex bg-[#F8F8F8] items-center w-full h-[54px] px-5 gap-x-3 rounded-full cursor-pointer"
-          >
-            <div className="flex justify-center items-center rounded-full overflow-hidden">
-              <IoIosPerson className="text-[#ABABAB] text-2xl" />
-            </div>
-            <input
-              type="text"
-              placeholder="Create Proposal"
-              className="w-full bg-transparent outline-none cursor-pointer"
-            />
-          </Link>
-        </Card>
-
         <Card>
           <div className="flex w-full gap-y-3">
             <div className="flex flex-col w-full gap-3">
