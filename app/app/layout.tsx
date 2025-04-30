@@ -38,7 +38,7 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
             <AuthHandler onConnected={setIsConnected} />
-              <main className="max-w-screen-2xl w-full flex justify-center h-screen overflow-hidden">
+              <main className="max-w-screen-2xl w-full flex justify-center h-screen">
                 {isConnected ? (
                   <main className="flex w-full justify-center h-full overscroll-y-auto">
                     {pathname === "/app/create-proposal" ? (
