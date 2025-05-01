@@ -47,6 +47,8 @@ next-env.d.ts
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#images
+Uploads/
 # User-specific files
 *.rsuser
 *.suo
