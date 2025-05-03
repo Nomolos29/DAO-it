@@ -13,6 +13,7 @@ import { Modal } from "../components";
 import { useCreateProposal } from "../hooks/useCreateProposal";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import openai from "../lib/openai";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 // Types definitions
 interface ProposalState {
