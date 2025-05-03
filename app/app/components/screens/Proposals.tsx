@@ -1,17 +1,12 @@
-import { useState } from "react";
-// import Card from "../Card";
-import { IoIosPerson } from "react-icons/io";
-import { HiChatBubbleOvalLeft } from "react-icons/hi2";
-import { BiSolidLike, BiSolidDislike } from "react-icons/bi";
-import Modal from "../Modal";
-// import { Proposals } from "../../lib/ScreenData";
+// import { useState } from "react";
 import Link from "next/link";
 import { useGetAllProposals } from "@/app/app/hooks/useGetAllProposals";
+import Post from "../Post";
 
 const ProposalsHome = () => {
-  const [postComment, setPostComment] = useState(false);
   const { proposals, isLoading, error } = useGetAllProposals();
 
+  console.log("this is the proposals: ", proposals);
   // Handle loading state
   if (isLoading) {
     return <div>Loading proposals...</div>;
@@ -26,9 +21,9 @@ const ProposalsHome = () => {
     <main className="w-full px-2 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
       <div className="flex flex-col w-full h-[10px] gap-y-5">
         <div className="flex w-full justify-between items-center">
-          <select name="status" id="" title="Status" className="w-[200px] h-[50px] outline-none bg-[#F8F8F8] rounded-full px-5 text-[#474747] text-[14px] font-semibold">
-            <option value="Active">Active</option>
-            <option value="Closed">Closed</option>
+          <select name="status" id="" title="Status" className="w-[120px] h-[50px] outline-none border-[#ABABAB] border rounded-[10px] bg-transparent px-4 text-[#474747] text-[14px] font-semibold">
+            <option value="Active" className="">Active</option>
+            <option value="Closed" className="">Closed</option>
           </select>
 
           <Link href="/app/create-proposal">
@@ -53,116 +48,134 @@ const ProposalsHome = () => {
         <div className="flex w-full gap-y-3">
           <div className="flex flex-col w-full gap-3">
             {proposals?.map((proposal) => (
-              <div
+              // <div
+              //   key={proposal.id}
+              //   className="flex w-full flex-col h-fit gap-y-5 rounded-lg bg-[#F8F8F8] p-[30px]"
+              // >
+              //   {/* Placeholder for proposer (not stored in contract) */}
+              //   <div className="text-lg text-[#474747]">Username234</div>
+
+              //   <article className="flex flex-col gap-y-4">
+              //     <Link href={`/app/${proposal.id}`}>
+              //       <h3 className="text-lg text-[#474747]">
+              //         {proposal.title}
+              //       </h3>
+              //     </Link>
+              //     <p className="text-md text-[#777777]">{proposal.summary}</p>
+
+              //     <section className="flex w-full justify-between items-center">
+              //       <div className="flex items-center gap-x-3 text-[14px] text-[#474747]">
+              //         <span
+              //           onClick={() => setPostComment(true)}
+              //           className="cursor-pointer flex items-center"
+              //         >
+              //           <HiChatBubbleOvalLeft className="text-lg" />0{" "}
+              //           {/* Comments not in contract */}
+              //         </span>
+              //         <span className="flex gap-x-1">
+              //           <BiSolidLike className="text-lg hover:text-yellow-500 bg-clip-text" />
+              //           0 {/* Likes not in contract */}
+              //         </span>
+              //         <span className="flex gap-x-1">
+              //           <BiSolidDislike className="text-lg" />0{" "}
+              //           {/* Dislikes not in contract */}
+              //         </span>
+              //       </div>
+
+              //       <div className="flex items-center gap-x-3 text-[#494445] text-[12px]">
+              //         <span>
+              //           {Number(proposal.yesVotes) +
+              //             Number(proposal.noVotes) +
+              //             Number(proposal.abstainVotes)}{" "}
+              //           votes
+              //         </span>
+              //         <span>
+              //           {new Date(
+              //             Number(proposal.endDate) * 1000
+              //           ).toLocaleDateString()}
+              //         </span>
+              //       </div>
+              //     </section>
+              //   </article>
+
+              //   {/* Comment Modal */}
+              //   <Modal
+              //     isOpen={postComment}
+              //     onClose={() => setPostComment(false)}
+              //     bgDarkened
+              //   >
+              //     <div className="w-[500px] flex flex-col gap-y-4">
+              //       <p className="text-[12px]">
+              //         Replying to{" "}
+              //         <span className="text-[#8A5A00]">username234</span>
+              //       </p>
+              //       <div className="flex flex-col gap-y-5 rounded-lg">
+              //         <div className="text-lg text-[#474747]">
+              //           Username234
+              //         </div>
+              //         <article className="flex flex-col gap-y-4">
+              //           <h3 className="text-lg text-[#474747]">
+              //             {proposal.title}
+              //           </h3>
+              //           <p className="text-md text-[#777777]">
+              //             {proposal.summary}
+              //           </p>
+              //           <section className="flex w-full justify-between items-center">
+              //             <div className="flex items-center gap-x-3 text-[14px] text-[#474747]">
+              //               <span
+              //                 onClick={() => setPostComment(true)}
+              //                 className="cursor-pointer"
+              //               >
+              //                 <HiChatBubbleOvalLeft />
+              //               </span>
+              //               <span>0</span>
+              //               <span>0</span>
+              //             </div>
+              //             <div className="flex items-center gap-x-3 text-[#494445] text-[12px]">
+              //               <span>
+              //                 {Number(proposal.yesVotes) +
+              //                   Number(proposal.noVotes) +
+              //                   Number(proposal.abstainVotes)}
+              //               </span>
+              //               <span>
+              //                 {new Date(
+              //                   Number(proposal.endDate) * 1000
+              //                 ).toLocaleDateString()}
+              //               </span>
+              //             </div>
+              //           </section>
+              //         </article>
+              //       </div>
+              //       <div className="flex bg-[#F8F8F8] items-center w-full max-h-[100px] h-full px-5 gap-x-3 rounded-full cursor-pointer">
+              //         <div className="flex justify-center items-center rounded-full overflow-hidden">
+              //           <IoIosPerson className="text-[#ABABAB] text-2xl" />
+              //         </div>
+              //         <textarea
+              //           placeholder="Write a comment..."
+              //           className="w-full bg-transparent outline-none cursor-pointer"
+              //         />
+              //       </div>
+              //     </div>
+              //   </Modal>
+              // </div>
+              <Post
                 key={proposal.id}
-                className="flex w-full flex-col h-fit gap-y-5 rounded-lg bg-[#F8F8F8] p-[30px]"
-              >
-                {/* Placeholder for proposer (not stored in contract) */}
-                <div className="text-lg text-[#474747]">Username234</div>
-
-                <article className="flex flex-col gap-y-4">
-                  <Link href={`/app/${proposal.id}`}>
-                    <h3 className="text-lg text-[#474747]">
-                      {proposal.title}
-                    </h3>
-                  </Link>
-                  <p className="text-md text-[#777777]">{proposal.summary}</p>
-
-                  <section className="flex w-full justify-between items-center">
-                    <div className="flex items-center gap-x-3 text-[14px] text-[#474747]">
-                      <span
-                        onClick={() => setPostComment(true)}
-                        className="cursor-pointer flex items-center"
-                      >
-                        <HiChatBubbleOvalLeft className="text-lg" />0{" "}
-                        {/* Comments not in contract */}
-                      </span>
-                      <span className="flex gap-x-1">
-                        <BiSolidLike className="text-lg hover:text-yellow-500 bg-clip-text" />
-                        0 {/* Likes not in contract */}
-                      </span>
-                      <span className="flex gap-x-1">
-                        <BiSolidDislike className="text-lg" />0{" "}
-                        {/* Dislikes not in contract */}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-x-3 text-[#494445] text-[12px]">
-                      <span>
-                        {Number(proposal.yesVotes) +
-                          Number(proposal.noVotes) +
-                          Number(proposal.abstainVotes)}{" "}
-                        votes
-                      </span>
-                      <span>
-                        {new Date(
-                          Number(proposal.endDate) * 1000
-                        ).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </section>
-                </article>
-
-                {/* Comment Modal */}
-                <Modal
-                  isOpen={postComment}
-                  onClose={() => setPostComment(false)}
-                  bgDarkened
-                >
-                  <div className="w-[500px] flex flex-col gap-y-4">
-                    <p className="text-[12px]">
-                      Replying to{" "}
-                      <span className="text-[#8A5A00]">username234</span>
-                    </p>
-                    <div className="flex flex-col gap-y-5 rounded-lg">
-                      <div className="text-lg text-[#474747]">
-                        Username234
-                      </div>
-                      <article className="flex flex-col gap-y-4">
-                        <h3 className="text-lg text-[#474747]">
-                          {proposal.title}
-                        </h3>
-                        <p className="text-md text-[#777777]">
-                          {proposal.summary}
-                        </p>
-                        <section className="flex w-full justify-between items-center">
-                          <div className="flex items-center gap-x-3 text-[14px] text-[#474747]">
-                            <span
-                              onClick={() => setPostComment(true)}
-                              className="cursor-pointer"
-                            >
-                              <HiChatBubbleOvalLeft />
-                            </span>
-                            <span>0</span>
-                            <span>0</span>
-                          </div>
-                          <div className="flex items-center gap-x-3 text-[#494445] text-[12px]">
-                            <span>
-                              {Number(proposal.yesVotes) +
-                                Number(proposal.noVotes) +
-                                Number(proposal.abstainVotes)}
-                            </span>
-                            <span>
-                              {new Date(
-                                Number(proposal.endDate) * 1000
-                              ).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </section>
-                      </article>
-                    </div>
-                    <div className="flex bg-[#F8F8F8] items-center w-full max-h-[100px] h-full px-5 gap-x-3 rounded-full cursor-pointer">
-                      <div className="flex justify-center items-center rounded-full overflow-hidden">
-                        <IoIosPerson className="text-[#ABABAB] text-2xl" />
-                      </div>
-                      <textarea
-                        placeholder="Write a comment..."
-                        className="w-full bg-transparent outline-none cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                </Modal>
-              </div>
+                id={proposal.id}
+                title={proposal.title}
+                postBy="Amarachi2944"
+                postImage={true}
+                // postType="proposal"
+                postComments={286}
+                postStatus={"active"}
+                postDislikes={20}
+                profilePic={true}
+                postLikes={100}
+                description={proposal.summary}
+                postCreationDate={proposal.startDate}
+                postStartDate={proposal.startDate}
+                postEndDate={proposal.endDate}
+                postVotes={proposal.yesVotes + proposal.noVotes + proposal.abstainVotes}
+              />
             ))}
           </div>
         </div>

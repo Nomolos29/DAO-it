@@ -3,13 +3,14 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { useState } from "react";
-import AuthLanding from "./(auth)/AuthLanding";
+import TutorialPage from "./(auth)/Tutorial";
 import { Header, SideBar } from "./components";
 import { usePathname } from "next/navigation";
 import { ThirdwebProvider } from "thirdweb/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthHandler } from "./(auth)/AuthHandler";
 import { ToastContainer } from "react-toastify";
+import FullHeader from "./components/layout/FullHeader";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,11 +39,17 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
             <AuthHandler onConnected={setIsConnected} />
-              <main className="max-w-screen-2xl w-full flex justify-center h-screen overflow-hidden">
+              <main className="max-w-screen-2xl w-full flex justify-center h-screen">
                 {isConnected ? (
                   <main className="flex w-full justify-center h-full overscroll-y-auto">
                     {pathname === "/app/create-proposal" ? (
-                      <div className="mt-[65px]">{children}</div>
+                      <div className="flex flex-col w-full relative">
+                        <FullHeader displayWallet />
+                        
+                        <main className="w-full pt-[90px]">
+                          {children}
+                        </main>
+                      </div>
                     ) : (
                       <div className="flex w-full">
                         <aside className="">
@@ -61,8 +68,8 @@ export default function RootLayout({
                     )}
                   </main>
                 ) : (
-                  <div className="h-screen flex flex-col justify-center items-center">
-                    <AuthLanding />
+                  <div className="w-full">
+                    <TutorialPage />
                   </div>
                 )}
               </main>

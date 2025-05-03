@@ -1,7 +1,8 @@
-import { IoIosPeople, IoIosPerson, IoIosNotifications } from "react-icons/io";
-import { FaChalkboardTeacher } from "react-icons/fa";
-import { RiHome2Fill } from "react-icons/ri";
+import { IoIosPeople, IoIosNotifications } from "react-icons/io";
 import React from "react"
+import { AiOutlineHome } from "react-icons/ai";
+import { RxCalendar } from "react-icons/rx";
+import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 
 interface MenuItem {
     navIcon: React.FC;
@@ -11,14 +12,9 @@ interface MenuItem {
 
 export const SideBarMenu: MenuItem[] = [
     {
-        navIcon: RiHome2Fill,
+        navIcon: AiOutlineHome,
         navTitle: "Home",
         navLink: "/app",
-    },
-    {
-        navIcon: IoIosPerson,
-        navTitle: "Profile",
-        navLink: "/app/#",
     },
     {
         navIcon: IoIosPeople,
@@ -26,15 +22,20 @@ export const SideBarMenu: MenuItem[] = [
         navLink: "/app/#",
     },
     {
+        navIcon: RxCalendar,
+        navTitle: "Events",
+        navLink: "/app/#",
+    },
+    {
+        navIcon: LiaChalkboardTeacherSolid,
+        navTitle: "Educators",
+        navLink: "/app/#",
+    },
+    {
         navIcon: IoIosNotifications,
         navTitle: "Notifications",
         navLink: "/app/#",
     },
-    {
-        navIcon: FaChalkboardTeacher,
-        navTitle: "Educators",
-        navLink: "/app/#",
-    }
 ]
 
 export const HomeNavTab = ["Proposals", "Intending Proposals", "Community Post"]

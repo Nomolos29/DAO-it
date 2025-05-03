@@ -1,15 +1,20 @@
+"use client"
+
 import Link from "next/link";
 import { SideBarMenu } from "../../lib/NavsAndLinks";
 import { usePathname } from "next/navigation";
 import WalletButton from "@/components/walletButton";
 import { RiSettings3Line } from "react-icons/ri";
+import { IoIosArrowDropdownCircle } from "react-icons/io";
+import { useState } from "react";
 
 const SideBar: React.FC = () => {
   const pathname = usePathname();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   return (
-    <div className="max-h-[100vh] h-full bg-white w-[240px] p-[25px]">
-      <nav className="flex flex-col justify-between h-full">
+    <div className="max-h-[100vh] h-full bg-white w-[240px] overflow-hidden p-[25px]">
+      <nav className="flex flex-col justify-between h-full relative">
         <div className="flex flex-col gap-y-10">
           <svg width="180" height="39" viewBox="0 0 180 39" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_241_2776)">
@@ -48,15 +53,24 @@ const SideBar: React.FC = () => {
           </div>
         </div>
         
-        <div className="flex flex-col gap-y-3">
-          <WalletButton />
+        <div className={`flex flex-col gap-y-3 bg-white w-full overflow-hidden z-10 absolute bottom-0 left-0 ${showProfileMenu ? "translate-y-0" : "translate-y-[60%]"} transition-all duration-500`}>
+          <div className="flex w-full justify-end">
+            <IoIosArrowDropdownCircle className={`text-3xl text-[#1D54E15A] hover:text-[#1D54E1] cursor-pointer transition-all duration-500 ${showProfileMenu ? "rotate-0" : "rotate-[180deg]"}`} onClick={() => setShowProfileMenu(!showProfileMenu)} />
+          </div>
+          <main className="flex flex-col gap-y-3 border-t border-[#EDEDED] pt-3">
+            <WalletButton />
 
-          <Link href="#">
-            <button type="button" className="flex items-center w-full gap-x-3 h-[50px] px-[20px] rounded-[10px] text-[#2E3035] font-semibold hover:bg-[#F7F3FF] hover:text-[#2E3035] transition-colors duration-200">
-              <RiSettings3Line className="text-xl" />
-              Settings
-            </button>
-          </Link>
+            <div className="flex flex-col gap-y-3">
+              <Link href="#">
+                <button type="button" className="flex items-center w-full gap-x-3 h-[50px] px-[20px] rounded-[10px] text-[#2E3035] font-semibold hover:bg-[#F7F3FF] hover:text-[#2E3035] transition-colors duration-200">
+                  <RiSettings3Line className="text-xl" />
+                  Settings
+                </button>
+              </Link>
+
+              <button type="button" className="flex items-center w-full gap-x-3 h-[50px] bg-[#A50D0D1A] px-[20px] rounded-[10px] text-[#A50D0D] font-medium text-md hover:bg-[#F7F3FF] hover:text-[#2E3035] transition-colors duration-200">Log Out</button>
+            </div>
+          </main>
         </div>
       </nav>
     </div>
