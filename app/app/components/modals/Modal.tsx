@@ -6,14 +6,15 @@ export interface ModalProps {
   bgBlured?: boolean;
   bgDarkened?: boolean;
   children?: React.ReactNode;
+  closeButton?: "left" | "right";
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, bgBlured, bgDarkened, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, bgBlured, bgDarkened, children, closeButton }) => {
   if (!isOpen) return null; // Don't render the modal if it's not open
 
   return (
     <div
-      className={`fixed inset-0 ${bgDarkened && "bg-black/30"} ${bgBlured && "bg-white/70 backdrop-blur-[10px]"} flex justify-center items-center z-50`}
+      className={`fixed inset-0 ${bgDarkened && "bg-black/30"} ${bgBlured && "bg-black/30 backdrop-blur-[10px]"} flex justify-center items-center z-50`}
       onClick={onClose} // Close modal when clicking outside
     >
       <div
@@ -21,13 +22,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, bgBlured, bgDarkened, ch
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
       >
         {/* Close Icon (X) */}
-        <button
+        {closeButton && <button
           type="button"
-          className="absolute top-3 right-3 bg-[#d3d3d3] w-5 h-5 flex justify-center items-center rounded-full text-white font-semibold border-none text-lg cursor-pointer"
+          className={`absolute top-3 bg-[#d3d3d3] w-7 h-7 flex justify-center items-center rounded-full text-white font-semibold border-none text-xl cursor-pointer ${closeButton === "left" ? "left-3" : "right-3"}`}
           onClick={onClose}
         >
           ×
-        </button>
+        </button>}
 
         {/* Modal Content */}
         {children}

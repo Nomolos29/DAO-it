@@ -1,23 +1,26 @@
-import Card from "../Card";
-import { Proposal } from "../../hooks/useGetAllProposals";
 
-const ProposalDetail: React.FC<Proposal> = ({
-  id,
-  title,
-  description,
-  startDate,
-  endDate,
+
+interface ProposalDetailProps {
+  fullDescription: string;
+  yesVotes: number;
+  noVotes: number;
+  abstainVotes: number;
+}
+
+const ProposalDetail: React.FC<ProposalDetailProps> = ({
   yesVotes,
   noVotes,
   abstainVotes,
+  fullDescription
 }) => {
   // const [status, setStatus] = useState("Active")
 
   const status: string = "Active";
   return (
-    <Card>
-      <main className="flex h-[calc(100vh-130px)] overflow-auto scrollbar-hide">
-        <div className="flex flex-col gap-y-3 w-full h-full">
+    
+      <main className="flex h-full flex-col gap-y-3">
+        <div className="flex flex-col gap-y-3 w-full h-full p-1">
+
           {/* Proposal Header Section */}
           <section className="bg-[#F8F8F8] rounded-[10px] p-[30px] flex flex-col gap-y-5">
             <div>
@@ -26,8 +29,6 @@ const ProposalDetail: React.FC<Proposal> = ({
                 <h5>Username234</h5>
               </div>
             </div>
-
-            <p className="font-medium">Proposal ID: {id.toString()}</p>
 
             <div>
               <p>Status</p>
@@ -43,28 +44,23 @@ const ProposalDetail: React.FC<Proposal> = ({
                 {status}
               </div>
             </div>
-
-            <div>
-              <p>Title</p>
-              <h4 className="">{title}</h4>
-            </div>
           </section>
 
           {/* Timeline Section */}
           <section className="bg-[#F8F8F8] rounded-[10px] p-[20px]">
             <h3>Timeline</h3>
             <div className="flex flex-col gap-y-4">
-              <span>
+              {/* <span>
                 <p>Start date</p>
-                <h4>{new Date(startDate * 1000).toLocaleDateString()}</h4>
-              </span>
+                <h4>{new Date(postCreationDate * 1000).toLocaleDateString()}</h4>
+              </span> */}
 
               <div className="w-[65px] h-[1px] bg-[#777777]"></div>
 
-              <span>
+              {/* <span>
                 <p>End date</p>
-                <h4>{new Date(endDate * 1000).toLocaleDateString()}</h4>
-              </span>
+                <h4>{new Date(postEndDate * 1000).toLocaleDateString()}</h4>
+              </span> */}
             </div>
           </section>
 
@@ -84,11 +80,11 @@ const ProposalDetail: React.FC<Proposal> = ({
           {/* Proposal Details Section */}
           <section className="bg-[#F8F8F8] rounded-[10px] p-[20px]">
             <h3>Details</h3>
-            <p className="mt-3 text-[#777777]">{description}</p>
+            <p className="mt-3 text-[#777777]">{fullDescription}</p>
           </section>
         </div>
       </main>
-    </Card>
+    
   );
 };
 

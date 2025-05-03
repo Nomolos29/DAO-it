@@ -1,0 +1,139 @@
+import React, { useState } from 'react'
+import Modal, { ModalProps } from './Modal'
+import { HiOutlineArrowNarrowLeft, HiOutlineArrowNarrowRight } from 'react-icons/hi';
+
+export type Question = {
+    question: string;
+    answers: string[];
+    correctAnswer: string
+}
+
+interface QuizModalProps extends ModalProps {
+    questions: Question[];
+}
+
+const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions }) => {
+    const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+    const [correctAnswers, setCorrectAnswers] = useState<number>(0);
+    const [currentQuestion, setCurrentQuestion] = useState<number>(1);
+    const [answeredQuestions, setAnsweredQuestions] = useState<{[key: number]: string}>({});
+
+    const buttonStyle = "h-[50px] w-[203px] flex items-center justify-center rounded-[10px]";
+
+    const handleNextQuestion = () => {
+        // Check if the selected answer is correct for the current question
+        const currentQ = questions[currentQuestion - 1];
+        if (selectedAnswer === currentQ.correctAnswer) {
+            setCorrectAnswers(prev => prev + 1);
+        }
+        
+        // Store the answer for this question
+        setAnsweredQuestions(prev => ({
+            ...prev,
+            [currentQuestion]: selectedAnswer
+        }));
+        
+        // Reset selection and move to next question
+        setSelectedAnswer("");
+        setCurrentQuestion(prev => prev + 1);
+    };
+
+    const handlePreviousQuestion = () => {
+        // When going back, restore the previously selected answer if it exists
+        setSelectedAnswer(answeredQuestions[currentQuestion - 1] || "");
+        setCurrentQuestion(prev => prev - 1);
+    };
+
+    const handleFinish = () => {
+        // Check the last question's answer
+        const currentQ = questions[currentQuestion - 1];
+        if (selectedAnswer === currentQ.correctAnswer) {
+            setCorrectAnswers(prev => prev + 1);
+        }
+        
+        // Close the modal or show results
+        onClose();
+        setSelectedAnswer("");
+        setCurrentQuestion(1);
+        setCorrectAnswers(0);
+        setAnsweredQuestions({});
+
+        // You might want to show the total score here
+        alert(`You got ${correctAnswers + (selectedAnswer === currentQ.correctAnswer ? 1 : 0)} out of ${questions.length} correct!`);
+    };
+
+    return (
+        <Modal isOpen={isOpen} bgBlured onClose={onClose}>
+            <main className='w-[900px] flex flex-col justify-between p-[30px] gap-y-10'>
+                <div className='flex items-center gap-x-1'>
+                    {questions.map((_, index) => (
+                        <div key={index} className={`h-[3px] w-[100px] ${currentQuestion >= index + 1 ? "bg-[#4C69F8]" : "bg-[#E0E2EA]"}`}></div>
+                    ))}
+                </div>
+
+                <div className='relative w-[80%] h-[230px]'>
+                    <p>Question {currentQuestion} of {questions.length}</p>
+
+                    {questions.map((question, index) => (
+                        <div key={index} className={`flex flex-col gap-y-7 absolute top-10 justify-between left-0 w-full h-full ${currentQuestion === index + 1 ? 'block' : 'hidden'}`}>
+                            <h1 className='text-[24px]'>{question.question}</h1>
+
+                            <div className='flex flex-col gap-y-3 items-start'>
+                                {question.answers.map((answer, i) => (
+                                    <label htmlFor={`${index}-${i}`} key={i} className='flex gap-x-3 items-center text-lg font-normal text-[#2E3035]'>
+                                        <input 
+                                            id={`${index}-${i}`} 
+                                            type='radio' 
+                                            name={`answer-${index}`} 
+                                            value={answer} 
+                                            className='h-5 w-5' 
+                                            onChange={() => setSelectedAnswer(answer)}
+                                            checked={selectedAnswer === answer || answeredQuestions[currentQuestion] === answer}
+                                        />
+                                        {answer}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className='w-full flex justify-between items-center mt-14'>
+                    {currentQuestion > 1 ? 
+                        <button 
+                            type='button' 
+                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2`} 
+                            onClick={handlePreviousQuestion}
+                        >
+                            <HiOutlineArrowNarrowLeft className='text-xl' />
+                            Previous
+                        </button> 
+                        : <div></div> /* Empty div to maintain space */}
+                    
+                    {currentQuestion < questions.length ? 
+                        <button 
+                            type='button' 
+                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2`} 
+                            onClick={handleNextQuestion}
+                            disabled={!selectedAnswer}
+                        >
+                            Next
+                            <HiOutlineArrowNarrowRight className='text-xl' />
+                        </button> 
+                        : 
+                        <button 
+                            type='button' 
+                            className={`${buttonStyle} text-white bg-[#1D54E1]`}
+                            onClick={handleFinish}
+                            disabled={!selectedAnswer}
+                        >
+                            Finish
+                        </button>
+                    }
+                </div>
+            </main>
+        </Modal>
+    )
+}
+
+export default QuizModal
