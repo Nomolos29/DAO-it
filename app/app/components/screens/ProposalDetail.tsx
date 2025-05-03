@@ -30,6 +30,11 @@ const ProposalDetail: React.FC<ProposalDetailProps> = ({
               </div>
             </div>
 
+<<<<<<< HEAD
+=======
+            <p className='font-medium'>Proposal ID: {id}</p>
+
+>>>>>>> 58dc59f (Fix: fixed a minor bug)
             <div>
               <p>Status</p>
               <div
