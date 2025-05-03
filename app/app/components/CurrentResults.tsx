@@ -1,37 +1,44 @@
 "use client"
 
 import React, { useState } from 'react'
-import VoteModal from './VoteModal';
+import VoteModal, { VoteModalProps } from './modals/VoteModal';
+import { IoInformationCircle } from 'react-icons/io5';
 
-// interface CurrentResultsProps {
-//   totalVotes: number
-// }
+interface CurrentResultsProps extends VoteModalProps {
+  yesVotes: number;
+  noVotes: number;
+  abstainVotes: number;
+  totalVotes: number;
+}
 
 
-const CurrentResults = () => {
+const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVotes, noVotes, abstainVotes, totalVotes}) => {
 
-  const [openVoteModal, setOpenVoteModal] = useState(false);
+  const [openVoteModal, setOpenVoteModal] = useState<boolean>(false);
+  const [hasVoted, setHasVoted] = useState<boolean>(false)
+
+  setHasVoted(false);
 
   const votes = [
     {
       title: "Yes",
-      votes: 235,
+      votes: yesVotes,
     },
     {
       title: "No",
-      votes: 50,
+      votes: noVotes,
     },
     {
       title: "abstain",
-      votes: 5,
+      votes: abstainVotes,
     },
   ]
 
-  const totalVotes= 290;
+  // const totalVotes= 290;
   let percentage:number = 0;
 
   return (
-    <main className='py-3'>
+    <main className='py-3 w-full flex flex-col gap-y-3'>
       <section className='flex flex-col gap-y-5 rounded-[12px] bg-white p-[15px]'>
         <h3 className='text-xl text-[#232426] font-semibold'>Current result</h3>
 
@@ -45,7 +52,7 @@ const CurrentResults = () => {
 
                 <div className='flex w-full items-center text-sm justify-between'>
                   <p className='text-lg'>{vote.votes} <span className='text-md font-normal text-[#868686]'>credits</span></p>
-                  <p className='text-lg text-[#494445]'>{percentage}%</p>
+                  <p className='text-lg text-[#494445]'>{Number.isNaN(percentage) ? "0" : percentage}%</p>
                 </div>
 
                 <div className='w-full bg-[#DADADA] h-[10px] rounded-full overflow-hidden'>
@@ -60,15 +67,21 @@ const CurrentResults = () => {
 
         <button 
           type='button'
+          disabled={hasVoted}
           onClick={() => setOpenVoteModal(true)}
-          className='w-full p-4 bg-[#1B1B1B] rounded-[10px] text-white'
-        >Vote now</button>
+          className={`w-full p-4 ${hasVoted ? "bg-[#999CA3]" : "bg-[#1B1B1B]"} rounded-[10px] text-white`}
+        >{hasVoted ? "You already voted" : "Vote now"}</button>
       </section>
-      <section></section>
+
+
+      {hasVoted && <section className='w-full rounded-[10px] flex flex-col bg-white gap-y-3 p-3 shadow-md shadow-[#00000017]'>
+        <IoInformationCircle className='text-2xl text-[#ABABAB]' />
+        <p className='text-[#474747]'>You&apos;ve already cast your vote. Each user can vote only once per proposal.</p>
+      </section>}
 
 
 
-      <VoteModal isOpen={openVoteModal} onClose={() => setOpenVoteModal(false)} />
+      <VoteModal isOpen={openVoteModal} onClose={() => setOpenVoteModal(false)} title={title} proposalID={proposalID} />
     </main>
   )
 }

@@ -26,7 +26,7 @@ const MainApp = () => {
           ))}
         </nav>
 
-        <article className='w-full flex justify-center relative items-center h-[calc(100vh-250px)]'>
+        <article className='w-full flex justify-center relative items-center h-[calc(100vh-220px)] overflow-auto scrollbar-hide'>
           {activeScreen === "Proposals" ? <ProposalsHome /> 
           : activeScreen === "Intending Proposals" ? <IntendingProposals />
           : activeScreen === "Community Post" && <CommunityPost />}
@@ -34,7 +34,7 @@ const MainApp = () => {
       </section>
 
 
-      <aside className='flex justify-end overflow-auto scrollbar-hide pl-10 w-[380px] h-[calc(100vh-110px)]'>
+      <aside className='flex justify-end overflow-auto scrollbar-hide px-3 w-[380px] h-[calc(100vh-110px)]'>
         <CommunityList />
       </aside>
     </main>

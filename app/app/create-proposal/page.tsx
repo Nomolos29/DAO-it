@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { IoInformationCircle } from "react-icons/io5";
-import { ImExit } from "react-icons/im";
 import { TiTickOutline } from "react-icons/ti";
 import Link from "next/link";
 import { useActiveAccount } from "thirdweb/react";
 import { Modal } from "../components";
 import { useCreateProposal } from "../hooks/useCreateProposal";
+import { FaArrowLeftLong } from "react-icons/fa6";
 import openai from "../lib/openai";
 
 // Types definitions
@@ -370,33 +370,32 @@ const CreateProposal = () => {
   
   // Styling classes
   const inputStyle = "px-4 border border-[#CECECE] rounded-[10px] outline-none bg-transparent flex items-center text-[#474747]";
-  const labelStyle = "text-[#494445] text-[14px]";
-  const container = "flex flex-col gap-y-2";
+  const labelStyle = "text-[#494445] text-[16px]";
+  const container = "flex flex-col gap-y-2 bg-white p-[16px] rounded-[10px]";
   
   return (
-    <main className="w-full flex justify-center pb-20">
-      <div className="w-[750px] flex flex-col gap-y-10">
-        {/* Header */}
-        <div className="flex justify-between items-center pb-10">
-          <div className="relative group cursor-pointer">
-            <IoInformationCircle className="text-2xl hover:text-[#474747]" />
-            <div className="flex flex-col gap-y-2 p-[12px] shadow-md opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-[10px] w-[300px] text-[#474747] absolute top-[-12px] left-[-12px]">
-              <IoInformationCircle className="text-2xl" />
-              <p className="text-[14px]">
+    <main className="w-full flex gap-x-10 px-[24px] pb-20 pt-5">
+      <div className="w-[75%] flex flex-col">
+        <div className="flex flex-col gap-y-7 pb-10">
+          <Link
+            href="/app"
+            className="flex py-5 items-center w-[120px] h-[50px] justify-center bg-[#F7F3FF] transition-all duration-500 text-[#1D54E1] hover:bg-[#1D54E1] hover:text-white rounded-[10px] gap-2 font-medium text-md cursor-pointer"
+          >
+            <FaArrowLeftLong /> Home
+          </Link>
+          <div className="relative group h-[50px] flex items-center cursor-pointer px-[20px] w-[70%] rounded-[10px] overflow-hidden">
+            <IoInformationCircle className="text-3xl text-[#1D54E1]" />
+            <div className="flex gap-x-2  shadow-md h-full px-[20px] transition-all duration-500 items-center w-full opacity-0 group-hover:opacity-100  hover:bg-white hover:text-[#474747] absolute top-0 left-0">
+              <IoInformationCircle className="text-3xl text-[#1D54E1]" />
+              <p className="text-md">
                 Submit your idea for voting. A fee is required to ensure serious
                 and thoughtful proposals.
               </p>
             </div>
           </div>
-          <Link
-            href="/app"
-            className="flex py-5 items-center transition-all duration-500 hover:text-[#474747] gap-2 cursor-pointer"
-          >
-            Home <ImExit className="text-2xl" />
-          </Link>
         </div>
 
-        <h2 className="text-[28px] text-[#474747]">
+        <h2 className="text-[30px] text-[#2E3035] font-semibold mb-5">
           Create and publish a proposal
         </h2>
 
@@ -712,12 +711,14 @@ const CreateProposal = () => {
             </p>
             <div className="flex justify-center gap-4">
               <button
+                type="button"
                 onClick={() => setShowConfirmation(false)}
                 className="px-4 py-2 text-gray-600 bg-gray-200 rounded"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleSubmit}
                 disabled={submitStatus.loading}
                 className="px-4 py-2 text-white bg-[#F8B51C] rounded flex items-center justify-center min-w-[80px]"
@@ -751,6 +752,47 @@ const CreateProposal = () => {
           </div>
         </Modal>
       </div>
+
+      <section className="w-[25%] flex flex-col gap-y-5">
+        <div className="flex flex-col gap-y-5">
+          <h3 className="text-[20px] text-[#474747]">Tips for creating a proposal</h3>
+          <p className="text-[#474747]">
+            Ensure your proposal is clear and concise. Use bullet points for
+            easy readability.
+          </p>
+        </div>
+        <div className="flex flex-col gap-y-5">
+          <h3 className="text-[20px] text-[#474747]">Important notes</h3>
+          <p className="text-[#474747]">
+            Proposals are subject to review and may require additional
+            information. Ensure you have all necessary details before
+            submission.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-y-[10px] p-[15px] bg-white rounded-[10px] w-full">
+          <button type="button" className="text-[#1D54E1] w-full flex items-center h-[50px] justify-center bg-[#1D54E11A] rounded-[10px]">Preview proposal</button>
+
+          <button
+              type="button"
+              onClick={() => setShowConfirmation(true)}
+              disabled={
+                submitStatus.loading ||
+                !walletAddress ||
+                !proposalTitle ||
+                !shortDescription ||
+                !description ||
+                !startDate ||
+                !endDate
+              }
+              className="text-lg text-white h-[54px] flex items-center justify-center bg-[#1B1B1B] rounded-[10px] w-full border border-[#F8B51C] hover:bg-gradient-to-tr from-[#F8B51C] to-[#FEE539] hover:text-[#474747] transition-colors duration-700 cursor-pointer disabled:opacity-50"
+            >
+              {submitStatus.loading || proposalLoading
+                ? "Submitting..."
+                : "Create proposal"}
+          </button>
+        </div>
+      </section>
     </main>
   );
 };
