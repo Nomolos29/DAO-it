@@ -6,6 +6,9 @@ import { IoInformationCircle } from "react-icons/io5";
 import { TiTickOutline } from "react-icons/ti";
 import Link from "next/link";
 import { useActiveAccount } from "thirdweb/react";
+import { analyzeSentiment } from '../services/sentimentAnalysis';
+import { saveSentimentAnalysis } from '../services/sentimentStorage';
+import { SentimentAnalysis } from '../types/sentiment';
 import { Modal } from "../components";
 import { useCreateProposal } from "../hooks/useCreateProposal";
 import { FaArrowLeftLong } from "react-icons/fa6";
@@ -111,6 +114,10 @@ const CreateProposal = () => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [submitStatus, setSubmitStatus] = useState<SubmitStatusState>({ loading: false, error: null });
+
+  // Sentiment analysis state
+  const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   
   // Set wallet address and generate proposal ID when account loads
   useEffect(() => {
@@ -360,6 +367,25 @@ const CreateProposal = () => {
       );
   
       setSubmitStatus({ loading: false, error: null });
+      
+      // Run sentiment analysis
+      setIsAnalyzing(true);
+      try {
+        const analysis = await analyzeSentiment(
+          proposal.id,
+          proposal.title,
+          proposal.summary,
+          fullProposal
+        );
+        
+        setSentimentAnalysis(analysis);
+        saveSentimentAnalysis(analysis);
+      } catch (error) {
+        console.error('Sentiment analysis failed:', error);
+      } finally {
+        setIsAnalyzing(false);
+      }
+      
       setShowSuccess(true);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
@@ -744,11 +770,42 @@ const CreateProposal = () => {
               <TiTickOutline className="text-2xl text-white" />
             </div>
             <p className="text-[#474747] mt-2">Proposal posted successfully</p>
-            <Link href="/app">
-              <button className="flex bg-gradient-to-r from-[#F8B51C] to-[#FEE539] text-white items-center justify-center w-[350px] px-4 py-2 my-1 rounded-lg">
-                <span className="flex items-center gap-2">View</span>
-              </button>
-            </Link>
+            
+            {isAnalyzing && (
+              <div className="flex items-center gap-2 mt-4">
+                <div className="w-5 h-5 border-2 border-[#1D54E1] border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-[#474747]">Analyzing sentiment...</span>
+              </div>
+            )}
+            
+            {sentimentAnalysis && !isAnalyzing && (
+              <div className="mt-4 text-center">
+                <p className="text-[#474747] mb-2">Sentiment Analysis Complete!</p>
+                <p className={`font-semibold ${
+                  sentimentAnalysis.overallSentiment === 'positive' ? 'text-green-600' :
+                  sentimentAnalysis.overallSentiment === 'negative' ? 'text-red-600' :
+                  'text-gray-600'
+                }`}>
+                  Overall Sentiment: {sentimentAnalysis.overallSentiment.toUpperCase()}
+                </p>
+              </div>
+            )}
+            
+            <div className="flex gap-4 mt-4">
+              <Link href="/app">
+                <button className="flex bg-gradient-to-r from-[#F8B51C] to-[#FEE539] text-white items-center justify-center px-6 py-2 rounded-lg">
+                  <span className="flex items-center gap-2">View Proposals</span>
+                </button>
+              </Link>
+              
+              {sentimentAnalysis && (
+                <Link href="/app/sentiment-dashboard">
+                  <button className="flex bg-[#1D54E1] text-white items-center justify-center px-6 py-2 rounded-lg">
+                    <span className="flex items-center gap-2">View Analysis</span>
+                  </button>
+                </Link>
+              )}
+            </div>
           </div>
         </Modal>
       </div>
@@ -772,25 +829,6 @@ const CreateProposal = () => {
 
         <div className="flex flex-col gap-y-[10px] p-[15px] bg-white rounded-[10px] w-full">
           <button type="button" className="text-[#1D54E1] w-full flex items-center h-[50px] justify-center bg-[#1D54E11A] rounded-[10px]">Preview proposal</button>
-
-          <button
-              type="button"
-              onClick={() => setShowConfirmation(true)}
-              disabled={
-                submitStatus.loading ||
-                !walletAddress ||
-                !proposalTitle ||
-                !shortDescription ||
-                !description ||
-                !startDate ||
-                !endDate
-              }
-              className="text-lg text-white h-[54px] flex items-center justify-center bg-[#1B1B1B] rounded-[10px] w-full border border-[#F8B51C] hover:bg-gradient-to-tr from-[#F8B51C] to-[#FEE539] hover:text-[#474747] transition-colors duration-700 cursor-pointer disabled:opacity-50"
-            >
-              {submitStatus.loading || proposalLoading
-                ? "Submitting..."
-                : "Create proposal"}
-          </button>
         </div>
       </section>
     </main>

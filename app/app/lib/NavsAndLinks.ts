@@ -1,4 +1,4 @@
-import { IoIosPeople, IoIosNotifications } from "react-icons/io";
+import { IoIosPeople, IoIosNotifications, IoIosChatbubbles } from "react-icons/io";
 import React from "react"
 import { AiOutlineHome } from "react-icons/ai";
 import { RxCalendar } from "react-icons/rx";
@@ -15,6 +15,11 @@ export const SideBarMenu: MenuItem[] = [
         navIcon: AiOutlineHome,
         navTitle: "Home",
         navLink: "/app",
+    },
+    {
+        navIcon: IoIosChatbubbles,
+        navTitle: "Sentiment Analysis",
+        navLink: "/app/sentiment-dashboard",
     },
     {
         navIcon: IoIosPeople,

@@ -56,7 +56,7 @@ export default function RootLayout({
                           <SideBar />
                         </aside>
                         
-                        <div className="flex flex-col overflow-hidden relative w-full h-screen">
+                        <div className="flex flex-col relative w-full h-screen">
                           <header className="w-full absolute z-30">
                             <Header />
                           </header>
