@@ -403,7 +403,8 @@ const CreateProposal = () => {
     <main className="w-full flex gap-x-10 px-[24px] pb-20 pt-5">
       <div className="w-[75%] flex flex-col">
         <div className="flex flex-col gap-y-7 pb-10">
-          <Link
+          {/* Header */}
+        <Link
             href="/app"
             className="flex py-5 items-center w-[120px] h-[50px] justify-center bg-[#F7F3FF] transition-all duration-500 text-[#1D54E1] hover:bg-[#1D54E1] hover:text-white rounded-[10px] gap-2 font-medium text-md cursor-pointer"
           >
@@ -565,8 +566,8 @@ const CreateProposal = () => {
                     {PROPOSAL_SECTIONS.find(s => s.id === activeSectionId)?.label}
                   </h4>
                   
-                  <button
-                    type="button"
+                  <div
+                    // type="button"
                     onClick={() => generateSectionContent(activeSectionId)}
                     disabled={isGeneratingAI}
                     className="text-sm flex items-center bg-yellow-50 text-yellow-700 px-3 py-1 rounded-md hover:bg-yellow-100"
@@ -584,7 +585,7 @@ const CreateProposal = () => {
                         Get Ideas
                       </>
                     )}
-                  </button>
+                  </div>
                 </div>
                 
                 <textarea
@@ -829,6 +830,46 @@ const CreateProposal = () => {
 
         <div className="flex flex-col gap-y-[10px] p-[15px] bg-white rounded-[10px] w-full">
           <button type="button" className="text-[#1D54E1] w-full flex items-center h-[50px] justify-center bg-[#1D54E11A] rounded-[10px]">Preview proposal</button>
+
+          <button
+              type="button"
+              onClick={() => setShowConfirmation(true)}
+              disabled={
+                submitStatus.loading ||
+                !walletAddress ||
+                !proposalTitle ||
+                !shortDescription ||
+                !description ||
+                !startDate ||
+                !endDate
+              }
+              className="text-lg text-white h-[54px] flex items-center justify-center bg-[#1B1B1B] rounded-[10px] w-full border border-[#F8B51C] hover:bg-gradient-to-tr from-[#F8B51C] to-[#FEE539] hover:text-[#474747] transition-colors duration-700 cursor-pointer disabled:opacity-50"
+            >
+              {submitStatus.loading || proposalLoading              placeholder="Enter a clear, descriptive title..."
+            />
+          </div>
+
+          {/* Short Description/Summary */}
+          <div className={container}>
+            <label htmlFor="summary" className={labelStyle}>
+              Short Description/Summary
+            </label>
+            <textarea
+              id="summary"
+              name="summary"
+              rows={3}
+              value={proposal.summary}
+              onChange={handleInputChange}
+              className={inputStyle}
+              placeholder="Write a brief summary of your proposal (2-3 sentences)..."
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              This should be written in your own words and will appear in proposal listings.
+            </p>
+
+                ? "Submitting..."
+                : "Create proposal"}
+          </button>
         </div>
       </section>
     </main>
