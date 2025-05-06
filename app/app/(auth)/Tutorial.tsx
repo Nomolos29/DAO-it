@@ -88,7 +88,7 @@ const TutorialPage = () => {
             </div>
           </main>
 
-          <QuizModal isOpen={startQuiz} onClose={() => {setStartQuiz(false)}} questions={TutorialQuestions} onQuizComplete={() => handleQuizCompletion} />
+          <QuizModal isOpen={startQuiz} onClose={() => {setStartQuiz(false)}} questions={TutorialQuestions} onQuizComplete={handleQuizCompletion} />
         </div>
       }
     </div>

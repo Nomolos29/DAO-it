@@ -63,7 +63,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
 
         // Check if the user passed or failed
         
-        setActiveModal((correctAnswers/questions.length*100) < 80 ? 'passed' : 'failed');
+        setActiveModal((correctAnswers/questions.length*100) >= 80 ? 'passed' : 'failed');
     };
 
     const handleCloseAllModals = () => {
