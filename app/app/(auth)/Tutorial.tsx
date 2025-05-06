@@ -10,31 +10,48 @@ const TutorialPage = () => {
   const [startQuiz, setStartQuiz] = useState<boolean>(false);
   const [passedQuiz, setPassedQuiz] = useState<boolean>(false);
 
+  const handleQuizCompletion = (didPass: boolean) => {
+    setPassedQuiz(didPass);
+    setStartQuiz(false);
+  };
+
   const TutorialQuestions:Question[] = [
     {
-      question: "What must you do before you can sign up on the platform?",
-      answers: ["Invite three friends", "Complete a course", "Watch a video and pass a quiz", "Connect your crypto wallet"],
-      correctAnswer: "Watch a video and pass a quiz"
+      question: "What do users receive in return for their contributions?",
+      answers: ["Free data", "DAOit tokens", "Online certificates", "Airtime  "],
+      correctAnswer: "DAOit tokens"
     }, 
     {
-      question: "Why must you do before you can sign up on the platform?",
-      answers: ["Invite three friends", "Complete a course", "Watch a video and pass a quiz", "Connect your crypto wallet"],
-      correctAnswer: "Watch a video and pass a quiz"
+      question: "What do DAOit tokens allow users to do?",
+      answers: ["Buy goods in stores", "Withdraw cash", "Vote on decisions", "Send emails"],
+      correctAnswer: "Vote on decisions"
     },
     {
-      question: "What should you do before you can sign up on the platform?",
-      answers: ["Invite three friends", "Complete a course", "Watch a video and pass a quiz", "Connect your crypto wallet"],
-      correctAnswer: "Watch a video and pass a quiz"
+      question: "What makes the voting system fair and transparent in DAOit?",
+      answers: ["Manual counting", "Blockchain technology", "Student elections", "Government approval"],
+      correctAnswer: "Blockchain technology"
+    },
+    {
+      question: "Which of these is a result of collective action via DAOit?",
+      answers: ["Faster syllabus completion", "Better snacks in school", "Policies that reflect real classroom needs", "Higher rent for schools"],
+      correctAnswer: "Policies that reflect real classroom needs"
+    },
+    {
+      question: "What does DAOit help eliminate in decision-making?",
+      answers: ["Waiting time for meetings", "Complete a course", "Too much paperwork", "Delays and lack of representation"],
+      correctAnswer: "Delays and lack of representation"
     }
   ]
 
-  setPassedQuiz(true)
+  // useEffect(() => {
+  //   setPassedQuiz(true)
+  // }, [])
   
   return (
     <div className='w-full relative'>
       {passedQuiz ? 
         (<AuthLanding />) :
-        <div className='w-full relative'>
+        <div className='w-full relative pt-14'>
           <FullHeader />
 
           <main className='flex flex-col items-center w-full gap-y-20 px-7 py-14 min-h-screen'>
@@ -71,7 +88,7 @@ const TutorialPage = () => {
             </div>
           </main>
 
-          <QuizModal isOpen={startQuiz} onClose={() => {setStartQuiz(false)}} questions={TutorialQuestions} />
+          <QuizModal isOpen={startQuiz} onClose={() => {setStartQuiz(false)}} questions={TutorialQuestions} onQuizComplete={() => handleQuizCompletion} />
         </div>
       }
     </div>

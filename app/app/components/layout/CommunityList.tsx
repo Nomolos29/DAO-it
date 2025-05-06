@@ -25,7 +25,7 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
           <div key={index} className="flex justify-between items-center w-full">
             <div>
               <h3 className="text-[#232426] pb-1 text-md">{community.name}</h3>
-              <p className="text-md font-medium text-[#5B5E65]">{community.members}</p>
+              <p className="text-sm text-[#5B5E65]">{community.members}</p>
             </div>
             <button type="button" className={`text-md flex items-center justify-center ${community.status == "joined" ? "bg-[#1D54E1] text-white hover:bg-[#1d55e14f]" : "bg-white border-[#D5D5D5] text-[#1D54E1] border hover:bg-[#1D54E11A] hover:border-[#1d55e14f]"} transition-all duration-200 w-[106px] h-[36px] rounded-[5px] gap-x-3`}>
               {community.status == "joined" ? "Joined" : "Join"}
