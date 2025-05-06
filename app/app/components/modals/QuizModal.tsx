@@ -100,7 +100,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
                                             type='radio' 
                                             name={`answer-${index}`} 
                                             value={answer} 
-                                            className='h-5 w-5' 
+                                            className='h-5 w-5 cursor-pointer' 
                                             onChange={() => setSelectedAnswer(answer)}
                                             checked={selectedAnswer === answer || answeredQuestions[currentQuestion] === answer}
                                         />
