@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FaArrowLeftLong } from 'react-icons/fa6';
 import { SentimentDashboard } from '../components/SentimentDashboard';
 import { getAllSentimentAnalyses } from '../services/sentimentStorage';
 import { SentimentAnalysis } from '../types/sentiment';
@@ -20,14 +19,8 @@ export default function SentimentDashboardPage() {
   }, []);
 
   return (
-    <main className="w-full px-[24px] pb-20 pt-5">
+    <main className="w-full px-[24px] pb-20 pt-5 overflow-auto">
       <div className="max-w-7xl mx-auto">
-        <Link
-          href="/app"
-          className="inline-flex py-5 items-center px-6 h-[50px] justify-center bg-[#F7F3FF] transition-all duration-500 text-[#1D54E1] hover:bg-[#1D54E1] hover:text-white rounded-[10px] gap-2 font-medium text-md cursor-pointer mb-8"
-        >
-          <FaArrowLeftLong /> Home
-        </Link>
 
         <h1 className="text-3xl font-bold mb-8">Proposal Sentiment Analysis</h1>
 

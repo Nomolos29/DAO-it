@@ -17,7 +17,13 @@ const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVot
   const [openVoteModal, setOpenVoteModal] = useState<boolean>(false);
   const [hasVoted, setHasVoted] = useState<boolean>(false)
 
-  setHasVoted(false);
+  const handleVoteCompletion = (voted: boolean) => {
+    setHasVoted(voted);
+    setOpenVoteModal(false);
+  }
+  
+
+  // setHasVoted(false);
 
   const votes = [
     {
@@ -59,7 +65,7 @@ const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVot
                   <div 
                     className={`${vote.title.toLowerCase() == "yes" ? "bg-[#09FF00]" : vote.title.toLowerCase() == "no" ? "bg-[#FF0000]" : "bg-[#FFD336]"} min-w-[2px] h-full`}
                     style={{width: `${percentage}%`}}
-                  ></div>
+                  />
                 </div>
               </div>
           )})}
@@ -81,7 +87,7 @@ const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVot
 
 
 
-      <VoteModal isOpen={openVoteModal} onClose={() => setOpenVoteModal(false)} title={title} proposalID={proposalID} />
+      <VoteModal isOpen={openVoteModal} onClose={() => setOpenVoteModal(false)} VoteStatus={handleVoteCompletion} title={title} proposalID={proposalID} />
     </main>
   )
 }

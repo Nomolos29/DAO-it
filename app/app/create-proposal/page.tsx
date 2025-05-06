@@ -403,15 +403,16 @@ const CreateProposal = () => {
     <main className="w-full flex gap-x-10 px-[24px] pb-20 pt-5">
       <div className="w-[75%] flex flex-col">
         <div className="flex flex-col gap-y-7 pb-10">
-          <Link
+          {/* Header */}
+        <Link
             href="/app"
             className="flex py-5 items-center w-[120px] h-[50px] justify-center bg-[#F7F3FF] transition-all duration-500 text-[#1D54E1] hover:bg-[#1D54E1] hover:text-white rounded-[10px] gap-2 font-medium text-md cursor-pointer"
           >
             <FaArrowLeftLong /> Home
           </Link>
-          <div className="relative group h-[50px] flex items-center cursor-pointer px-[20px] w-[70%] rounded-[10px] overflow-hidden">
+          <div className="relative group h-[50px] flex items-center cursor-pointer px-[15px] w-full rounded-[10px] overflow-hidden">
             <IoInformationCircle className="text-3xl text-[#1D54E1]" />
-            <div className="flex gap-x-2  shadow-md h-full px-[20px] transition-all duration-500 items-center w-full opacity-0 group-hover:opacity-100  hover:bg-white hover:text-[#474747] absolute top-0 left-0">
+            <div className="flex gap-x-2  shadow-md h-full px-[15px] transition-all duration-500 items-center w-full opacity-0 group-hover:opacity-100  hover:bg-white hover:text-[#474747] absolute top-0 left-0">
               <IoInformationCircle className="text-3xl text-[#1D54E1]" />
               <p className="text-md">
                 Submit your idea for voting. A fee is required to ensure serious
@@ -426,8 +427,8 @@ const CreateProposal = () => {
         </h2>
 
         {/* Originality Score */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-1">
+        <div className={`mb-6 ${container}`}>
+          <div className={`flex justify-between items-center mb-1`}>
             <h3 className="text-[16px] text-[#474747]">Originality Score</h3>
             <span className={`font-medium ${
               originalityScore >= 70 ? "text-green-600" : 
@@ -534,7 +535,7 @@ const CreateProposal = () => {
           </div>
 
           {/* Section Builder */}
-          <div className="mb-6 border border-gray-200 rounded-lg p-4">
+          <div className={`mb-6 rounded-lg p-4 ${container}`}>
             <h3 className="text-[18px] text-[#474747] mb-4">Proposal Builder</h3>
             
             {/* Section tabs */}
@@ -546,9 +547,9 @@ const CreateProposal = () => {
                   onClick={() => setActiveSectionId(section.id)}
                   className={`px-3 py-2 rounded-md mr-2 text-sm whitespace-nowrap
                     ${activeSectionId === section.id 
-                      ? "bg-[#F8B51C] text-white" 
-                      : "bg-gray-100 text-gray-700"}
-                    ${completedSections.has(section.id) ? "border-l-4 border-green-500" : ""}
+                      ? "bg-white text-[#1D54E1] shadow-md" 
+                      : "bg-[#1D54E11A] text-gray-700"}
+                    ${completedSections.has(section.id) ? "border-l-4 border-[#1D54E1]" : ""}
                   `}
                 >
                   {section.label}
@@ -569,11 +570,11 @@ const CreateProposal = () => {
                     type="button"
                     onClick={() => generateSectionContent(activeSectionId)}
                     disabled={isGeneratingAI}
-                    className="text-sm flex items-center bg-yellow-50 text-yellow-700 px-3 py-1 rounded-md hover:bg-yellow-100"
+                    className="text-sm flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-md hover:bg-blue-100"
                   >
                     {isGeneratingAI ? (
                       <span className="flex items-center">
-                        <div className="w-4 h-4 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                        <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
                         Working...
                       </span>
                     ) : (
@@ -662,7 +663,7 @@ const CreateProposal = () => {
             
             <div className="space-y-4">
               {REFLECTION_QUESTIONS.map(question => (
-                <div className="flex flex-col gap-y-2" key={question.id}>
+                <div className={`${container} gap-y-2`} key={question.id}>
                   <label className="block text-[#494445] text-[14px] mb-2">
                     {question.label}
                   </label>
@@ -708,21 +709,6 @@ const CreateProposal = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="button"
-            onClick={() => {
-              if (validateProposal()) {
-                setShowConfirmation(true);
-              }
-            }}
-            disabled={submitStatus.loading || proposalLoading}
-            className="text-lg text-white h-[54px] flex items-center justify-center bg-[#1B1B1B] rounded-[10px] w-full border border-[#F8B51C] hover:bg-gradient-to-tr from-[#F8B51C] to-[#FEE539] hover:text-[#474747] transition-colors duration-700 cursor-pointer disabled:opacity-50"
-          >
-            {submitStatus.loading || proposalLoading
-              ? "Submitting..."
-              : "Create proposal"}
-          </button>
         </form>
 
         {/* Confirmation Modal */}
@@ -829,6 +815,23 @@ const CreateProposal = () => {
 
         <div className="flex flex-col gap-y-[10px] p-[15px] bg-white rounded-[10px] w-full">
           <button type="button" className="text-[#1D54E1] w-full flex items-center h-[50px] justify-center bg-[#1D54E11A] rounded-[10px]">Preview proposal</button>
+
+
+          {/* Submit Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (validateProposal()) {
+                setShowConfirmation(true);
+              }
+            }}
+            disabled={submitStatus.loading || proposalLoading}
+            className="text-lg text-white h-[54px] flex items-center justify-center bg-[#1D54E1] rounded-[10px] w-full hover:bg-[#1D54E1] transition-colors duration-700 cursor-pointer disabled:opacity-50"
+          >
+            {submitStatus.loading || proposalLoading
+              ? "Submitting..."
+              : "Create proposal"}
+          </button>
         </div>
       </section>
     </main>

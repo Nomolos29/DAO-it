@@ -24,7 +24,7 @@ export const SideBarMenu: MenuItem[] = [
     {
         navIcon: IoIosPeople,
         navTitle: "Communities",
-        navLink: "/app/#",
+        navLink: "/app/communities",
     },
     {
         navIcon: RxCalendar,

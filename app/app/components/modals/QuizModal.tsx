@@ -1,22 +1,26 @@
 import React, { useState } from 'react'
 import Modal, { ModalProps } from './Modal'
 import { HiOutlineArrowNarrowLeft, HiOutlineArrowNarrowRight } from 'react-icons/hi';
+import { PiMaskSadFill } from "react-icons/pi";
+import { GiPartyPopper } from 'react-icons/gi';
 
 export type Question = {
     question: string;
     answers: string[];
-    correctAnswer: string
+    correctAnswer: string;
 }
 
 interface QuizModalProps extends ModalProps {
     questions: Question[];
+    onQuizComplete: (didPass: boolean) => void;
 }
 
-const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions }) => {
+const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQuizComplete }) => {
     const [selectedAnswer, setSelectedAnswer] = useState<string>("");
     const [correctAnswers, setCorrectAnswers] = useState<number>(0);
     const [currentQuestion, setCurrentQuestion] = useState<number>(1);
     const [answeredQuestions, setAnsweredQuestions] = useState<{[key: number]: string}>({});
+    const [activeModal, setActiveModal] = useState<"default" | "questions" | "passed" | "failed">("questions");
 
     const buttonStyle = "h-[50px] w-[203px] flex items-center justify-center rounded-[10px]";
 
@@ -52,18 +56,28 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions }) => 
         }
         
         // Close the modal or show results
-        onClose();
         setSelectedAnswer("");
         setCurrentQuestion(1);
         setCorrectAnswers(0);
         setAnsweredQuestions({});
 
-        // You might want to show the total score here
-        alert(`You got ${correctAnswers + (selectedAnswer === currentQ.correctAnswer ? 1 : 0)} out of ${questions.length} correct!`);
+        // Check if the user passed or failed
+        
+        setActiveModal((correctAnswers/questions.length*100) >= 80 ? 'passed' : 'failed');
     };
 
+    const handleCloseAllModals = () => {
+        setActiveModal('questions');
+        onClose();
+    };
+
+    const handleSendResult = () => {
+        onQuizComplete(true)
+    }
+
     return (
-        <Modal isOpen={isOpen} bgBlured onClose={onClose}>
+        <>
+        <Modal isOpen={isOpen && activeModal === "questions"} bgBlured onClose={onClose}>
             <main className='w-[900px] flex flex-col justify-between p-[30px] gap-y-10'>
                 <div className='flex items-center gap-x-1'>
                     {questions.map((_, index) => (
@@ -86,7 +100,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions }) => 
                                             type='radio' 
                                             name={`answer-${index}`} 
                                             value={answer} 
-                                            className='h-5 w-5' 
+                                            className='h-5 w-5 cursor-pointer' 
                                             onChange={() => setSelectedAnswer(answer)}
                                             checked={selectedAnswer === answer || answeredQuestions[currentQuestion] === answer}
                                         />
@@ -133,6 +147,42 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions }) => 
                 </div>
             </main>
         </Modal>
+
+        <Modal isOpen={activeModal === "passed"} bgBlured onClose={() => setActiveModal("default")}>
+            <main className="w-[450px] flex flex-col items-center text-center gap-y-4 px-[30px]">
+                <GiPartyPopper className='text-[100px] text-[#1D54E1]' />
+    
+                <h3 className='text-xl font-semibold text-[#2E3035]'>Congrats! You&apos;re In!</h3>
+    
+                <p className='text-[#5B5E65]'>Now you can create your account and start exploring a world where knowledge meets ownership</p>
+    
+                <button 
+                type='button'
+                className="bg-[#1D54E1] text-white w-full px-4 py-[15px] rounded-[10px]"
+                onClick={handleSendResult}
+                >
+                    Create my account
+                </button>
+            </main>
+        </Modal>
+
+        <Modal isOpen={activeModal === "failed"} bgBlured onClose={() => setActiveModal("questions")}>
+            <main className='w-[450px] flex flex-col items-center text-center gap-y-4 px-[30px]'>
+                <PiMaskSadFill className='text-[100px] text-red-400' />
+                <h3 className='text-xl font-semibold text-[#2E3035]'>Sorry, you didn&apos;t pass the quiz</h3>
+    
+                <p className='text-[#5B5E65]'>You need to get at least 80% of the answers correct to pass the quiz. Please try again.</p>
+    
+                <button 
+                type='button'
+                className="bg-[#1D54E1] text-white w-full px-4 py-[15px] rounded-[10px]"
+                onClick={handleCloseAllModals}
+                >
+                    Back to video
+                </button>
+            </main>
+        </Modal>
+        </>
     )
 }
 

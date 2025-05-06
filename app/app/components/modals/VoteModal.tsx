@@ -8,9 +8,13 @@ export interface VoteModalProps {
     proposalID: number;
 }
 
-type FullVoteModalProps = VoteModalProps & ModalProps;
+type VoteStatus = (voted: boolean) => void;
 
-const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, proposalID }) => {
+type FullVoteModalProps = VoteModalProps & ModalProps & {
+  VoteStatus: VoteStatus;
+};
+
+const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, proposalID, VoteStatus }) => {
   const [voteType, setVoteType] = useState<string>("");
   const [activeModal, setActiveModal] = useState<'vote' | 'confirmation' | 'completion'>('vote');
 
@@ -21,9 +25,14 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
 
   const handleVoteCompletion = () => {
     setActiveModal('completion');
-
+    VoteStatus(true);
     setVoteType("");
   }
+
+  const handleCloseAllModals = () => {
+    setActiveModal('vote');
+    onClose();
+  };
 
   const voteButton =
     "w-full py-3 rounded-[10px] px-[10px] gap-x-2 cursor-pointer text-md font-medium border flex items-center";
@@ -93,10 +102,7 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
         </main>
       </Modal>
 
-      <Modal isOpen={activeModal === 'completion'} bgBlured onClose={() => {
-          setActiveModal('vote');
-          onClose();
-        }}>
+      <Modal isOpen={activeModal === 'completion'} bgBlured onClose={handleCloseAllModals}>
         <main className="w-[450px] flex flex-col items-center text-center gap-y-4 px-[30px]">
           <GiPartyPopper className='text-[100px] text-[#1D54E1]' />
 
@@ -107,9 +113,7 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
           <button 
             type='button'
             className="bg-[#1D54E1] text-white w-full px-4 py-[15px] rounded-[10px]"
-            onClick={() => {
-              setActiveModal('vote');
-              onClose()}}
+            onClick={handleCloseAllModals}
           >
             Go back
           </button>

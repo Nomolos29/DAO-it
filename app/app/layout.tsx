@@ -28,7 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -60,7 +60,7 @@ export default function RootLayout({
                           <header className="w-full absolute z-30">
                             <Header />
                           </header>
-                          <article className="gray h-screen overscroll-hidden pt-[80px] p-3">
+                          <article className="gray h-screen overflow-hidden pt-[80px] p-3">
                             {children}
                           </article>
                         </div>
