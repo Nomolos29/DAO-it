@@ -70,19 +70,24 @@ const TutorialPage = () => {
             </div>
 
             <div className='flex flex-col gap-y-3 items-center justify-center w-full h-full'>
-              <video className='w-[80%] h-[80%]' controls>
-                <source src="../assets/tutorialVideo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+            <div className='relative w-[80%] h-[calc(100vh-100px)]'>
+              <iframe 
+                src={`https://www.youtube.com/embed/jsKfpMRPd6c?autoplay=1&rel=0`}
+                loading="lazy"
+                className='w-full h-full'
+                title='Onboarding Video'
+                allowFullScreen
+                frameBorder="0"
+              />
+            </div>
 
-              <div className='flex items-center gap-x-5 justify-center w-full h-full'>
+              <div className='flex items-center gap-x-5 justify-center w-full h-full mt-5'>
                 <button 
                   type='button' 
                   className='w-[400px] text-[#1D54E1] h-[50px] flex justify-center items-center rounded-[10px] bg-[#1D54E11A]'
                   onClick={() => setStartQuiz(true)}
                   >Start Quiz</button>
-
-                
+            
                 {/* <button type='button' className='w-[400px] text-white h-[50px] flex justify-center items-center rounded-[10px] bg-[#1D54E1]'>Start Quiz</button> */}
               </div>
             </div>

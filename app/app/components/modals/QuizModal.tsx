@@ -3,6 +3,8 @@ import Modal, { ModalProps } from './Modal'
 import { HiOutlineArrowNarrowLeft, HiOutlineArrowNarrowRight } from 'react-icons/hi';
 import { PiMaskSadFill } from "react-icons/pi";
 import { GiPartyPopper } from 'react-icons/gi';
+import Image from 'next/image';
+import logo from "@/public/appImages/lightLogo.png"
 
 export type Question = {
     question: string;
@@ -78,14 +80,18 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
     return (
         <>
         <Modal isOpen={isOpen && activeModal === "questions"} bgBlured onClose={onClose}>
-            <main className='w-[900px] flex flex-col justify-between p-[30px] gap-y-10'>
+            <main className='w-[900px] flex flex-col justify-between p-[30px] gap-y-10 rounded-[20px] relative'>
                 <div className='flex items-center gap-x-1'>
                     {questions.map((_, index) => (
                         <div key={index} className={`h-[3px] w-[100px] ${currentQuestion >= index + 1 ? "bg-[#4C69F8]" : "bg-[#E0E2EA]"}`}></div>
                     ))}
                 </div>
 
-                <div className='relative w-[80%] h-[230px]'>
+                <div className='absolute top-0 right-3 z-0 w-[50%] h-full flex items-center justify-center'>
+                    <Image src={logo} alt='logo' width={1000} height={1000} />
+                </div>
+
+                <div className='relative w-[80%] h-[230px] z-[2]'>
                     <p>Question {currentQuestion} of {questions.length}</p>
 
                     {questions.map((question, index) => (
@@ -112,7 +118,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
                     ))}
                 </div>
 
-                <div className='w-full flex justify-between items-center mt-14'>
+                <div className='w-full flex justify-between items-center mt-14 z-[2]'>
                     {currentQuestion > 1 ? 
                         <button 
                             type='button' 
@@ -127,7 +133,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
                     {currentQuestion < questions.length ? 
                         <button 
                             type='button' 
-                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2`} 
+                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2 ${selectedAnswer ? "cursor-pointer" : "cursor-not-allowed"}`} 
                             onClick={handleNextQuestion}
                             disabled={!selectedAnswer}
                         >
@@ -137,7 +143,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
                         : 
                         <button 
                             type='button' 
-                            className={`${buttonStyle} text-white bg-[#1D54E1]`}
+                            className={`${buttonStyle} text-white bg-[#1D54E1] ${selectedAnswer ? "cursor-pointer" : "cursor-not-allowed"}`}
                             onClick={handleFinish}
                             disabled={!selectedAnswer}
                         >

@@ -393,6 +393,8 @@ const CreateProposal = () => {
       toast.error("Submission failed: " + errorMessage);
     }
   };
+
+  const creationDate = new Date().toLocaleDateString("en-US");
   
   // Styling classes
   const inputStyle = "px-4 border border-[#CECECE] rounded-[10px] outline-none bg-transparent flex items-center text-[#474747]";
@@ -689,8 +691,9 @@ const CreateProposal = () => {
                 type="date"
                 id="startDate"
                 name="startDate"
-                value={proposal.startDate}
-                onChange={handleInputChange}
+                value={creationDate}
+                disabled
+                // onChange={handleInputChange}
                 className={`${inputStyle} h-[50px]`}
               />
             </div>
