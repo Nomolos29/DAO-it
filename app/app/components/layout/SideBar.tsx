@@ -8,7 +8,11 @@ import { RiSettings3Line } from "react-icons/ri";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useState } from "react";
 
-const SideBar: React.FC = () => {
+interface SideBarProps {
+  isConnected: boolean;
+}
+
+const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
   const pathname = usePathname();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -68,7 +72,8 @@ const SideBar: React.FC = () => {
                 </button>
               </Link>
 
-              <button type="button" className="flex items-center w-full gap-x-3 h-[50px] bg-[#A50D0D1A] px-[20px] rounded-[10px] text-[#A50D0D] font-medium text-md hover:bg-[#F7F3FF] hover:text-[#2E3035] transition-colors duration-200">Log Out</button>
+              {isConnected && (
+              <button type="button" className="flex items-center w-full gap-x-3 h-[50px] bg-[#A50D0D1A] px-[20px] rounded-[10px] text-[#A50D0D] font-medium text-md hover:bg-[#F7F3FF] hover:text-[#2E3035] transition-colors duration-200">Log Out</button>)}
             </div>
           </main>
         </div>

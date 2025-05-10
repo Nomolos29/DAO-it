@@ -294,7 +294,7 @@ const CreateProposal = () => {
   // Validate the proposal before submission
   const validateProposal = (): boolean => {
     // Check basic fields
-    if (!proposal.title || !proposal.summary || !proposal.startDate || !proposal.endDate) {
+    if (!proposal.title || !proposal.summary) {
       toast.error("Please complete all required fields");
       return false;
     }
@@ -320,19 +320,19 @@ const CreateProposal = () => {
     }
     
     // Validate dates
-    const startTimestamp = new Date(proposal.startDate).getTime();
-    const endTimestamp = new Date(proposal.endDate).getTime();
-    const now = Date.now();
+    // const startTimestamp = new Date(proposal.startDate).getTime();
+    // const endTimestamp = new Date(proposal.endDate).getTime();
+    // const now = Date.now();
     
-    if (startTimestamp < now) {
-      toast.error("Start date cannot be in the past");
-      return false;
-    }
+    // if (startTimestamp < now) {
+    //   toast.error("Start date cannot be in the past");
+    //   return false;
+    // }
     
-    if (endTimestamp <= startTimestamp) {
-      toast.error("End date must be after start date");
-      return false;
-    }
+    // if (endTimestamp <= startTimestamp) {
+    //   toast.error("End date must be after start date");
+    //   return false;
+    // }
     
     // Check originality score
     if (originalityScore < 40) {
@@ -342,6 +342,11 @@ const CreateProposal = () => {
     
     return true;
   };
+
+  const now = new Date()
+  // const currentDate = now.toISOString().slice(0, 12);
+  const startDate = new Date(now.setDate(now.getDate() + 7)).toISOString().slice(0, 10);
+  const endDate = new Date(now.setDate(now.getDate() + 21)).toISOString().slice(0, 10);
   
   // Submit the proposal to the blockchain
   const handleSubmit = async (): Promise<void> => {
@@ -355,8 +360,8 @@ const CreateProposal = () => {
       const fullProposal = compileFullProposal();
       
       // Convert dates to Unix timestamps (seconds)
-      const startTimestamp = Math.floor(new Date(proposal.startDate).getTime() / 1000);
-      const endTimestamp = Math.floor(new Date(proposal.endDate).getTime() / 1000);
+      const startTimestamp = Math.floor(new Date(now.setDate(now.getDate() + 7)).getTime() / 1000);
+      const endTimestamp = Math.floor(new Date(now.setDate(now.getDate() + 21)).getTime() / 1000);
   
       await createProposal(
         proposal.title,
@@ -394,7 +399,6 @@ const CreateProposal = () => {
     }
   };
 
-  const creationDate = new Date().toLocaleDateString("en-US");
   
   // Styling classes
   const inputStyle = "px-4 border border-[#CECECE] rounded-[10px] outline-none bg-transparent flex items-center text-[#474747]";
@@ -402,7 +406,7 @@ const CreateProposal = () => {
   const container = "flex flex-col gap-y-2 bg-white p-[16px] rounded-[10px]";
   
   return (
-    <main className="w-full flex gap-x-10 px-[24px] pb-20 pt-5">
+    <main className="w-full flex gap-x-10 px-[30px] pb-20 pt-5">
       <div className="w-[75%] flex flex-col">
         <div className="flex flex-col gap-y-7 pb-10">
           {/* Header */}
@@ -412,9 +416,9 @@ const CreateProposal = () => {
           >
             <FaArrowLeftLong /> Home
           </Link>
-          <div className="relative group h-[50px] flex items-center cursor-pointer px-[15px] w-full rounded-[10px] overflow-hidden">
+          <div className="relative group h-[50px] flex items-center cursor-pointer px-[10px] w-full rounded-[10px] overflow-hidden">
             <IoInformationCircle className="text-3xl text-[#1D54E1]" />
-            <div className="flex gap-x-2  shadow-md h-full px-[15px] transition-all duration-500 items-center w-full opacity-0 group-hover:opacity-100  hover:bg-white hover:text-[#474747] absolute top-0 left-0">
+            <div className="flex gap-x-2  shadow-md h-full px-[10px] transition-all duration-500 items-center w-full opacity-0 group-hover:opacity-100  hover:bg-white hover:text-[#474747] absolute top-0 left-0">
               <IoInformationCircle className="text-3xl text-[#1D54E1]" />
               <p className="text-md">
                 Submit your idea for voting. A fee is required to ensure serious
@@ -481,7 +485,7 @@ const CreateProposal = () => {
               id="walletAddress"
               name="walletAddress"
               value={proposal.walletAddress}
-              className={`${inputStyle} h-[50px]`}
+              className={`px-4 border border-[#1D54E11A] rounded-[10px] outline-none flex items-center text-[#1D54E1] h-[50px] bg-[#1D54E11A] cursor-not-allowed`}
               disabled
             />
           </div>
@@ -496,7 +500,7 @@ const CreateProposal = () => {
               id="id"
               name="id"
               value={proposal.id}
-              className={`${inputStyle} h-[50px]`}
+              className={`px-4 border border-[#1D54E11A] rounded-[10px] outline-none flex items-center text-[#1D54E1] h-[50px] bg-[#1D54E11A] cursor-not-allowed`}
               disabled
             />
           </div>
@@ -516,6 +520,42 @@ const CreateProposal = () => {
               placeholder="Enter a clear, descriptive title..."
             />
           </div>
+
+          <section className="flex gap-x-5 w-full">
+            <div className={`${container} w-1/2`}>
+              <label htmlFor="proposalStatus" className={labelStyle}>
+                Proposal status
+              </label>
+              <select name="proposalStatus" id="proposalStatus" defaultValue="Select proposal status" title="Proposal status" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
+                <option
+                  value={proposal.title}
+                  className={`mr-3 h-[50px]`}
+                >Public</option>
+
+                <option
+                  value={proposal.title}
+                  className={`mr-3 h-[50px]`}
+                >Private</option>
+              </select>
+            </div>
+
+            <div className={`${container} w-1/2`}>
+              <label htmlFor="proposalType" className={labelStyle}>
+                Proposal type
+              </label>
+              <select name="proposalType" id="proposalType" defaultValue="Select proposal type" title="Proposal type" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
+                <option
+                  value={proposal.title}
+                  className={`${inputStyle} h-[50px]`}
+                >Abdoption</option>
+
+                <option
+                  value={proposal.title}
+                  className={`${inputStyle} h-[50px]`}
+                >Fund Raising</option>
+              </select>
+            </div>       
+          </section>
 
           {/* Short Description/Summary */}
           <div className={container}>
@@ -688,13 +728,13 @@ const CreateProposal = () => {
                 Start date
               </label>
               <input
-                type="date"
+                type="text"
                 id="startDate"
                 name="startDate"
-                value={creationDate}
+                value={startDate} // Format date to YYYY-MM-DD
                 disabled
-                // onChange={handleInputChange}
-                className={`${inputStyle} h-[50px]`}
+                onChange={handleInputChange}
+                className={`px-4 border border-[#1D54E11A] rounded-[10px] outline-none flex items-center text-[#1D54E1] h-[50px] bg-[#1D54E11A] cursor-not-allowed`}
               />
             </div>
             <div className={`${container} w-1/2`}>
@@ -702,12 +742,13 @@ const CreateProposal = () => {
                 End Date
               </label>
               <input
-                type="date"
+                type="text"
                 id="endDate"
                 name="endDate"
-                value={proposal.endDate}
+                value={endDate} // Format date to YYYY-MM-DD
+                disabled
                 onChange={handleInputChange}
-                className={`${inputStyle} h-[50px]`}
+                className={`px-4 border border-[#1D54E11A] rounded-[10px] outline-none flex items-center text-[#1D54E1] h-[50px] bg-[#1D54E11A] cursor-not-allowed`}
               />
             </div>
           </div>
@@ -800,21 +841,22 @@ const CreateProposal = () => {
       </div>
 
       <section className="w-[25%] flex flex-col gap-y-5">
-        <div className="flex flex-col gap-y-5">
-          <h3 className="text-[20px] text-[#474747]">Tips for creating a proposal</h3>
-          <p className="text-[#474747]">
-            Ensure your proposal is clear and concise. Use bullet points for
-            easy readability.
-          </p>
-        </div>
-        <div className="flex flex-col gap-y-5">
-          <h3 className="text-[20px] text-[#474747]">Important notes</h3>
-          <p className="text-[#474747]">
-            Proposals are subject to review and may require additional
-            information. Ensure you have all necessary details before
-            submission.
-          </p>
-        </div>
+        <section className="flex flex-col bg-white p-5 rounded-[10px]">
+          <div className="pb-3 border-b-[1px] border-[#D5D5D5]">
+            <h3 className="text-[20px] text-[#232426] font-medium">How to create a proposal</h3>
+          </div>
+              
+          <section className="p-2">
+            <div className="flex flex-col gap-y-2">
+              <h3 className="text-[16px] font-medium">Important notes</h3>
+              <p className="text-[16px] text-[#5B5E65]">
+                Proposals are subject to review and may require additional
+                information. Ensure you have all necessary details before
+                submission.
+              </p>
+            </div>
+          </section>
+        </section>
 
         <div className="flex flex-col gap-y-[10px] p-[15px] bg-white rounded-[10px] w-full">
           <button type="button" className="text-[#1D54E1] w-full flex items-center h-[50px] justify-center bg-[#1D54E11A] rounded-[10px]">Preview proposal</button>
