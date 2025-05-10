@@ -53,7 +53,7 @@ export default function RootLayout({
                     ) : (
                       <div className="flex w-full">
                         <aside className="">
-                          <SideBar />
+                          <SideBar isConnected={isConnected} />
                         </aside>
                         
                         <div className="flex flex-col relative w-full h-screen">
