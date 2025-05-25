@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
+import toast from "../utils/toast";
 import { IoInformationCircle } from "react-icons/io5";
 import { TiTickOutline } from "react-icons/ti";
 import Link from "next/link";
@@ -348,7 +348,7 @@ const CreateProposal = () => {
   const startDate = new Date(now.setDate(now.getDate() + 7)).toISOString().slice(0, 10);
   const endDate = new Date(now.setDate(now.getDate() + 21)).toISOString().slice(0, 10);
   
-  // Submit the proposal to the blockchain
+  // Submit the proposal to the blockchain and backend
   const handleSubmit = async (): Promise<void> => {
     if (!validateProposal()) return;
     
@@ -362,13 +362,25 @@ const CreateProposal = () => {
       // Convert dates to Unix timestamps (seconds)
       const startTimestamp = Math.floor(new Date(now.setDate(now.getDate() + 7)).getTime() / 1000);
       const endTimestamp = Math.floor(new Date(now.setDate(now.getDate() + 21)).getTime() / 1000);
+      
+      // Get selected values from dropdowns
+      const proposalStatusSelect = document.getElementById('proposalStatus') as HTMLSelectElement;
+      const proposalTypeSelect = document.getElementById('proposalType') as HTMLSelectElement;
+      
+      const proposalStatus = proposalStatusSelect?.value === 'Private' ? 'Private' : 'Public';
+      const proposalType = proposalTypeSelect?.value === 'Fund Raising' ? 'FundRaiser' : 'Adoption';
   
+      // Create proposal using updated hook with additional parameters
       await createProposal(
         proposal.title,
         fullProposal,
         proposal.summary,
         startTimestamp,
-        endTimestamp
+        endTimestamp,
+        proposalStatus as 'Public' | 'Private',
+        'Community', // Default private status
+        proposalType as 'Adoption' | 'FundRaiser',
+        undefined, // No images for now
       );
   
       setSubmitStatus({ loading: false, error: null });
@@ -384,7 +396,7 @@ const CreateProposal = () => {
         );
         
         setSentimentAnalysis(analysis);
-        saveSentimentAnalysis(analysis);
+        await saveSentimentAnalysis(analysis);
       } catch (error) {
         console.error('Sentiment analysis failed:', error);
       } finally {
@@ -526,14 +538,14 @@ const CreateProposal = () => {
               <label htmlFor="proposalStatus" className={labelStyle}>
                 Proposal status
               </label>
-              <select name="proposalStatus" id="proposalStatus" defaultValue="Select proposal status" title="Proposal status" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
+              <select name="proposalStatus" id="proposalStatus" defaultValue="Public" title="Proposal status" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
                 <option
-                  value={proposal.title}
+                  value="Public"
                   className={`mr-3 h-[50px]`}
                 >Public</option>
 
                 <option
-                  value={proposal.title}
+                  value="Private"
                   className={`mr-3 h-[50px]`}
                 >Private</option>
               </select>
@@ -543,14 +555,14 @@ const CreateProposal = () => {
               <label htmlFor="proposalType" className={labelStyle}>
                 Proposal type
               </label>
-              <select name="proposalType" id="proposalType" defaultValue="Select proposal type" title="Proposal type" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
+              <select name="proposalType" id="proposalType" defaultValue="Adoption" title="Proposal type" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
                 <option
-                  value={proposal.title}
+                  value="Adoption"
                   className={`${inputStyle} h-[50px]`}
-                >Abdoption</option>
+                >Adoption</option>
 
                 <option
-                  value={proposal.title}
+                  value="Fund Raising"
                   className={`${inputStyle} h-[50px]`}
                 >Fund Raising</option>
               </select>

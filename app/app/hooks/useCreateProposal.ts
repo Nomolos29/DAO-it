@@ -1,50 +1,57 @@
 import { useActiveAccount } from "thirdweb/react";
-import { prepareContractCall, sendAndConfirmTransaction } from "thirdweb";
-import { daoitContract } from "../lib/constants";
+import { useState } from "react";
+import { useProposalService, ProposalData } from "../services/proposalService";
 
 export const useCreateProposal = () => {
   const account = useActiveAccount();
-  const isPending = false;
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const proposalService = useProposalService();
 
   const createProposal = async (
     title: string,
     description: string,
     summary: string,
     startDate: number,
-    endDate: number
+    endDate: number,
+    status: 'Public' | 'Private' = 'Public',
+    privateStatus: 'Community' | 'Group' = 'Community',
+    proposalType: 'Adoption' | 'FundRaiser' = 'Adoption',
+    images?: File[]
   ): Promise<void> => {
     try {
       if (!account) {
         throw new Error("No wallet connected");
       }
 
-      const proposalTx = await prepareContractCall({
-        contract: daoitContract,
-        method:
-          "function propose(string memory title, string memory description, string memory summary, uint256 startDate, uint256 endDate)",
-        params: [
-          title,
-          description,
-          summary,
-          BigInt(startDate),
-          BigInt(endDate),
-        ],
-      });
+      setIsLoading(true);
+      setError(null);
 
-      // Send and confirm the transaction in one step
-      await sendAndConfirmTransaction({
-        account,
-        transaction: proposalTx,
-      });
+      const proposalData: ProposalData = {
+        proposalId: account.address ? `prop_${account.address.slice(-4)}_${Date.now().toString(36)}` : undefined,
+        proposalTitle: title,
+        proposalSummary: summary,
+        proposalDetails: description,
+        proposalStatus: status,
+        privateStatus: privateStatus,
+        proposalType: proposalType,
+        endDate: new Date(endDate),
+        images: images
+      };
+
+      await proposalService.createProposal(proposalData);
     } catch (err) {
       console.error("Error creating proposal:", err);
+      setError(err instanceof Error ? err : new Error(String(err)));
       throw err; // Re-throw to be handled by the caller
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return {
     createProposal,
-    isLoading: isPending,
-    error: null,
+    isLoading,
+    error,
   };
 };
