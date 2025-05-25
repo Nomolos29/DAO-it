@@ -1,14 +1,70 @@
 import openai from '../lib/openai';
-import { SentimentAnalysis } from '../types/sentiment';
-import { generateMockComments } from '../utils/mockComments';
+import { SentimentAnalysis, Comment } from '../types/sentiment';
+import { useCommentService } from './commentService';
 
+// Check if we're running on the client side
+const isClient = typeof window !== 'undefined';
+
+/**
+ * Analyzes sentiment for a proposal based on its comments
+ * @throws Will throw an error if the analysis fails or if called in a server-side context
+ */
 export async function analyzeSentiment(
   proposalId: string,
   proposalTitle: string,
   proposalSummary: string,
   proposalDescription: string
 ): Promise<SentimentAnalysis> {
-  const comments = generateMockComments(proposalTitle, 15);
+  // Ensure we're on the client side
+  if (!isClient) {
+    throw new Error('Sentiment analysis can only be performed in client-side environment');
+  }
+
+  // Validate inputs
+  if (!proposalId) {
+    throw new Error('Proposal ID is required for sentiment analysis');
+  }
+
+  console.log(`Starting sentiment analysis for proposal ${proposalId}`);
+  
+  // Try to get real comments from the API
+  let comments: Comment[] = [];
+  try {
+    const commentService = useCommentService();
+    console.log('Fetching comments for sentiment analysis...');
+    const commentsResponse = await commentService.getAllComments(proposalId);
+    
+    // Map API comments to our internal format
+    if (commentsResponse && Array.isArray(commentsResponse)) {
+      comments = commentsResponse.map(c => ({
+        id: c.id || c.commentId || `comment-${Math.random()}`,
+        author: c.author || c.userId || 'Anonymous',
+        content: c.text || c.commentText || c.content || '',
+        timestamp: c.createdAt || new Date().toISOString(),
+        sentiment: 'neutral' // Default, will be updated by analysis
+      }));
+      console.log(`Fetched ${comments.length} comments for analysis`);
+    } else {
+      console.warn('Comments response is not an array or is empty');
+    }
+  } catch (error) {
+    console.error('Error fetching comments for sentiment analysis:', error);
+    throw new Error(`Failed to fetch comments: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  
+  // If no comments were found, use a default message
+  if (comments.length === 0) {
+    console.warn('No comments found, using default comment');
+    comments = [
+      {
+        id: `default-comment-${Date.now()}`,
+        author: 'System',
+        content: 'No comments available for this proposal yet.',
+        timestamp: new Date().toISOString(),
+        sentiment: 'neutral'
+      }
+    ];
+  }
   
   const analysisContent = `
 Analyze the sentiment of this DAO proposal and its community feedback:
@@ -19,7 +75,7 @@ Summary: ${proposalSummary}
 Description: ${proposalDescription}
 
 COMMUNITY COMMENTS:
-${comments.map(c => `- ${c.author}: "${c.content}" [${c.sentiment}]`).join('\n')}
+${comments.map(c => `- ${c.author}: "${c.content}"`).join('\n')}
 
 Please provide a JSON response with exactly this structure:
 {
@@ -35,6 +91,7 @@ Please provide a JSON response with exactly this structure:
 }`;
 
   try {
+    console.log('Sending request to OpenAI for sentiment analysis...');
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -49,65 +106,77 @@ Please provide a JSON response with exactly this structure:
     });
 
     const content = completion.choices[0].message.content;
-    if (!content) throw new Error('No content received from OpenAI');
+    if (!content) {
+      throw new Error('No content received from OpenAI');
+    }
     
-    const result = JSON.parse(content);
+    console.log('Received response from OpenAI, parsing result...');
+    let result;
+    try {
+      result = JSON.parse(content);
+    } catch (parseError) {
+      console.error('Error parsing OpenAI response:', parseError, 'Response content:', content);
+      throw new Error('Failed to parse OpenAI response');
+    }
+    
+    // Validate the result structure
+    if (!result.overallSentiment || !result.breakdown || !result.keyThemes || !result.insights) {
+      console.error('Invalid response structure from OpenAI:', result);
+      throw new Error('OpenAI response is missing required fields');
+    }
     
     const analysis: SentimentAnalysis = {
       proposalId,
-      overallSentiment: result.overallSentiment || 'neutral',
+      overallSentiment: result.overallSentiment,
       sentimentScore: typeof result.sentimentScore === 'number' ? result.sentimentScore : 0,
       breakdown: {
-        positive: result.breakdown?.positive || 33,
-        negative: result.breakdown?.negative || 33,
-        neutral: result.breakdown?.neutral || 34,
+        positive: result.breakdown.positive || 0,
+        negative: result.breakdown.negative || 0,
+        neutral: result.breakdown.neutral || 0,
       },
-      keyThemes: Array.isArray(result.keyThemes) ? result.keyThemes : [
-        'Implementation Strategy',
-        'Resource Allocation', 
-        'Timeline Concerns',
-        'Community Impact',
-        'Technical Approach'
-      ],
-      insights: Array.isArray(result.insights) ? result.insights : [
-        'Mixed community response with valid concerns raised',
-        'Strong support for the core concept but implementation questions remain',
-        'Timeline appears ambitious according to several community members',
-        'Resource allocation needs more detailed planning',
-        'Technical approach requires further community discussion'
-      ],
-      comments: comments,
+      keyThemes: Array.isArray(result.keyThemes) ? result.keyThemes : [],
+      insights: Array.isArray(result.insights) ? result.insights : [],
+      comments: comments.map(c => ({
+        ...c,
+        sentiment: determineCommentSentiment(c.content, result)
+      })),
       timestamp: new Date().toISOString()
     };
     
+    console.log('Sentiment analysis completed successfully');
     return analysis;
   } catch (error) {
     console.error('Sentiment analysis error:', error);
-    return {
-      proposalId,
-      overallSentiment: 'neutral',
-      sentimentScore: 0,
-      breakdown: {
-        positive: 40,
-        negative: 30,
-        neutral: 30,
-      },
-      keyThemes: [
-        'Implementation Timeline', 
-        'Resource Allocation', 
-        'Community Impact',
-        'Technical Feasibility',
-        'Governance Considerations'
-      ],
-      insights: [
-        'Community shows mixed reactions to the proposal',
-        'Concerns raised about implementation feasibility',
-        'Strong support for addressing the underlying problem',
-        'Timeline and resource allocation need clarification',
-        'Technical approach requires more detailed explanation'
-      ],
-      comments: comments,
-      timestamp: new Date().toISOString()
-    };
+    throw new Error(`Sentiment analysis failed: ${error instanceof Error ? error.message : String(error)}`);
   }
+}
+
+// Helper function to determine sentiment of individual comments
+function determineCommentSentiment(
+  content: string, 
+  result: any
+): 'positive' | 'negative' | 'neutral' {
+  // Simple heuristic - in a real implementation, this would be more sophisticated
+  const lowerContent = content.toLowerCase();
+  
+  // Positive words
+  const positiveWords = ['great', 'good', 'excellent', 'support', 'agree', 'like', 'helpful', 'innovative'];
+  
+  // Negative words
+  const negativeWords = ['bad', 'poor', 'terrible', 'disagree', 'against', 'problem', 'issue', 'concern'];
+  
+  let positiveScore = 0;
+  let negativeScore = 0;
+  
+  positiveWords.forEach(word => {
+    if (lowerContent.includes(word)) positiveScore++;
+  });
+  
+  negativeWords.forEach(word => {
+    if (lowerContent.includes(word)) negativeScore++;
+  });
+  
+  if (positiveScore > negativeScore) return 'positive';
+  if (negativeScore > positiveScore) return 'negative';
+  return 'neutral';
 }

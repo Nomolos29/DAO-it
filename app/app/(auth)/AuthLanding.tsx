@@ -1,22 +1,66 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Login from "../(auth)/Login";
 import SignUp from "../(auth)/SignUp";
-import Logo from "../assets/BigLogo.svg";
+// Import removed, we'll use a direct path in the Image component
 import WalletButton from "@/components/walletButton";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "../services/authService";
+import { useRouter } from "next/navigation";
+import toast from "../utils/toast";
 
 const AuthLanding = () => {
   const [loginIsOpen, setLoginIsOpen] = useState(false);
   const [signUpIsOpen, setSignUpIsOpen] = useState(false);
+  const { account, loginWithWallet, registerWallet, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // If user connects wallet and is already authenticated, redirect to app
+    if (account && isAuthenticated()) {
+      router.push("/app");
+    }
+  }, [account, router, isAuthenticated]);
+
+  const handleWalletLogin = async () => {
+    if (!account) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    try {
+      await loginWithWallet();
+      toast.success("Successfully logged in!");
+      router.push("/app");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Failed to login. Please try again.");
+    }
+  };
+
+  const handleWalletSignUp = async () => {
+    if (!account) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    try {
+      await registerWallet();
+      toast.success("Successfully registered!");
+      router.push("/app");
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Failed to register. Please try again.");
+    }
+  };
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <main className="container w-full flex justify-between items-center gap-x-[150px] px-8">
         <aside className="w-1/2 flex flex-col gap-y-4">
-          <Image src={Logo} alt="logo" width={1000} height={1000} className="w-full" />
+          <Image src="/app/assets/BigLogo.svg" alt="logo" width={1000} height={1000} className="w-full" />
           
           <p className="text-center text-[16px] text-[#494445] font-medium px-5">
             Take power to shape your school&apos;s future. Join the
@@ -30,7 +74,7 @@ const AuthLanding = () => {
           <div className="flex flex-col gap-y-5">
             <button
               type="submit"
-              onClick={() => setSignUpIsOpen(true)}
+              onClick={() => account ? handleWalletSignUp() : setSignUpIsOpen(true)}
               className="rounded-[10px] cursor-pointer px-2 h-[48px] border-[1.5px] border-[#F8B51C] w-full bg-[#1B1B1B] text-white text-lg"
             >
               Sign Up
@@ -38,7 +82,7 @@ const AuthLanding = () => {
 
             <button
               type="button"
-              onClick={() => setLoginIsOpen(true)}
+              onClick={() => account ? handleWalletLogin() : setLoginIsOpen(true)}
               className="rounded-[10px] cursor-pointer px-2 text-lg h-[48px] w-full bg-gradient-to-r from-[#F8B51C] to-[#FEE539]"
             >
               Sign In
