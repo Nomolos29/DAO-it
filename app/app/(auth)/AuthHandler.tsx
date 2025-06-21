@@ -12,6 +12,8 @@ export const AuthHandler = ({
   const router = useRouter();
   const account = useActiveAccount();
 
+  console.log(account)
+
   useEffect(() => {
     if (account) {
       onConnected(true);
