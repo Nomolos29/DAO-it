@@ -358,17 +358,11 @@ const CreateProposal = () => {
     try {
       // Compile full proposal
       const fullProposal = compileFullProposal();
-      
-      // Convert dates to Unix timestamps (seconds)
-      const startTimestamp = Math.floor(new Date(now.setDate(now.getDate() + 7)).getTime() / 1000);
-      const endTimestamp = Math.floor(new Date(now.setDate(now.getDate() + 21)).getTime() / 1000);
   
       await createProposal(
         proposal.title,
         fullProposal,
         proposal.summary,
-        startTimestamp,
-        endTimestamp
       );
   
       setSubmitStatus({ loading: false, error: null });
