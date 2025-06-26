@@ -9,9 +9,7 @@ export const useCreateProposal = () => {
   const createProposal = async (
     title: string,
     description: string,
-    summary: string,
-    startDate: number,
-    endDate: number
+    summary: string
   ): Promise<void> => {
     try {
       if (!account) {
@@ -21,13 +19,11 @@ export const useCreateProposal = () => {
       const proposalTx = await prepareContractCall({
         contract: daoitContract,
         method:
-          "function propose(string memory title, string memory description, string memory summary, uint256 startDate, uint256 endDate)",
+          "function propose(string memory id, string memory title, string memory summary)",
         params: [
           title,
           description,
           summary,
-          BigInt(startDate),
-          BigInt(endDate),
         ],
       });
 

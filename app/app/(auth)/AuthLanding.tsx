@@ -7,10 +7,13 @@ import Logo from "../assets/BigLogo.svg";
 import WalletButton from "@/components/walletButton";
 import Image from "next/image";
 import Link from "next/link";
+// import { useAddress, useLogin } from "@thirdweb/react";
 
 const AuthLanding = () => {
   const [loginIsOpen, setLoginIsOpen] = useState(false);
   const [signUpIsOpen, setSignUpIsOpen] = useState(false);
+
+
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
@@ -38,7 +41,7 @@ const AuthLanding = () => {
 
             <button
               type="button"
-              onClick={() => setLoginIsOpen(true)}
+              // onClick={() => handleLogin}
               className="rounded-[10px] cursor-pointer px-2 text-lg h-[48px] w-full bg-gradient-to-r from-[#F8B51C] to-[#FEE539]"
             >
               Sign In

@@ -80,7 +80,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
     return (
         <>
         <Modal isOpen={isOpen && activeModal === "questions"} bgBlured onClose={onClose}>
-            <main className='w-[900px] flex flex-col justify-between p-[30px] gap-y-10 rounded-[20px] relative'>
+            <main className='w-[90%] md:w-[85%] xl:w-[900px] flex flex-col justify-between p-[30px] gap-y-10 rounded-[20px] relative'>
                 <div className='flex items-center gap-x-1'>
                     {questions.map((_, index) => (
                         <div key={index} className={`h-[3px] w-[100px] ${currentQuestion >= index + 1 ? "bg-[#4C69F8]" : "bg-[#E0E2EA]"}`}></div>
