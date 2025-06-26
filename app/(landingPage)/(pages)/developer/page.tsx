@@ -3,10 +3,11 @@
 
 import { HiArrowTurnRightDown } from "react-icons/hi2";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
-import { introduction } from "../lib/documentation"
+import { introduction } from "../../lib/documentation"
 import slugify from "slugify";
 import { useState } from 'react';
 import Link from "next/link";
+import { InnerPageHeroHeader } from "../../components";
 
 
 
@@ -16,8 +17,11 @@ const DocumentationPage = () => {
     const[ open, setOpen ] = useState(false)
 
     return (
-        <section className="flex flex-col max-w-[1440px] justify-center px-0 md:px-[30px] lg:px-[60px] pt-14">
-            <div className="flex flex-col md:flex-row w-full gap-x-10">
+        <section className="flex flex-col items-center w-full">
+            <InnerPageHeroHeader highLightText="Developers" rightSideHeading="Community" paragraph='Join the Movement for Transparent and Collaborative Education. "Shape the future of learning through innovation and collective decision-making”.' />
+
+            <div className="flex flex-col px-10 max-w-screen-2xl md:flex-row w-full gap-x-10 py-20">
+
                 <section className={`p-5 border bg-white rounded-lg flex flex-col gap-y-10 w-full md:w-[30%] h-screen md:h-fit overflow-y-scroll md:overflow-hidden fixed md:relative md:hidden z-50 ${open ? "top-[0%] pb-10" : "top-[92%]"}`} onClick={() => {setOpen(!open)}}>
                     <h3 className="font-bold text-lg flex justify-between items-center" >ON THIS PAGE {open ? <FaAngleDown /> : <FaAngleUp />}</h3>
                     <div className={`flex-col gap-y-10 ${open ? "flex" : "hidden"}`}>

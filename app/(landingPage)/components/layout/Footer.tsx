@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 import { FaDiscord, FaSquareXTwitter } from "react-icons/fa6";
-import logo from "../../../../public/logo.svg";
 
 const Footer = () => {
   const sections = [
@@ -41,12 +40,12 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="pt-20 pb-5 bg-[#1B1B1B] text-white">
+    <footer className="pt-16 pb-4 bg-[#003CB1] bg-[url(/LandingPage/FooterBg.png)] bg-fit bg-no-repeat bg-center text-white">
       <div className="flex flex-col max-w-screen-2xl w-full gap-8 px-4 mx-auto  md:flex-row lg:px-10">
         <div className="md:w-[55%]">
-          <Link href="/">
+          {/* <Link href="/">
             <img src={logo} alt="logo" width={0} height={0} className="w-[50%]" />
-          </Link>
+          </Link> */}
           <p className="max-w-md mb-4 text-sm">
             DAOit is a decentralized governance platform designed for
             educational institutions, leveraging blockchain technology to
@@ -90,7 +89,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="px-4 mt-12 text-sm text-gray-600 lg:px-10">
+      <div className="px-4 mt-8 max-w-screen-2xl text-sm text-[#F2F2F2] lg:px-10">
         All rights reserved © DAOit
       </div>
     </footer>

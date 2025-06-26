@@ -1,10 +1,15 @@
-import { createThirdwebClient } from "thirdweb";
-import { ConnectButton, lightTheme } from "thirdweb/react";
-
+import {
+  createThirdwebClient
+} from "thirdweb";
 import { inAppWallet, createWallet } from "thirdweb/wallets";
+import {
+  ConnectButton,
+  lightTheme,
+} from "thirdweb/react";
 
 const clientId =
   process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "defaultClientId";
+
 const client = createThirdwebClient({ clientId });
 
 const wallets = [
@@ -12,12 +17,13 @@ const wallets = [
     auth: {
       options: [
         "google",
-        "telegram",
-        "farcaster",
         "email",
-        "x",
         "passkey",
         "phone",
+        // Uncomment if needed:
+        // "telegram",
+        // "farcaster",
+        // "x",
       ],
     },
   }),

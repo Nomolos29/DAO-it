@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 
 const FAQs = () => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   const faqs = [
     {
@@ -55,33 +55,37 @@ const FAQs = () => {
 
   return (
     <section className="w-full flex justify-center bg-[url('/LandingPage/FaqBg.svg')] bg-fixed bg-cover bg-top">
-      <div className="px-10 max-w-screen-2xl w-full flex flex-col items-center bg-transparent pt-16">
-        <h2 className="text-[40px] font-bold mb-6">Frequently Asked Question</h2>
-        <div className="space-y-4 w-full">
+      <div className="px-10 max-w-screen-2xl w-full max-h-[500px] flex gap-x-20 justify-between bg-transparent py-16">
+        <div className="flex flex-col items-start w-2/6">
+          <p className="text-[30px] text-[#002887] font-medium">Got Questions?</p>
+          <h2 className="text-[36px] font-semibold mb-6">We got answers</h2>
+        </div>
+        <div className="flex flex-col gap-y-4 w-full px-5 transition-all overflow-y-scroll duration-500">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="pt-4 cursor-pointer"
               onClick={() => toggleFAQ(index)}
+              className={`rounded-2xl overflow-visible transition-all duration-300 cursor-pointer ${
+                activeIndex === index ? "bg-blue-800 text-white" : "bg-gray-100 text-black"
+              }`}
             >
-              <div className="flex justify-between items-center">
-                <p className="text-[22px] font-medium w-[850px]">{faq.question}</p>
-                <span className="text-xl">
-                  {activeIndex === index ? "-" : "+"}
-                </span>
+              <div className="flex justify-between items-center px-6 h-20">
+                <p className="text-xl font-medium">{faq.question}</p>
+                <span>{activeIndex === index ? "-" : "+"}</span>
               </div>
-              {activeIndex === index && (
-                <p className="mt-2 text-[#777777] border-l-[7px] py-3 px-7 border-[#F8B51C] text-lg w-[850px]">
-                  {faq.answer}.
-                </p>
-              )}
+
+              <div
+                className={`px-6 transition-all duration-300 ease-in-out overflow-hidden ${
+                  activeIndex === index
+                    ? "max-h-[200px] opacity-100 py-5"
+                    : "max-h-0 opacity-0 py-0"
+                }`}
+              >
+                <p className="text-base">{faq.answer}</p>
+              </div>
             </div>
           ))}
-        </div>
 
-
-        <div className="mt-6 flex items-center w-full justify-center text-[26px] font-bold pt-20 pb-5">
-          <h4>&qout;NOTE: The DOAit platform adheres to all data privacy laws of it&apos;s users&qout;</h4>
         </div>
       </div>
     </section>

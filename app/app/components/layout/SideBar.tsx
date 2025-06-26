@@ -7,7 +7,7 @@ import WalletButton from "@/components/walletButton";
 import { RiSettings3Line } from "react-icons/ri";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useState } from "react";
-import { useDisconnect } from "@thirdweb-dev/react";
+import { useActiveWallet, useDisconnect } from "thirdweb/react";
 
 interface SideBarProps {
   isConnected: boolean;
@@ -17,10 +17,14 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
   const pathname = usePathname();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const disconnect = useDisconnect();
+  const {disconnect }= useDisconnect();
+  const wallet = useActiveWallet()
 
   const handleDisconnect = () => {
-    disconnect();
+    if(wallet && wallet.id) {
+       disconnect(wallet);
+    }
+   
   };
 
   return (
