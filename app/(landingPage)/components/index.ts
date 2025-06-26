@@ -1,8 +1,13 @@
 export { default as HeroSection } from "./global/HeroSection";
-export { default as FeatureSection } from "./global/FeatureSection";
 export { default as FAQs } from "./global/FAQs";
-export { default as JoinCommunity } from "./global/JoinCommunity";
-export { default as HowItWorks } from "./global/HowItWorks";
 export { default as Footer } from "./layout/Footer";
 export { default as Header } from "./layout/Header";
 export { default as Sidebar } from "./layout/Sidebar";
+export { default as GlobalLearning } from "./global/GlobalLearning";
+export { default as InnerPageHeroHeader } from "./global/InnerPageHeroHeader";
+export { default as Button } from "./global/Button";
+export { default as WhatIsDaoIt } from "./pages/WhatIsDaoIt";
+export { default as AboutDaoIt } from "./pages/AboutDaoIt";
+export { default as WhatMakesDaoitUnique } from "./pages/WhatMakesDaoitUnique";
+export { default as UserFlow } from "./pages/UserFlow";
+export { default as WhoIsDaoitFor } from "./pages/WhoIsDaoitFor";

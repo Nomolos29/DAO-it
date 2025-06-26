@@ -112,7 +112,7 @@ export const SentimentDashboard: React.FC<SentimentDashboardProps> = ({
               />
               <YAxis hide />
               <Tooltip 
-                formatter={(value, name, props) => [props.payload.sentiment, 'Sentiment']}
+                formatter={(name: string) => [name, 'Author']}
               />
               <Bar dataKey="value" fill="#8884d8">
                 {barData.map((entry, index) => (

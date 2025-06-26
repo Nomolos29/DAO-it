@@ -7,7 +7,7 @@ import Logo from "../assets/BigLogo.svg";
 import WalletButton from "@/components/walletButton";
 import Image from "next/image";
 import Link from "next/link";
-import { useAddress, useLogin } from "@thirdweb-dev/react";
+// import { useAddress, useLogin } from "@thirdweb/react";
 
 const AuthLanding = () => {
   const [loginIsOpen, setLoginIsOpen] = useState(false);

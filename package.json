@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.66.9",
-    "@thirdweb-dev/react": "^4.9.4",
-    "@thirdweb-dev/sdk": "^4.0.99",
     "dotenv": "^16.4.7",
     "next": "^15.1.7",
     "openai": "^4.96.0",
@@ -22,11 +20,11 @@
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.3",
     "slugify": "^1.6.6",
-    "thirdweb": "^5.89.0"
+    "thirdweb": "^5.104.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
+    "@types/node": "^20.19.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19",
     "@types/recharts": "^1.8.29",

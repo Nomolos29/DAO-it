@@ -5,7 +5,7 @@ import React from "react";
 interface CardProps {
   title: string;
   description: string;
-  svgSrc: string
+  svgSrc?: string
 }
 
 const Card: React.FC<CardProps> = ({ title, description, svgSrc }) => {
