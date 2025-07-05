@@ -1,3 +1,4 @@
+// import WalletButton from "@/components/walletButton";
 import Header from "../layout/Header";
 import Button from "./Button";
 
@@ -16,6 +17,7 @@ const HeroSection = () => {
           Join our Educational Decentralized Autonomous Organization (DAO)  to Learn, Collaborate, and Grow. We are Focus on  Empowering Students, Educators, and Administrators In a Transparent, Open and Collaborative Decision-making Process.
           </p>
           <Button />
+          {/* <WalletButton /> */}
         </section>
 
         <div className="w-[90%] md:w-[40%] relative">
@@ -37,7 +39,7 @@ const HeroSection = () => {
           fill="#ffffff"
           d="M0,224L60,213.3C120,203,240,181,360,181.3C480,181,600,203,720,213.3C840,224,960,224,1080,197.3C1200,171,1320,117,1380,90.7L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
         />
-      </svg>   
+      </svg>
     </div>
   );
 };

@@ -8,9 +8,9 @@ import { Header, SideBar } from "./components";
 import { usePathname } from "next/navigation";
 import { ThirdwebProvider } from "thirdweb/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthHandler } from "./(auth)/AuthHandler";
 import { ToastContainer } from "react-toastify";
 import FullHeader from "./components/layout/FullHeader";
+import AuthLanding from "./(auth)/AuthLanding";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,8 +28,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState<"login" | "register" | "loggedIn">("login");
+
   const pathname = usePathname();
+
 
   return (
     <html lang="en">
@@ -38,14 +40,13 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
-            <AuthHandler onConnected={setIsConnected} />
               <main className="max-w-screen-2xl w-full flex justify-center h-screen">
-                {isConnected ? (
+                {isConnected === "loggedIn" ? (
                   <main className="flex w-full justify-center h-full overscroll-y-auto">
                     {pathname === "/app/create-proposal" ? (
                       <div className="flex flex-col w-full relative">
                         <FullHeader displayWallet />
-                        
+
                         <main className="w-full pt-[90px]">
                           {children}
                         </main>
@@ -53,9 +54,9 @@ export default function RootLayout({
                     ) : (
                       <div className="flex w-full">
                         <aside className="">
-                          <SideBar isConnected={isConnected} />
+                          <SideBar isConnected={isConnected === "loggedIn"} />
                         </aside>
-                        
+
                         <div className="flex flex-col relative w-full h-screen">
                           <header className="w-full absolute z-30">
                             <Header />
@@ -67,11 +68,11 @@ export default function RootLayout({
                       </div>
                     )}
                   </main>
-                ) : (
+                ) : isConnected === "login" ? (
                   <div className="w-full">
-                    <TutorialPage />
+                    <AuthLanding onWalletConnected={(action) => setIsConnected(action)} />
                   </div>
-                )}
+                ) : (<TutorialPage loggedIn={(action) => setIsConnected(action)} />)}
               </main>
           </ThirdwebProvider>
         </QueryClientProvider>

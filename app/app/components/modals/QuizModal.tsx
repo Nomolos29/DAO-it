@@ -5,6 +5,8 @@ import { PiMaskSadFill } from "react-icons/pi";
 import { GiPartyPopper } from 'react-icons/gi';
 import Image from 'next/image';
 import logo from "@/public/appImages/lightLogo.png"
+import { useRegister } from '../../hooks/useRegister';
+import { useLogin } from '../../hooks/useLogin';
 
 export type Question = {
     question: string;
@@ -15,14 +17,19 @@ export type Question = {
 interface QuizModalProps extends ModalProps {
     questions: Question[];
     onQuizComplete: (didPass: boolean) => void;
+    onLoginSuccess?: (action: "register" | "loggedIn") => void;
 }
 
-const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQuizComplete }) => {
+const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQuizComplete, onLoginSuccess }) => {
     const [selectedAnswer, setSelectedAnswer] = useState<string>("");
     const [correctAnswers, setCorrectAnswers] = useState<number>(0);
     const [currentQuestion, setCurrentQuestion] = useState<number>(1);
+    const [hasRegistered, setHasRegistered] = useState<boolean>(false);
     const [answeredQuestions, setAnsweredQuestions] = useState<{[key: number]: string}>({});
     const [activeModal, setActiveModal] = useState<"default" | "questions" | "passed" | "failed">("questions");
+
+    const register = useRegister();
+    const login = useLogin();
 
     const buttonStyle = "h-[50px] w-[203px] flex items-center justify-center rounded-[10px]";
 
@@ -32,13 +39,13 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
         if (selectedAnswer === currentQ.correctAnswer) {
             setCorrectAnswers(prev => prev + 1);
         }
-        
+
         // Store the answer for this question
         setAnsweredQuestions(prev => ({
             ...prev,
             [currentQuestion]: selectedAnswer
         }));
-        
+
         // Reset selection and move to next question
         setSelectedAnswer("");
         setCurrentQuestion(prev => prev + 1);
@@ -56,7 +63,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
         if (selectedAnswer === currentQ.correctAnswer) {
             setCorrectAnswers(prev => prev + 1);
         }
-        
+
         // Close the modal or show results
         setSelectedAnswer("");
         setCurrentQuestion(1);
@@ -64,8 +71,21 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
         setAnsweredQuestions({});
 
         // Check if the user passed or failed
-        
+
         setActiveModal((correctAnswers/questions.length*100) >= 80 ? 'passed' : 'failed');
+
+        if ((correctAnswers / questions.length * 100) >= 80) {
+            register.mutate(undefined, {
+                onSuccess: () => {
+                    setHasRegistered(true);
+                },
+                onError: (error) => {
+                    console.log("Registration failed:", error);
+                    alert("Registration failed!");
+                }
+            });
+        }
+
     };
 
     const handleCloseAllModals = () => {
@@ -74,6 +94,14 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
     };
 
     const handleSendResult = () => {
+        if (hasRegistered) {
+            login.mutate(undefined, {
+                onSuccess: () => {
+                    onLoginSuccess?.("loggedIn"); // 🔥 bubble up to layout
+                },
+            });
+        }
+
         onQuizComplete(true)
     }
 
@@ -101,12 +129,12 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
                             <div className='flex flex-col gap-y-3 items-start'>
                                 {question.answers.map((answer, i) => (
                                     <label htmlFor={`${index}-${i}`} key={i} className='flex gap-x-3 items-center text-lg font-normal text-[#2E3035]'>
-                                        <input 
-                                            id={`${index}-${i}`} 
-                                            type='radio' 
-                                            name={`answer-${index}`} 
-                                            value={answer} 
-                                            className='h-5 w-5 cursor-pointer' 
+                                        <input
+                                            id={`${index}-${i}`}
+                                            type='radio'
+                                            name={`answer-${index}`}
+                                            value={answer}
+                                            className='h-5 w-5 cursor-pointer'
                                             onChange={() => setSelectedAnswer(answer)}
                                             checked={selectedAnswer === answer || answeredQuestions[currentQuestion] === answer}
                                         />
@@ -119,30 +147,30 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
                 </div>
 
                 <div className='w-full flex justify-between items-center mt-14 z-[2]'>
-                    {currentQuestion > 1 ? 
-                        <button 
-                            type='button' 
-                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2`} 
+                    {currentQuestion > 1 ?
+                        <button
+                            type='button'
+                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2`}
                             onClick={handlePreviousQuestion}
                         >
                             <HiOutlineArrowNarrowLeft className='text-xl' />
                             Previous
-                        </button> 
+                        </button>
                         : <div></div> /* Empty div to maintain space */}
-                    
-                    {currentQuestion < questions.length ? 
-                        <button 
-                            type='button' 
-                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2 ${selectedAnswer ? "cursor-pointer" : "cursor-not-allowed"}`} 
+
+                    {currentQuestion < questions.length ?
+                        <button
+                            type='button'
+                            className={`${buttonStyle} bg-[#1D54E11A] text-[#1D54E1] gap-x-2 ${selectedAnswer ? "cursor-pointer" : "cursor-not-allowed"}`}
                             onClick={handleNextQuestion}
                             disabled={!selectedAnswer}
                         >
                             Next
                             <HiOutlineArrowNarrowRight className='text-xl' />
-                        </button> 
-                        : 
-                        <button 
-                            type='button' 
+                        </button>
+                        :
+                        <button
+                            type='button'
                             className={`${buttonStyle} text-white bg-[#1D54E1] ${selectedAnswer ? "cursor-pointer" : "cursor-not-allowed"}`}
                             onClick={handleFinish}
                             disabled={!selectedAnswer}
@@ -157,12 +185,12 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
         <Modal isOpen={activeModal === "passed"} bgBlured onClose={() => setActiveModal("default")}>
             <main className="w-[450px] flex flex-col items-center text-center gap-y-4 px-[30px]">
                 <GiPartyPopper className='text-[100px] text-[#1D54E1]' />
-    
+
                 <h3 className='text-xl font-semibold text-[#2E3035]'>Congrats! You&apos;re In!</h3>
-    
+
                 <p className='text-[#5B5E65]'>Now you can create your account and start exploring a world where knowledge meets ownership</p>
-    
-                <button 
+
+                <button
                 type='button'
                 className="bg-[#1D54E1] text-white w-full px-4 py-[15px] rounded-[10px]"
                 onClick={handleSendResult}
@@ -176,10 +204,10 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
             <main className='w-[450px] flex flex-col items-center text-center gap-y-4 px-[30px]'>
                 <PiMaskSadFill className='text-[100px] text-red-400' />
                 <h3 className='text-xl font-semibold text-[#2E3035]'>Sorry, you didn&apos;t pass the quiz</h3>
-    
+
                 <p className='text-[#5B5E65]'>You need to get at least 80% of the answers correct to pass the quiz. Please try again.</p>
-    
-                <button 
+
+                <button
                 type='button'
                 className="bg-[#1D54E1] text-white w-full px-4 py-[15px] rounded-[10px]"
                 onClick={handleCloseAllModals}

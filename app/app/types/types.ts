@@ -34,3 +34,10 @@ export type ProposalTuple = [
   bigint, // noVotes
   bigint // abstainVotes
 ];
+
+export type YourUserType = {
+  id: string;
+  name: string;
+  walletAddress: string;
+  // Add any other properties here
+};
