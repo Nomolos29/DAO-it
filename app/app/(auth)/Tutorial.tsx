@@ -4,14 +4,16 @@ import React, { useState } from 'react'
 import FullHeader from '../components/layout/FullHeader'
 import Link from 'next/link'
 import QuizModal, { Question } from '../components/modals/QuizModal'
-import AuthLanding from './AuthLanding'
 
-const TutorialPage = () => {
+interface TutorialPageProps {
+  loggedIn?: (action: "register" | "loggedIn") => void;
+}
+
+const TutorialPage = ({ loggedIn }: TutorialPageProps) => {
   const [startQuiz, setStartQuiz] = useState<boolean>(false);
-  const [passedQuiz, setPassedQuiz] = useState<boolean>(false);
 
-  const handleQuizCompletion = (didPass: boolean) => {
-    setPassedQuiz(didPass);
+
+  const handleQuizCompletion = () => {
     setStartQuiz(false);
   };
 
@@ -20,7 +22,7 @@ const TutorialPage = () => {
       question: "What do users receive in return for their contributions?",
       answers: ["Free data", "DAOit tokens", "Online certificates", "Airtime  "],
       correctAnswer: "DAOit tokens"
-    }, 
+    },
     {
       question: "What do DAOit tokens allow users to do?",
       answers: ["Buy goods in stores", "Withdraw cash", "Vote on decisions", "Send emails"],
@@ -43,14 +45,8 @@ const TutorialPage = () => {
     }
   ]
 
-  // useEffect(() => {
-  //   setPassedQuiz(true)
-  // }, [])
-  
   return (
     <div className='w-full relative'>
-      {passedQuiz ? 
-        (<AuthLanding />) :
         <div className='w-full relative pt-20 md:pt-14'>
           <FullHeader />
 
@@ -75,7 +71,7 @@ const TutorialPage = () => {
 
             <div className='flex flex-col gap-y-3 items-center justify-center w-full h-full'>
               <div className='relative w-full lg:w-[80%] h-[400px]'>
-                <iframe 
+                <iframe
                   src={`https://www.youtube.com/embed/jsKfpMRPd6c?autoplay=1&rel=0`}
                   loading="lazy"
                   className='w-full h-full'
@@ -86,23 +82,28 @@ const TutorialPage = () => {
               </div>
 
               <div className='flex items-center gap-x-5 justify-center w-full h-full mt-5'>
-                <button 
-                  type='button' 
+                <button
+                  type='button'
                   className='w-[400px] text-[#1D54E1] h-[50px] flex justify-center items-center rounded-[10px] bg-[#1D54E11A]'
                   onClick={() => setStartQuiz(true)}
                   >Start Quiz</button>
-            
+
                 {/* <button type='button' className='w-[400px] text-white h-[50px] flex justify-center items-center rounded-[10px] bg-[#1D54E1]'>Start Quiz</button> */}
               </div>
             </div>
           </main>
 
-          <QuizModal isOpen={startQuiz} onClose={() => {setStartQuiz(false)}} questions={TutorialQuestions} onQuizComplete={handleQuizCompletion} />
+          <QuizModal
+            isOpen={startQuiz}
+            onClose={() => {setStartQuiz(false)}}
+            questions={TutorialQuestions}
+            onQuizComplete={handleQuizCompletion}
+            onLoginSuccess={(action) => loggedIn?.(action)}
+          />
         </div>
-      }
     </div>
 
-    
+
   )
 }
 
