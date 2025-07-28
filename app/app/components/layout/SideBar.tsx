@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { SideBarMenu } from "../../lib/NavsAndLinks";
 import { usePathname } from "next/navigation";
-import WalletButton from "@/components/walletButton";
 import { RiSettings3Line } from "react-icons/ri";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useState } from "react";

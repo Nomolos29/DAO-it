@@ -14,7 +14,6 @@ import { signMessage } from "thirdweb/utils";
 import { useEffect } from "react";
 import { apiFetch } from "@/app/app/lib/apiFetch";
 import Message from "@/app/app/lib/Message";
-import { YourUserType } from "@/app/app/types/types";
 import { toast } from "react-toastify";
 
 const clientId =

@@ -3,7 +3,6 @@ import { useActiveAccount, useActiveWallet } from "thirdweb/react";
 import { signMessage } from "thirdweb/utils";
 import { apiFetch } from "../lib/apiFetch";
 import Message from "../lib/Message";
-import { YourUserType } from "../types/types";
 
 
 

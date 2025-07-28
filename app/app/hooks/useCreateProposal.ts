@@ -2,7 +2,6 @@ import { useActiveAccount } from "thirdweb/react";
 import {
   prepareContractCall,
   sendAndConfirmTransaction,
-  getContract,
 } from "thirdweb";
 import { daoitContract, tokenContract, PROPOSAL_DEPOSIT } from "../lib/constants";
 import { apiFetch } from "../lib/apiFetch";
@@ -22,7 +21,7 @@ export const useCreateProposal = () => {
     proposalContent,
     startDate,
     endDate,
-    destinationAddress,
+    // destinationAddress,
     walletAddress,
   }: ProposalState): Promise<void> => {
     try {

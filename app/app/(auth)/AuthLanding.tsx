@@ -1,7 +1,6 @@
 
-import Logo from "../assets/BigLogo.svg";
+
 import WalletButton from "@/components/walletButton";
-import Image from "next/image";
 import Link from "next/link";
 
 interface AuthLandingProps {
