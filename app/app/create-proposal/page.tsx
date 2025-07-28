@@ -13,15 +13,21 @@ import { Modal } from "../components";
 import { useCreateProposal } from "../hooks/useCreateProposal";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import openai from "../lib/openai";
+import { v4 as uuidv4 } from 'uuid';
 
 // Types definitions
-interface ProposalState {
+export interface ProposalState {
   id: string;
   title: string;
+  visibility: string;
+  targetLocation: string;
+  proposalContent: string;
+  proposalType: string;
   summary: string;
   startDate: string;
   endDate: string;
   walletAddress: string;
+  destinationAddress: string;
 }
 
 interface SectionData {
@@ -60,56 +66,61 @@ const PROPOSAL_SECTIONS: SectionData[] = [
 
 // Reflection questions definition
 const REFLECTION_QUESTIONS: ReflectionQuestion[] = [
-  { 
-    id: "personal", 
-    label: "Why is this proposal important to you?", 
-    placeholder: "Share your personal motivation for this proposal..." 
+  {
+    id: "personal",
+    label: "Why is this proposal important to you?",
+    placeholder: "Share your personal motivation for this proposal..."
   },
-  { 
-    id: "alignment", 
-    label: "How does this proposal align with the DAO's goals?", 
-    placeholder: "Explain how this proposal supports the DAO's mission..." 
+  {
+    id: "alignment",
+    label: "How does this proposal align with the DAO's goals?",
+    placeholder: "Explain how this proposal supports the DAO's mission..."
   },
-  { 
-    id: "experience", 
-    label: "What relevant experience do you bring to this proposal?", 
-    placeholder: "Describe any experience or expertise you have related to this topic..." 
+  {
+    id: "experience",
+    label: "What relevant experience do you bring to this proposal?",
+    placeholder: "Describe any experience or expertise you have related to this topic..."
   },
 ];
 
 // Generates a unique proposal ID
-const generateProposalId = (address: string): string => {
-  const timestamp = Date.now().toString(36);
-  const randomStr = Math.random().toString(36).substring(2, 5);
-  return `prop_${address ? address.slice(-4) : "anon"}_${timestamp}_${randomStr}`;
-};
+// const generateProposalId = (address: string): string => {
+//   const timestamp = Date.now().toString(36);
+//   const randomStr = Math.random().toString(36).substring(2, 5);
+//   return `prop_${address ? address.slice(-4) : "anon"}_${timestamp}_${randomStr}`;
+// };
 
 const CreateProposal = () => {
   const account = useActiveAccount();
   const { createProposal, isLoading: proposalLoading } = useCreateProposal();
-  
+
   // Basic form state
   const [proposal, setProposal] = useState<ProposalState>({
     id: "",
     title: "",
+    visibility: "Public",
+    targetLocation: "",
+    proposalType: "Abdoption",
+    proposalContent: "",
     summary: "",
     startDate: "",
     endDate: "",
     walletAddress: "",
+    destinationAddress: "",
   });
-  
+
   // Section content state - centralized
   const [sections, setSections] = useState<SectionsState>({});
   const [reflections, setReflections] = useState<ReflectionsState>({});
   const [activeSectionId, setActiveSectionId] = useState<string>("background");
-  
+
   // AI integration state
   const [aiContributions, setAiContributions] = useState<SectionsState>({});
   const [userModifiedSections, setUserModifiedSections] = useState<Set<string>>(new Set());
   const [completedSections, setCompletedSections] = useState<Set<string>>(new Set());
   const [isGeneratingAI, setIsGeneratingAI] = useState<boolean>(false);
   const [originalityScore, setOriginalityScore] = useState<number>(100);
-  
+
   // UI state
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
@@ -118,30 +129,32 @@ const CreateProposal = () => {
   // Sentiment analysis state
   const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-  
+
+
+
   // Set wallet address and generate proposal ID when account loads
   useEffect(() => {
     if (account) {
       setProposal(prev => ({
         ...prev,
         walletAddress: account.address,
-        id: generateProposalId(account.address)
+        id: uuidv4().toUpperCase(), // Generate a new UUID for the proposal ID
       }));
     }
   }, [account]);
-  
+
   // Calculate the proposal's originality score
   const calculateOriginalityScore = useCallback((): number => {
     const aiSectionCount = Object.keys(aiContributions).length;
     if (aiSectionCount === 0) return 100;
-    
+
     const userModifiedCount = userModifiedSections.size;
     const score = Math.round((userModifiedCount / aiSectionCount) * 100);
-    
+
     // Ensure score is at least 10, even if nothing is modified
     const finalScore = Math.max(score, 10);
     setOriginalityScore(finalScore);
-    
+
     return finalScore;
   }, [aiContributions, userModifiedSections]);
 
@@ -153,7 +166,7 @@ const CreateProposal = () => {
   // Update the completed sections set
   const updateCompletedSections = useCallback((): void => {
     const newCompletedSections = new Set<string>();
-    
+
     // Check each section - if it has meaningful content, mark it as completed
     Object.entries(sections).forEach(([sectionId, content]) => {
       // Check if content has substantial text (not just whitespace)
@@ -161,7 +174,7 @@ const CreateProposal = () => {
         newCompletedSections.add(sectionId);
       }
     });
-    
+
     setCompletedSections(newCompletedSections);
   }, [sections]);
 
@@ -169,18 +182,24 @@ const CreateProposal = () => {
   useEffect(() => {
     updateCompletedSections();
   }, [updateCompletedSections]);
-  
+
   // Handle basic form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setProposal(prev => ({ ...prev, [name]: value }));
   };
-  
+
+  // Handle select input changes
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+    setProposal(prev => ({ ...prev, [name]: value }));
+  };
+
   // Handle section content changes
   const handleSectionChange = (sectionId: string, content: string): void => {
     // Update section content
     setSections(prev => ({ ...prev, [sectionId]: content }));
-    
+
     // Check if this is a significant modification from AI content
     const aiContent = aiContributions[sectionId];
     if (aiContent && content !== aiContent) {
@@ -194,21 +213,21 @@ const CreateProposal = () => {
       }
     }
   };
-  
+
   // Handle reflection changes
   const handleReflectionChange = (questionId: string, content: string): void => {
     setReflections(prev => ({ ...prev, [questionId]: content }));
   };
-  
+
   // Generate AI content for a section
   const generateSectionContent = async (sectionId: string): Promise<string | null> => {
     if (!proposal.title) {
       toast.error("Please enter a proposal title first");
       return null;
     }
-    
+
     setIsGeneratingAI(true);
-    
+
     try {
       // Different prompts based on the section
       const sectionPrompts: Record<string, string> = {
@@ -218,29 +237,29 @@ const CreateProposal = () => {
         timeline: `Create a practical Timeline section for a proposal titled "${proposal.title}" with 3-4 major milestones and rough timeframes.`,
         impact: `Create an Impact section (2-3 paragraphs) for a proposal titled "${proposal.title}" describing expected benefits and outcomes. Include relevant statistics and examples of impact.`,
       };
-      
+
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
-          { 
-            role: "system", 
-            content: "You are a proposal writing assistant that helps create structured, professional DAO proposals. Provide only the requested section with concise, useful content. Format as plain text." 
+          {
+            role: "system",
+            content: "You are a proposal writing assistant that helps create structured, professional DAO proposals. Provide only the requested section with concise, useful content. Format as plain text."
           },
           { role: "user", content: sectionPrompts[sectionId] }
         ],
         max_tokens: 250,
         temperature: 0.7,
       });
-      
+
       const content = completion.choices[0].message.content;
-      
+
       if (content) {
         // Store AI contribution and update section content
         setAiContributions(prev => ({ ...prev, [sectionId]: content }));
         setSections(prev => ({ ...prev, [sectionId]: content }));
         return content;
       }
-      
+
       throw new Error("Failed to generate content");
     } catch (error: unknown) {
       console.error("OpenAI API error:", error);
@@ -251,95 +270,79 @@ const CreateProposal = () => {
       setIsGeneratingAI(false);
     }
   };
-  
+
   // Calculate difference percentage between two text strings
   const calculateDiffPercentage = (original: string, modified: string): number => {
     if (!original) return 100;
-    
+
     const originalWords = original.toLowerCase().split(/\s+/);
     const modifiedWords = modified.toLowerCase().split(/\s+/);
-    
-    const commonWords = originalWords.filter((word: string) => 
+
+    const commonWords = originalWords.filter((word: string) =>
       word.length > 3 && modifiedWords.includes(word)
     ).length;
-    
+
     const maxWords = Math.max(originalWords.length, modifiedWords.length);
     const differentWords = maxWords - commonWords;
-    
+
     return Math.round((differentWords / maxWords) * 100);
   };
-  
+
   // Compile the full proposal description from sections and reflections
   const compileFullProposal = (): string => {
     // Add all sections
     let fullProposal = "";
-    
+
     PROPOSAL_SECTIONS.forEach(section => {
       const content = sections[section.id];
       if (content) {
         fullProposal += `# ${section.label}\n${content}\n\n`;
       }
     });
-    
+
     // Add reflections
     fullProposal += "## Personal Reflections\n";
     REFLECTION_QUESTIONS.forEach(question => {
       const answer = reflections[question.id] || "";
       fullProposal += `**${question.label}** ${answer}\n\n`;
     });
-    
+
     return fullProposal.trim();
   };
-  
+
   // Validate the proposal before submission
   const validateProposal = (): boolean => {
     // Check basic fields
-    if (!proposal.title || !proposal.summary) {
+    if (!proposal.title || !proposal.summary || !proposal.summary) {
       toast.error("Please complete all required fields");
       return false;
     }
-    
+
     // Check required sections
     const missingSections = PROPOSAL_SECTIONS
       .filter(section => section.required && !sections[section.id])
       .map(section => section.label);
-    
+
     if (missingSections.length > 0) {
       toast.error(`Missing required sections: ${missingSections.join(", ")}`);
       return false;
     }
-    
+
     // Check reflections
     const missingReflections = REFLECTION_QUESTIONS
       .filter(question => !reflections[question.id])
       .map(question => question.label);
-    
+
     if (missingReflections.length > 0) {
       toast.error("Please complete all reflection questions");
       return false;
     }
-    
-    // Validate dates
-    // const startTimestamp = new Date(proposal.startDate).getTime();
-    // const endTimestamp = new Date(proposal.endDate).getTime();
-    // const now = Date.now();
-    
-    // if (startTimestamp < now) {
-    //   toast.error("Start date cannot be in the past");
-    //   return false;
-    // }
-    
-    // if (endTimestamp <= startTimestamp) {
-    //   toast.error("End date must be after start date");
-    //   return false;
-    // }
-    
     // Check originality score
     if (originalityScore < 40) {
       toast.error("Your proposal needs more originality. Please personalize AI-generated content");
       return false;
     }
-    
+
     return true;
   };
 
@@ -347,28 +350,37 @@ const CreateProposal = () => {
   // const currentDate = now.toISOString().slice(0, 12);
   const startDate = new Date(now.setDate(now.getDate() + 7)).toISOString().slice(0, 10);
   const endDate = new Date(now.setDate(now.getDate() + 21)).toISOString().slice(0, 10);
-  
+
   // Submit the proposal to the blockchain
   const handleSubmit = async (): Promise<void> => {
     if (!validateProposal()) return;
-    
+
     setSubmitStatus({ loading: true, error: null });
     setShowConfirmation(false);
-    
+
     try {
       // Compile full proposal
       const fullProposal = compileFullProposal();
-  
-      await createProposal(
-        proposal.title,
-        fullProposal,
-        proposal.summary,
-      );
-  
+
+      await createProposal({
+        id: proposal.id,
+        title: proposal.title,
+        summary: proposal.summary,
+        visibility: proposal.visibility,
+        targetLocation: proposal.targetLocation,
+        proposalType: proposal.proposalType,
+        proposalContent: fullProposal,
+        startDate: proposal.startDate || startDate,
+        endDate: proposal.endDate || endDate,
+        destinationAddress: proposal.destinationAddress,
+        walletAddress: proposal.walletAddress
+      });
+
       setSubmitStatus({ loading: false, error: null });
-      
+
       // Run sentiment analysis
       setIsAnalyzing(true);
+
       try {
         const analysis = await analyzeSentiment(
           proposal.id,
@@ -376,7 +388,7 @@ const CreateProposal = () => {
           proposal.summary,
           fullProposal
         );
-        
+
         setSentimentAnalysis(analysis);
         saveSentimentAnalysis(analysis);
       } catch (error) {
@@ -384,7 +396,7 @@ const CreateProposal = () => {
       } finally {
         setIsAnalyzing(false);
       }
-      
+
       setShowSuccess(true);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
@@ -393,12 +405,12 @@ const CreateProposal = () => {
     }
   };
 
-  
+
   // Styling classes
   const inputStyle = "px-4 border border-[#CECECE] rounded-[10px] outline-none bg-transparent flex items-center text-[#474747]";
   const labelStyle = "text-[#494445] text-[16px]";
   const container = "flex flex-col gap-y-2 bg-white p-[16px] rounded-[10px]";
-  
+
   return (
     <main className="w-full flex gap-x-10 px-[30px] pb-20 pt-5">
       <div className="w-[75%] flex flex-col">
@@ -431,35 +443,35 @@ const CreateProposal = () => {
           <div className={`flex justify-between items-center mb-1`}>
             <h3 className="text-[16px] text-[#474747]">Originality Score</h3>
             <span className={`font-medium ${
-              originalityScore >= 70 ? "text-green-600" : 
-              originalityScore >= 40 ? "text-yellow-600" : 
+              originalityScore >= 70 ? "text-green-600" :
+              originalityScore >= 40 ? "text-yellow-600" :
               "text-red-600"
             }`}>{originalityScore}%</span>
           </div>
-          
+
           <div className="h-2 w-full bg-gray-200 rounded-full">
-            <div 
+            <div
               className={`h-2 rounded-full transition-all duration-500 ${
-                originalityScore >= 70 ? "bg-green-500" : 
-                originalityScore >= 40 ? "bg-yellow-500" : 
+                originalityScore >= 70 ? "bg-green-500" :
+                originalityScore >= 40 ? "bg-yellow-500" :
                 "bg-red-500"
               }`}
               style={{ width: `${originalityScore}%` }}
             />
           </div>
-          
+
           {originalityScore < 40 && (
             <p className="mt-1 text-sm text-red-600">
               Your proposal has too much AI-generated content. Please personalize AI-generated content.
             </p>
           )}
-          
+
           {originalityScore >= 40 && originalityScore < 70 && (
             <p className="mt-1 text-sm text-yellow-600">
               Getting better! Continue personalizing your proposal to increase your score.
             </p>
           )}
-          
+
           {originalityScore >= 70 && (
             <p className="mt-1 text-sm text-green-600">
               Great job! Your proposal shows strong originality.
@@ -515,40 +527,51 @@ const CreateProposal = () => {
             />
           </div>
 
-          <section className="flex gap-x-5 w-full">
-            <div className={`${container} w-1/2`}>
-              <label htmlFor="proposalStatus" className={labelStyle}>
-                Proposal status
-              </label>
-              <select name="proposalStatus" id="proposalStatus" defaultValue="Select proposal status" title="Proposal status" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
+          <div className={`${container} w-full`}>
+            <label htmlFor="proposalStatus" className={labelStyle}>
+              Proposal status
+            </label>
+            <section className="flex gap-x-5 w-full">
+              <select name="proposalStatus" id="proposalStatus" defaultValue="Select proposal status" title="Proposal status" className={`${inputStyle} w-full h-[50px] pr-2 bg-transparent`} onChange={handleSelectChange}>
                 <option
-                  value={proposal.title}
+                  value="Public"
                   className={`mr-3 h-[50px]`}
                 >Public</option>
 
                 <option
-                  value={proposal.title}
+                  value="Private"
                   className={`mr-3 h-[50px]`}
                 >Private</option>
               </select>
-            </div>
-
-            <div className={`${container} w-1/2`}>
-              <label htmlFor="proposalType" className={labelStyle}>
-                Proposal type
-              </label>
-              <select name="proposalType" id="proposalType" defaultValue="Select proposal type" title="Proposal type" className={`${inputStyle} h-[50px] pr-2 bg-transparent`}>
+              <select name="proposalType" id="proposalType" defaultValue="Select proposal type" title="Proposal type" className={`${inputStyle} w-full h-[50px] pr-2 bg-transparent`} onChange={handleSelectChange}>
                 <option
-                  value={proposal.title}
+                  value="Abdoption"
                   className={`${inputStyle} h-[50px]`}
                 >Abdoption</option>
 
                 <option
-                  value={proposal.title}
+                  value="Fund Raising"
                   className={`${inputStyle} h-[50px]`}
                 >Fund Raising</option>
               </select>
-            </div>       
+            </section>
+          </div>
+
+          <section className={`transition-all duration-300 ${proposal.proposalType === "Fund Raising" ? "flex w-full" : "hidden"}`}>
+            <div className={container + " w-full"}>
+              <label htmlFor="title" className={labelStyle}>
+                Destination wallet (will only appear if it&apos;s a fundraising proposal)
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={proposal.destinationAddress}
+                onChange={handleInputChange}
+                className={`${inputStyle} h-[50px]`}
+                placeholder="Enter the destination wallet address..."
+              />
+            </div>
           </section>
 
           {/* Short Description/Summary */}
@@ -573,7 +596,7 @@ const CreateProposal = () => {
           {/* Section Builder */}
           <div className={`mb-6 rounded-lg p-4 ${container}`}>
             <h3 className="text-[18px] text-[#474747] mb-4">Proposal Builder</h3>
-            
+
             {/* Section tabs */}
             <div className="flex mb-4 overflow-x-auto pb-2">
               {PROPOSAL_SECTIONS.map(section => (
@@ -582,8 +605,8 @@ const CreateProposal = () => {
                   type="button"
                   onClick={() => setActiveSectionId(section.id)}
                   className={`px-3 py-2 rounded-md mr-2 text-sm whitespace-nowrap
-                    ${activeSectionId === section.id 
-                      ? "bg-white text-[#1D54E1] shadow-md" 
+                    ${activeSectionId === section.id
+                      ? "bg-white text-[#1D54E1] shadow-md"
                       : "bg-[#1D54E11A] text-gray-700"}
                     ${completedSections.has(section.id) ? "border-l-4 border-[#1D54E1]" : ""}
                   `}
@@ -593,7 +616,7 @@ const CreateProposal = () => {
                 </button>
               ))}
             </div>
-            
+
             {/* Active section editor */}
             {activeSectionId && (
               <div className="mb-4">
@@ -601,7 +624,7 @@ const CreateProposal = () => {
                   <h4 className="font-medium text-[#474747]">
                     {PROPOSAL_SECTIONS.find(s => s.id === activeSectionId)?.label}
                   </h4>
-                  
+
                   <button
                     type="button"
                     onClick={() => generateSectionContent(activeSectionId)}
@@ -623,14 +646,14 @@ const CreateProposal = () => {
                     )}
                   </button>
                 </div>
-                
+
                 <textarea
                   value={sections[activeSectionId] || ""}
                   onChange={(e) => handleSectionChange(activeSectionId, e.target.value)}
                   className="w-full p-3 border border-gray-300 rounded-md min-h-[200px]"
                   placeholder={`Write your ${PROPOSAL_SECTIONS.find(s => s.id === activeSectionId)?.label.toLowerCase()} content here...`}
                 />
-                
+
                 {aiContributions[activeSectionId] && !userModifiedSections.has(activeSectionId) && (
                   <div className="mt-2 p-2 bg-yellow-50 text-yellow-700 text-sm rounded flex items-start">
                     <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -657,7 +680,7 @@ const CreateProposal = () => {
               {PROPOSAL_SECTIONS.map(section => {
                 const content = sections[section.id];
                 if (!content) return null;
-                
+
                 return (
                   <div key={section.id} className="mb-4">
                     <h5 className="font-medium text-[#474747] mb-2">{section.label}</h5>
@@ -665,14 +688,14 @@ const CreateProposal = () => {
                   </div>
                 );
               })}
-              
+
               {Object.keys(reflections).length > 0 && (
                 <div className="mt-4 border-t pt-4">
                   <h5 className="font-medium text-[#474747] mb-2">Personal Reflections</h5>
                   {REFLECTION_QUESTIONS.map(question => {
                     const answer = reflections[question.id];
                     if (!answer) return null;
-                    
+
                     return (
                       <div key={question.id} className="mb-2">
                         <p className="text-sm font-medium text-gray-600">{question.label}</p>
@@ -691,12 +714,12 @@ const CreateProposal = () => {
               <h3 className="text-[18px] text-[#474747]">Personal Reflections</h3>
               <span className="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Required</span>
             </div>
-            
+
             <p className="text-gray-600 text-sm mb-4">
-              These questions require your personal input and cannot be generated with AI. 
+              These questions require your personal input and cannot be generated with AI.
               Your answers help the DAO community understand your perspective.
             </p>
-            
+
             <div className="space-y-4">
               {REFLECTION_QUESTIONS.map(question => (
                 <div className={`${container} gap-y-2`} key={question.id}>
@@ -727,7 +750,6 @@ const CreateProposal = () => {
                 name="startDate"
                 value={startDate} // Format date to YYYY-MM-DD
                 disabled
-                onChange={handleInputChange}
                 className={`px-4 border border-[#1D54E11A] rounded-[10px] outline-none flex items-center text-[#1D54E1] h-[50px] bg-[#1D54E11A] cursor-not-allowed`}
               />
             </div>
@@ -741,7 +763,6 @@ const CreateProposal = () => {
                 name="endDate"
                 value={endDate} // Format date to YYYY-MM-DD
                 disabled
-                onChange={handleInputChange}
                 className={`px-4 border border-[#1D54E11A] rounded-[10px] outline-none flex items-center text-[#1D54E1] h-[50px] bg-[#1D54E11A] cursor-not-allowed`}
               />
             </div>
@@ -794,14 +815,14 @@ const CreateProposal = () => {
               <TiTickOutline className="text-2xl text-white" />
             </div>
             <p className="text-[#474747] mt-2">Proposal posted successfully</p>
-            
+
             {isAnalyzing && (
               <div className="flex items-center gap-2 mt-4">
                 <div className="w-5 h-5 border-2 border-[#1D54E1] border-t-transparent rounded-full animate-spin"></div>
                 <span className="text-[#474747]">Analyzing sentiment...</span>
               </div>
             )}
-            
+
             {sentimentAnalysis && !isAnalyzing && (
               <div className="mt-4 text-center">
                 <p className="text-[#474747] mb-2">Sentiment Analysis Complete!</p>
@@ -814,14 +835,14 @@ const CreateProposal = () => {
                 </p>
               </div>
             )}
-            
+
             <div className="flex gap-4 mt-4">
               <Link href="/app">
                 <button className="flex bg-gradient-to-r from-[#F8B51C] to-[#FEE539] text-white items-center justify-center px-6 py-2 rounded-lg">
                   <span className="flex items-center gap-2">View Proposals</span>
                 </button>
               </Link>
-              
+
               {sentimentAnalysis && (
                 <Link href="/app/sentiment-dashboard">
                   <button className="flex bg-[#1D54E1] text-white items-center justify-center px-6 py-2 rounded-lg">
@@ -839,7 +860,7 @@ const CreateProposal = () => {
           <div className="pb-3 border-b-[1px] border-[#D5D5D5]">
             <h3 className="text-[20px] text-[#232426] font-medium">How to create a proposal</h3>
           </div>
-              
+
           <section className="p-2">
             <div className="flex flex-col gap-y-2">
               <h3 className="text-[16px] font-medium">Important notes</h3>

@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { apiFetch } from "@/app/app/lib/apiFetch";
 import Message from "@/app/app/lib/Message";
 import { YourUserType } from "@/app/app/types/types";
+import { toast } from "react-toastify";
 
 const clientId =
   process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "defaultClientId";
@@ -45,17 +46,23 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
 
   useEffect(() => {
     const loginAfterConnect = async () => {
-      if (!account) return;
+      if (!account) {
+        toast.error("Could not connect to wallet. Please try again.");
+        return;
+      }else {
+        toast.success("Wallet connected successfully!\nPlease wait to sign the message.");
+      }
 
       // if (status === "login") {
         const message = Message
         try {
+          toast.success("Logging in...");
           const signature = await signMessage({
             message,
             account,
           });
 
-          const { token, user } = await apiFetch<{ token: string; user: YourUserType }>("/Authentication/wallet-login", {
+          const response = await apiFetch("/Authentication/wallet-login", {
             method: "POST",
             body: JSON.stringify({
               walletAddress: account.address,
@@ -64,12 +71,18 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
             }),
           });
 
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(user));
+
+          // Store token and user in localStorage
+          const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
+          console.log("Login response:", accessToken, refreshToken);
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
 
           if (onConnect) onConnect("loggedIn");
+          toast.success("Glad to have you back!");
         } catch (err) {
           console.log("Login failed after wallet connection", err);
+          toast.error("Login failed. Please register to get an account.");
           if (onConnect) onConnect("register");
         }
       // } else if (status === "register") {
@@ -109,7 +122,7 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
       connectButton={{ label: "Get Started" }}
       theme={lightTheme({
         colors: {
-          primaryButtonBg: "#494949",
+          primaryButtonBg: "#1D54E1",
         },
       })}
       connectModal={{ size: "compact" }}

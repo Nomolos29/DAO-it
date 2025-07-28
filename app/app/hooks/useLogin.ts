@@ -23,8 +23,9 @@ export const useLogin = () => {
       const message = Message
       const signature = await signMessage({ account, message });
 
+      console.log("Signature:", signature);
       // 2. Call backend login endpoint
-      const { token, user } = await apiFetch<{ token: string; user: YourUserType }>("/Authentication/wallet-login", {
+      const response = await apiFetch("/Authentication/wallet-login", {
         method: "POST",
         body: JSON.stringify({
           walletAddress: account.address,
@@ -33,12 +34,14 @@ export const useLogin = () => {
         }),
       });
 
+      console.log("Login response:", response);
+
       // 3. Store auth and redirect
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      // localStorage.setItem("token", token);
+      // localStorage.setItem("user", JSON.stringify(user));
 
       // router.push("/app");
-      return { token, user };
+      return { response };
     },
     // onSuccess: () => {
     //   if (onSuccessCallback) {
