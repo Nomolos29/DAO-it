@@ -29,32 +29,32 @@ export const useCreateProposal = () => {
       if (!account) throw new Error("No wallet connected");
 
       // Step 1: Approve DAO contract to transfer PROPOSAL_DEPOSIT tokens on user's behalf
-      // const approveTx = await prepareContractCall({
-      //   contract: tokenContract,
-      //   method: "function approve(address spender, uint256 amount)",
-      //   params: [
-      //     process.env.NEXT_PUBLIC_DAO_CONTRACT_ADDRESS || "", // DAO contract needs approval
-      //     PROPOSAL_DEPOSIT,      // amount to approve
-      //   ],
-      // });
+      const approveTx = await prepareContractCall({
+        contract: tokenContract,
+        method: "function approve(address spender, uint256 amount)",
+        params: [
+          process.env.NEXT_PUBLIC_DAO_CONTRACT_ADDRESS || "", // DAO contract needs approval
+          PROPOSAL_DEPOSIT,      // amount to approve
+        ],
+      });
 
-      // await sendAndConfirmTransaction({
-      //   account,
-      //   transaction: approveTx,
-      // });
+      await sendAndConfirmTransaction({
+        account,
+        transaction: approveTx,
+      });
 
-      // // Step 2: Call propose() on DAO contract
-      // const proposalTx = await prepareContractCall({
-      //   contract: daoitContract,
-      //   method:
-      //     "function propose(string memory id, string memory title, string memory summary)",
-      //   params: [id, title, summary],
-      // });
+      // Step 2: Call propose() on DAO contract
+      const proposalTx = await prepareContractCall({
+        contract: daoitContract,
+        method:
+          "function propose(string memory id, string memory title, string memory summary)",
+        params: [id, title, summary],
+      });
 
-      // await sendAndConfirmTransaction({
-      //   account,
-      //   transaction: proposalTx,
-      // });
+      await sendAndConfirmTransaction({
+        account,
+        transaction: proposalTx,
+      });
 
        // Step 3: Prepare FormData for backend
       const formData = new FormData();
