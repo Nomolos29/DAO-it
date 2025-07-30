@@ -84,31 +84,6 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
           toast.error("Login failed. Please register to get an account.");
           if (onConnect) onConnect("register");
         }
-      // } else if (status === "register") {
-      //   try {
-      //     const message = Message
-      //     const signature = await signMessage({
-      //       message,
-      //       account,
-      //     });
-
-      //     const { token, user } = await apiFetch<{ token: string; user: YourUserType }>("/Authentication/register-wallet", {
-      //       method: "POST",
-      //       body: JSON.stringify({
-      //         walletAddress: account.address,
-      //         signature,
-      //         message,
-      //       }),
-      //     });
-
-      //     localStorage.setItem("token", token);
-      //     localStorage.setItem("user", JSON.stringify(user));
-
-      //     if (onConnect) onConnect("register");
-      //   } catch (err) {
-      //     console.log("Registration failed after wallet connection", err);
-      //   }
-      // }
     };
 
     loginAfterConnect();

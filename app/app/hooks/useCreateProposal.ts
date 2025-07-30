@@ -6,6 +6,7 @@ import {
 import { daoitContract, tokenContract, PROPOSAL_DEPOSIT } from "../lib/constants";
 import { apiFetch } from "../lib/apiFetch";
 import { ProposalState } from "../create-proposal/page";
+import { toast } from "react-toastify";
 
 export const useCreateProposal = () => {
   const account = useActiveAccount();
@@ -87,10 +88,12 @@ export const useCreateProposal = () => {
       }) as Response;
 
       if (!response.ok) {
-        const data = await response.json();
-        console.error("API Error:", data);
-        throw new Error(`API Error: ${data.message || response.statusText}`);
+        const data = await response;
+        console.error("API Error:", data.status);
+        // throw new Error(`API Error: ${data.status || response.statusText}`);
       }
+
+      toast.success("Proposal created successfully!");
 
 
     } catch (err) {

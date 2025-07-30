@@ -37,3 +37,24 @@ export async function apiFetch<T = unknown>(
   // Otherwise return plain text (e.g., token)
   return res.text() as unknown as T;
 }
+
+export async function apiFetchWithAuth<T = unknown>(
+  endpoint: string,
+  options: ApiFetchOptions = {}
+): Promise<T> {
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!accessToken || !refreshToken) {
+    throw new Error("Missing authentication tokens");
+  }
+
+  return apiFetch<T>(endpoint, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken}`,
+      "x-refresh-token": refreshToken,
+    },
+  });
+}

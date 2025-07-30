@@ -15,6 +15,23 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import openai from "../lib/openai";
 import { v4 as uuidv4 } from 'uuid';
 
+export interface ApiProposal {
+  proposalId: string;
+  proposalTitle: string;
+  proposalSummary: string;
+  proposalDetails: string;
+  proposalStatus: string;
+  privateStatus: string;
+  proposalType: string;
+  abdoptionOption: string;
+  fundRaiserOption: string;
+  imageFilePath: string[];
+  createdAt: string;
+  endDate: string;
+  reactions: string[]; // Specify proper type if reactions have structure
+  userId: string;
+}
+
 // Types definitions
 export interface ProposalState {
   id: string;
@@ -27,7 +44,7 @@ export interface ProposalState {
   startDate: string;
   endDate: string;
   walletAddress: string;
-  destinationAddress: string;
+  destinationAddress?: string;
 }
 
 interface SectionData {
@@ -99,7 +116,7 @@ const CreateProposal = () => {
     id: "",
     title: "",
     visibility: "Public",
-    targetLocation: "",
+    targetLocation: "None",
     proposalType: "Abdoption",
     proposalContent: "",
     summary: "",
@@ -583,10 +600,11 @@ const CreateProposal = () => {
               id="summary"
               name="summary"
               rows={3}
+              maxLength={950}
               value={proposal.summary}
               onChange={handleInputChange}
               className={inputStyle}
-              placeholder="Write a brief summary of your proposal (2-3 sentences)..."
+              placeholder="Write a brief summary of your proposal (1 or 2 sentences)..."
             />
             <p className="text-sm text-gray-500 mt-1">
               This should be written in your own words and will appear in proposal listings.

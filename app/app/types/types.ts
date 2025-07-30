@@ -11,7 +11,7 @@ export interface Vote {
 }
 
 export interface Proposal {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   summary: string;

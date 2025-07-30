@@ -26,7 +26,7 @@ const IntendingProposals = () => {
                 key={index}
                 id={proposal.id}
                 title={proposal.title}
-                postBy="Amarachi2944"
+                postBy={proposal.id}
                 postImage={true}
                 // postType="proposal"
                 postComments={286}
@@ -38,7 +38,6 @@ const IntendingProposals = () => {
                 postCreationDate={proposal.startDate}
                 postStartDate={proposal.startDate}
                 postEndDate={proposal.endDate}
-                postVotes={proposal.yesVotes + proposal.noVotes + proposal.abstainVotes}
               />
             ))}
           </div>
