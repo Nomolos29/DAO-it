@@ -70,6 +70,7 @@ export default function RootLayout({
                   </main>
                 ) : isConnected === "login" ? (
                   <div className="w-full">
+                    {/* <FullHeader /> */}
                     <AuthLanding onWalletConnected={(action) => setIsConnected(action)} />
                   </div>
                 ) : (<TutorialPage loggedIn={(action) => setIsConnected(action)} />)}

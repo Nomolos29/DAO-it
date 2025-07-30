@@ -15,9 +15,9 @@ export interface PostProps {
   // postType: "proposal" | "post";
   postBy?: string;
   postDetailsPage?: boolean;
-  postCreationDate: Date | number;
-  postStartDate: number;
-  postEndDate: number;
+  postCreationDate: Date | string;
+  postStartDate: Date | string;
+  postEndDate: Date | string;
   postStatus?: "active" | "pending" | "ended";
   postVotes?: number;
   postComments: number;
@@ -35,9 +35,11 @@ const Dot = () => {
 const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, postComments, postCreationDate, postDislikes, postLikes, postStatus, postDetailsPage, postStartDate, postEndDate, postImage, postVotes}) => {
 
   const currentDate = new Date();
-  const postEndDateObj = new Date(Number(postEndDate) * 1000);
-  const postCreationDateObj = new Date(Number(postCreationDate) * 1000);
-  const postStartDateObj = new Date(Number(postStartDate) * 1000);
+  const postEndDateObj = new Date(postEndDate);
+  const postCreationDateObj = new Date(postCreationDate);
+  const postStartDateObj = new Date(postStartDate);
+
+  // console.log(postCreationDate);
 
   const postCreationDateString = Math.floor((Number(currentDate) - Number(postCreationDateObj)) / (1000 * 60 * 60 * 24));
   const postValidityTime = Math.floor((Number(postEndDateObj) - Number(postStartDateObj)) / (1000 * 60 * 60 * 24));
@@ -60,7 +62,7 @@ const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, p
             </div>
           </div>
 
-           {postDetailsPage && 
+          {postDetailsPage &&
           <div className={`px-[10px] w-[84px] capitalize py-[4px] flex items-center justify-center rounded-[5px] ${postStatus === "active" ? "bg-[#8AFF8A]" : postStatus === "pending" ? "bg-[#FFD336]" : "bg-[#FF0000]"}`}>
               {postStatus}
           </div>}
@@ -84,13 +86,13 @@ const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, p
             <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BsChatFill className='text-xl text-[#1D54E1] flex items-center gap-x-2' /><span>{postComments} Comments</span></p>
 
             <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BiSolidLike className='text-xl text-green-400 flex items-center gap-x-2' /><span>{postLikes} Likes</span></p>
-            
+
             <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BiSolidDislike className='text-xl text-red-400 flex items-center gap-x-2' /><span>{postDislikes} Dislikes</span></p>
           </div>
 
           {!postDetailsPage && <div className='flex items-center gap-x-3'>
             {postVotes && <p className='flex gap-x-2 items-center text-[#5B5E65] text-md'><Dot /><span>{postVotes} {postVotes > 1 ? "votes" : "vote"}</span></p>}
-            
+
 
             <p className='flex gap-x-2 items-center text-[#5B5E65] text-md'><Dot /><span>Ends in {postValidityTime}{postValidityTime > 1 ? "days" : "day"}</span></p>
           </div>}

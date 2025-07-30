@@ -14,7 +14,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, bgBlured, bgDarkened, ch
 
   return (
     <div
-      className={`fixed inset-0 mx-40 ${bgDarkened && "bg-black/30"} ${bgBlured && "bg-black/30 backdrop-blur-[10px]"} flex justify-center items-center z-50`}
+      className={`fixed inset-0 w-screen ${bgDarkened && "bg-black/30"} ${bgBlured && "bg-black/30 backdrop-blur-[10px]"} flex justify-center items-center z-50`}
       onClick={onClose} // Close modal when clicking outside
     >
       <div

@@ -1,7 +1,6 @@
 
-import Logo from "../assets/BigLogo.svg";
+
 import WalletButton from "@/components/walletButton";
-import Image from "next/image";
 import Link from "next/link";
 
 interface AuthLandingProps {
@@ -11,30 +10,34 @@ interface AuthLandingProps {
 const AuthLanding = ({onWalletConnected}:AuthLandingProps) => {
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <main className="container w-full flex justify-between items-center gap-x-[150px] px-8">
-        <aside className="w-1/2 flex flex-col gap-y-4">
-          <Image src={Logo} alt="logo" width={1000} height={1000} className="w-full" />
+    <div className="w-full h-screen flex justify-center items-center bg-[url('/appImages/Login-bg.png')] bg-cover bg-no-repeat">
+      <main className="max-w-screen-lg w-full flex justify-center items-center bg-white rounded-[24px] py-[50px] gap-x-[150px] px-[40px]">
+        <aside className="w-2/3 flex items-center flex-col gap-y-[40px]">
+          <svg width="86" height="86" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21.836 0.251949C16.2426 1.20937 11.4891 3.64492 7.57542 7.57539C4.23284 10.918 1.89808 14.9828 0.755892 19.4844C-0.319108 23.6668 -0.251921 29.1258 0.92386 33.0898C1.39417 34.6855 2.26761 36.7852 2.45238 36.7852C2.53636 36.7852 2.88909 36.5164 3.20824 36.1805C4.09847 35.2398 6.78597 33.1402 8.38167 32.1324C12.3289 29.6297 16.8137 27.9668 21.3489 27.3117C23.6836 26.959 28.2188 26.959 30.5535 27.3117C37.1715 28.2691 43.3192 31.1918 48.2743 35.727C48.9125 36.3148 49.4836 36.7852 49.5508 36.7852C49.7188 36.7852 50.609 34.5176 51.0457 33.0059C51.9192 29.932 52.2383 25.1281 51.7512 22.1719C50.9282 17.0824 48.9293 12.7152 45.6371 8.88554C41.6731 4.2496 35.9118 1.12539 29.6129 0.184761C28.0172 -0.050396 23.4149 -0.0168037 21.836 0.251949Z" fill="#1D54E1"/>
+            <path d="M55.5977 0.319256C53.0109 0.789566 49.2148 2.04933 49.2148 2.45246C49.2148 2.53644 49.4836 2.88918 49.8195 3.20832C50.7602 4.09855 52.8598 6.78605 53.8676 8.38176C56.3703 12.329 58.0332 16.8138 58.6883 21.3489C59.041 23.6837 59.041 28.2189 58.6883 30.5536C57.7309 37.1716 54.8082 43.3193 50.273 48.2743C49.6852 48.9126 49.2148 49.4837 49.2148 49.5509C49.2148 49.7189 51.4824 50.6091 52.9941 51.0458C56.068 51.9193 60.8719 52.2384 63.8281 51.7513C68.9176 50.9282 73.2848 48.9294 77.1145 45.6372C81.7504 41.6732 84.8746 35.9118 85.8152 29.613C86.2352 26.8415 85.9832 22.3735 85.2441 19.4845C82.9262 10.3638 75.6363 3.07394 66.5156 0.755974C63.341 -0.0502777 58.7051 -0.235043 55.5977 0.319256Z" fill="#1D54E1"/>
+            <path d="M24.2715 34.0303C18.1239 34.6014 13.3032 36.5834 8.88559 40.3627C4.24965 44.3268 1.12543 50.0881 0.184809 56.387C-0.235113 59.1584 0.01684 63.6264 0.755902 66.5155C3.07387 75.6362 10.3637 82.926 19.4844 85.244C23.6668 86.319 29.1258 86.2518 33.0899 85.076C34.6856 84.6057 36.7852 83.7323 36.7852 83.5475C36.7852 83.4635 36.5164 83.1108 36.1805 82.7916C35.2399 81.9014 33.1403 79.2139 32.1325 77.6182C29.6297 73.6709 27.9668 69.1862 27.3118 64.651C26.959 62.3163 26.959 57.7811 27.3118 55.4463C28.2692 48.8284 31.1918 42.6807 35.727 37.7256C36.3149 37.0874 36.7852 36.5163 36.7852 36.4491C36.7852 36.2811 34.5176 35.3909 33.0059 34.9542C30.6375 34.2823 26.4215 33.8288 24.2715 34.0303Z" fill="#1D54E1"/>
+            <path d="M35.811 50.5082C34.5512 53.6828 34.0641 56.3703 34.0473 59.9648C34.0305 62.6691 34.2153 64.1472 34.7864 66.4316C35.811 70.4125 37.6418 73.923 40.3629 77.1144C44.327 81.7503 50.0883 84.8746 56.3871 85.8152C59.1586 86.2351 63.6266 85.9832 66.5157 85.2441C75.6364 82.9261 82.9262 75.6363 85.2442 66.5156C86.3192 62.3332 86.252 56.8742 85.0762 52.9101C84.6059 51.3144 83.7325 49.2148 83.5477 49.2148C83.4637 49.2148 83.111 49.4836 82.7918 49.8195C81.9016 50.7601 79.2141 52.8597 77.6184 53.8675C73.6711 56.3703 69.1864 58.0332 64.6512 58.6882C62.3164 59.041 57.7813 59.041 55.4465 58.6882C48.8286 57.7308 42.6809 54.8082 37.7258 50.273C37.0875 49.6851 36.5164 49.2148 36.4493 49.2148C36.3821 49.2148 36.0797 49.8027 35.811 50.5082Z" fill="#1D54E1"/>
+          </svg>
 
-          <p className="text-center text-[16px] text-[#494445] font-medium px-5">
-            Take power to shape your school&apos;s future. Join the
-            teacher-student-led movement for future-ready learning
-          </p>
-        </aside>
+          <div className="flex flex-col items-center justify-center text-center w-full">
+            <h1 className="text-[48px] font-semibold">Get Started With <span className="text-[#1D54E1]">Daoit</span></h1>
 
-        <aside className="w-1/2 flex flex-col gap-y-8 px-10">
-          <h3 className="text-[36px] text-black">Join Us Today</h3>
+            <div className="flex flex-col items-center justify-center gap-y-3">
+              <p className="text-center text-[16px] text-[#999CA3] font-medium px-5">
+                Discover a platform designed to empower you to learn, contribute, and grow in a thriving educational ecosystem.
+              </p>
+
+              <WalletButton onConnect={(action) => onWalletConnected?.(action)} />
+            </div>
+          </div>
 
           <div className="flex flex-col gap-y-5">
-            {/* Pass props to WalletButton to listen for wallet connection */}
-            <WalletButton onConnect={(action) => onWalletConnected?.(action)} />
-
             <p className="text-[#474747]">
-              By signing up, you agree to the{" "}
+              Not a member yet? Start your learning adventure {" "}
               <Link href="/terms-and-conditions">
-                <span className="text-[#F8B51C]">Terms of Service</span>
-              </Link>{" "}
-              and <span className="text-[#F8B51C]">Privacy Policy</span>
+                <span className="text-[#1D54E1] underline">here.</span>
+              </Link>
             </p>
           </div>
         </aside>

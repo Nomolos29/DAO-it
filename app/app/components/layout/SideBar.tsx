@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { SideBarMenu } from "../../lib/NavsAndLinks";
 import { usePathname } from "next/navigation";
-import WalletButton from "@/components/walletButton";
 import { RiSettings3Line } from "react-icons/ri";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useState } from "react";
@@ -24,7 +23,7 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
     if(wallet && wallet.id) {
        disconnect(wallet);
     }
-   
+
   };
 
   return (
@@ -67,13 +66,13 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
             ))}
           </div>
         </div>
-        
+
         <div className={`flex flex-col gap-y-3 bg-white w-full overflow-hidden z-10 absolute bottom-0 left-0 ${showProfileMenu ? "translate-y-0" : "translate-y-[60%]"} transition-all duration-500`}>
           <div className="flex w-full justify-end">
             <IoIosArrowDropdownCircle className={`text-3xl text-[#1D54E15A] hover:text-[#1D54E1] cursor-pointer transition-all duration-500 ${showProfileMenu ? "rotate-0" : "rotate-[180deg]"}`} onClick={() => setShowProfileMenu(!showProfileMenu)} />
           </div>
           <main className="flex flex-col gap-y-3 border-t border-[#EDEDED] pt-3">
-            <WalletButton />
+            {/* <WalletButton /> */}
 
             <div className="flex flex-col gap-y-3">
               <Link href="#">

@@ -1,74 +1,68 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useReadContract } from "thirdweb/react";
-import { daoitContract } from "../lib/constants";
-import { resolveMethod } from "thirdweb";
+import { useEffect, useState } from "react";
+import { ApiProposal, ProposalState } from "../create-proposal/page";
+import { apiFetchWithAuth } from "../lib/apiFetch";
 
-export interface Proposal {
-  id: number | string;
-  title: string;
-  description: string;
-  summary: string;
-  startDate: number; // Timestamp when voting starts
-  endDate: number; // Timestamp when voting ends
-  yesVotes: number; // Total votes for Yes
-  noVotes: number; // Total votes for No
-  abstainVotes: number; // Total votes for Abstain
-}
+export const useGetAllProposals = () => {
+  const [proposals, setProposals] = useState<ProposalState[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-export function useGetAllProposals() {
-  console.log("Initializing useAllProposals hook");
-  console.log("daoitContract:", daoitContract);
+  useEffect(() => {
+    const fetchProposals = async () => {
+      try {
+        setIsLoading(true);
 
-  const { data, isLoading, error } = useReadContract({
-    contract: daoitContract,
-    // @ts-ignore: Ignore type error for this line
-    method: resolveMethod("getAllProposals"), // DO NOT EDIT THIS
-  });
-
-  console.log("Contract read state:", {
-    data: data,
-    isLoading: isLoading,
-    error: error ? error.toString() : "null",
-  });
-
-  const proposals: Proposal[] = [];
-
-  if (data) {
-    console.log("Raw data from contract:", data);
-    try {
-      if (Array.isArray(data)) {
-        data.forEach((item, index) => {
-          console.log(`Processing item ${index}:`, item);
-
-          const proposal: Proposal = {
-            id: Number(item.id || 0),
-            title: item.title || "",
-            description: item.description || "",
-            summary: item.summary || "",
-            startDate: Number(item.startDate || 0),
-            endDate: Number(item.endDate || 0),
-            yesVotes: Number(item.yesVotes || 0),
-            noVotes: Number(item.noVotes || 0),
-            abstainVotes: Number(item.abstainVotes || 0),
-          };
-
-          proposals.push(proposal);
+        // Make the API call
+        const result = await apiFetchWithAuth("/Proposal/GetAllProposals", {
+          method: "GET",
         });
-      } else {
-        console.error("Contract data is not an array:", data);
+
+        // Handle case where apiFetchWithAuth already parses JSON
+        if (Array.isArray(result)) {
+          const transformed = result.map(transformProposal);
+          setProposals(transformed);
+          setIsLoading(false);
+          return;
+        }
+
+        // Handle case where we get a Response object
+        if (result instanceof Response) {
+          if (!result.ok) {
+            throw new Error(`HTTP error! status: ${result.status}`);
+          }
+          const data: ApiProposal[] = await result.json();
+          const transformed = data.map(transformProposal);
+          setProposals(transformed);
+          setIsLoading(false);
+          return;
+        }
+
+        throw new Error('Unexpected response format');
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error(String(err)));
+        setIsLoading(false);
       }
-    } catch (transformError) {
-      console.error("Error transforming proposal data:", transformError);
-    }
-  }
+    };
 
-  proposals.reverse();
+    fetchProposals();
+  }, []);
 
-  console.log("Transformed proposals:", proposals);
+  return { proposals, isLoading, error };
+};
 
+// Transformation function
+function transformProposal(apiProposal: ApiProposal): ProposalState {
   return {
-    proposals,
-    isLoading,
-    error,
+    id: apiProposal.proposalId,
+    title: apiProposal.proposalTitle,
+    summary: apiProposal.proposalSummary,
+    proposalContent: apiProposal.proposalDetails,
+    visibility: apiProposal.proposalStatus,
+    proposalType: apiProposal.proposalType,
+    startDate: apiProposal.createdAt,
+    endDate: apiProposal.endDate,
+    walletAddress: apiProposal.userId,
+    targetLocation: apiProposal.privateStatus
+    // Map any additional fields here
   };
 }
