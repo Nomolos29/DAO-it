@@ -46,7 +46,7 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
   useEffect(() => {
     const loginAfterConnect = async () => {
       if (!account) {
-        toast.error("Could not connect to wallet. Please try again.");
+        toast.info("Please connect your wallet..");
         return;
       }else {
         toast.success("Wallet connected successfully!\nPlease wait to sign the message.");
@@ -55,11 +55,12 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
       // if (status === "login") {
         const message = Message
         try {
-          toast.success("Logging in...");
           const signature = await signMessage({
             message,
             account,
           });
+
+          toast.success("Logging in...");
 
           const response = await apiFetch("/Authentication/wallet-login", {
             method: "POST",

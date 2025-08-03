@@ -33,11 +33,12 @@ export const useLogin = () => {
         }),
       });
 
-      console.log("Login response:", response);
+      // console.log("Login response:", response);
 
-      // 3. Store auth and redirect
-      // localStorage.setItem("token", token);
-      // localStorage.setItem("user", JSON.stringify(user));
+      const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
+      console.log("Login response:", accessToken, refreshToken);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
       // router.push("/app");
       return { response };

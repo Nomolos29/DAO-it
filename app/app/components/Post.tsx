@@ -27,7 +27,7 @@ export interface PostProps {
 
 const Dot = () => {
   return (
-    <div className='h-[3px] w-[3px] rounded-full bg-[#C1B6B6]'></div>
+    <span className='h-[3px] w-[3px] rounded-full bg-[#C1B6B6]'></span>
   )
 }
 

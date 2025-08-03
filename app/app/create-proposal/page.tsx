@@ -414,6 +414,7 @@ const CreateProposal = () => {
         setIsAnalyzing(false);
       }
 
+      
       setShowSuccess(true);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
@@ -600,7 +601,8 @@ const CreateProposal = () => {
               id="summary"
               name="summary"
               rows={3}
-              maxLength={950}
+              maxLength={2000}
+              minLength={850}
               value={proposal.summary}
               onChange={handleInputChange}
               className={inputStyle}
