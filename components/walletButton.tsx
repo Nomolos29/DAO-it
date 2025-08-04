@@ -74,14 +74,14 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
 
           // Store token and user in localStorage
           const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
-          console.log("Login response:", accessToken, refreshToken);
+
+
           localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("refreshToken", refreshToken);
 
           if (onConnect) onConnect("loggedIn");
           toast.success("Glad to have you back!");
         } catch (err) {
-          console.log("Login failed after wallet connection", err);
           toast.error("Login failed. Please register to get an account.");
           if (onConnect) onConnect("register");
         }

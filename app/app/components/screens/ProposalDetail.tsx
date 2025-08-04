@@ -1,4 +1,5 @@
 
+import ReactMarkdown from 'react-markdown';
 
 interface ProposalDetailProps {
   fullDescription: string;
@@ -6,6 +7,7 @@ interface ProposalDetailProps {
   noVotes: number;
   abstainVotes: number;
 }
+
 
 const ProposalDetail: React.FC<ProposalDetailProps> = ({
   yesVotes,
@@ -15,9 +17,10 @@ const ProposalDetail: React.FC<ProposalDetailProps> = ({
 }) => {
   // const [status, setStatus] = useState("Active")
 
+
   const status: string = "Active";
   return (
-    
+
       <main className="flex h-full flex-col gap-y-3">
         <div className="flex flex-col gap-y-3 w-full h-full p-1">
 
@@ -81,12 +84,12 @@ const ProposalDetail: React.FC<ProposalDetailProps> = ({
 
           {/* Proposal Details Section */}
           <section className="bg-[#F8F8F8] rounded-[10px] p-[20px]">
-            <h3>Details</h3>
-            <p className="mt-3 text-[#777777]">{fullDescription}</p>
+            <h3 className='text-2xl font-semibold mb-5'>Full Proposal Details</h3>
+            <ReactMarkdown>{fullDescription}</ReactMarkdown>
           </section>
         </div>
       </main>
-    
+
   );
 };
 

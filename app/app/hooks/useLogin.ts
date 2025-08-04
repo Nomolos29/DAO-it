@@ -10,7 +10,6 @@ export const useLogin = () => {
   const account = useActiveAccount();
   const wallet = useActiveWallet();
 
-  console.log("Please connect your wallet to login");
 
   return useMutation({
     mutationFn: async () => {
@@ -33,20 +32,15 @@ export const useLogin = () => {
         }),
       });
 
-      // console.log("Login response:", response);
 
       const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
-      console.log("Login response:", accessToken, refreshToken);
+
+
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
       // router.push("/app");
       return { response };
-    },
-    // onSuccess: () => {
-    //   if (onSuccessCallback) {
-    //     onSuccessCallback(); // 👈 Automatically notify login success
-    //   }
-    // },
+    }
   });
 };

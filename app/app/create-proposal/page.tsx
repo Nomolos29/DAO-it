@@ -279,7 +279,7 @@ const CreateProposal = () => {
 
       throw new Error("Failed to generate content");
     } catch (error: unknown) {
-      console.error("OpenAI API error:", error);
+      toast.error(`OpenAI API error:, ${error}`);
       const errorMessage = error instanceof Error ? error.message : "Failed to generate section content";
       toast.error(errorMessage);
       return null;
@@ -409,7 +409,7 @@ const CreateProposal = () => {
         setSentimentAnalysis(analysis);
         saveSentimentAnalysis(analysis);
       } catch (error) {
-        console.error('Sentiment analysis failed:', error);
+        toast.error(`Sentiment analysis failed: ${error}`);
       } finally {
         setIsAnalyzing(false);
       }
