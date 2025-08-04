@@ -9,7 +9,7 @@ const HeroSection = () => {
       <Header />
       {/* <div className="absolute inset-0 bg-header-pattern bg-no-repeat bg-left-top transform scale-x-[-1] bg-[length:150%]"></div> */}
       <main className="flex flex-col-reverse md:flex-row items-center text-center md:text-left justify-between max-w-screen-2xl w-full py-10 md:px-10 md:pb-36 md:pt-20">
-        <section className="flex justify-center gap-y-7 flex-col w-[calc(100vw-30px)] md:w-1/2">
+        <section className="flex justify-center gap-y-7 flex-col w-[calc(100vw-30px)] md:w-1/2 z-[1]">
           <h1 className="text-3xl md:text-5xl font-bold text-[#102325]">
             <span className="text-[#1D54E1]">Building</span> a Collaborative Learning Community through Open & Inclusive Decision-Making
           </h1>
@@ -20,7 +20,7 @@ const HeroSection = () => {
           {/* <WalletButton /> */}
         </section>
 
-        <div className="w-[90%] md:w-[40%] relative">
+        <div className="w-[90%] md:w-[40%] relative z-[1]">
           <img src="/LandingPage/heroImageNew.png" alt="Hero Image" width={0} height={0} className="w-full" />
 
           <div>

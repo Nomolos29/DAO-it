@@ -5,7 +5,7 @@ import { GiPartyPopper } from 'react-icons/gi';
 
 export interface VoteModalProps {
     title: string;
-    proposalID: number;
+    proposalID: number | string;
 }
 
 type VoteStatus = (voted: boolean) => void;
@@ -82,7 +82,7 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
 
             <p>Please make sure you&apos;ve reviewed the proposal details before continuing.</p>
           </div>
-          
+
           <div className="flex flex-col w-full gap-y-3">
             <button
               type='button'
@@ -110,7 +110,7 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
 
           <p className='text-[#5B5E65]'>Your vote has been recorded and added to the proposal. Thanks for participating in shaping the future of the DAO!</p>
 
-          <button 
+          <button
             type='button'
             className="bg-[#1D54E1] text-white w-full px-4 py-[15px] rounded-[10px]"
             onClick={handleCloseAllModals}

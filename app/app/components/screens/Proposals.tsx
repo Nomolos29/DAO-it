@@ -12,7 +12,6 @@ const ProposalsHome = () => {
     return <div>Loading proposals...</div>;
   }
 
-  if (!isLoading) {console.log("this is the proposals: ", proposals);}
 
   if (!proposals || proposals.length === 0) {
     return <div>No proposals found.</div>;

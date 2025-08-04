@@ -10,7 +10,6 @@ export const useLogin = () => {
   const account = useActiveAccount();
   const wallet = useActiveWallet();
 
-  console.log("Please connect your wallet to login");
 
   return useMutation({
     mutationFn: async () => {
@@ -33,19 +32,15 @@ export const useLogin = () => {
         }),
       });
 
-      console.log("Login response:", response);
 
-      // 3. Store auth and redirect
-      // localStorage.setItem("token", token);
-      // localStorage.setItem("user", JSON.stringify(user));
+      const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
+
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
       // router.push("/app");
       return { response };
-    },
-    // onSuccess: () => {
-    //   if (onSuccessCallback) {
-    //     onSuccessCallback(); // 👈 Automatically notify login success
-    //   }
-    // },
+    }
   });
 };

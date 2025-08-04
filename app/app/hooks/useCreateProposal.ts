@@ -29,7 +29,7 @@ export const useCreateProposal = () => {
       if (!account) throw new Error("No wallet connected");
 
       // Step 1: Approve DAO contract to transfer PROPOSAL_DEPOSIT tokens on user's behalf
-      const approveTx = await prepareContractCall({
+      const approveTx = prepareContractCall({
         contract: tokenContract,
         method: "function approve(address spender, uint256 amount)",
         params: [

@@ -25,7 +25,7 @@ const WhatMakesUniqueContent = [
 
 const WhatMakesDaoitUnique = () => {
   return (
-    <section className='flex justify-center w-full bg-[url(/LandingPage/what-makes-daoit-unique/what-makes-it-unique.png)] bg-contain bg-left-top bg-no-repeat px-4 md:px-10 pt-[22%] pb-[15%]'>
+    <section className='flex justify-center w-full bg-[url(/LandingPage/what-makes-daoit-unique/what-makes-it-unique.png)] bg-center bg-contain bg-no-repeat px-5 md:px-10 pt-[22%] pb-[15%]'>
         <main className='flex flex-col max-w-screen-2xl w-full border-[4px] bg-gradient-to-tr from-white/10 to-white/20 border-white rounded-[18px] p-[36px] gap-y-10'>
             <h2 className='text-[24px] font-medium'>What Makes <span className='text-[#003CB1]'>DAOit</span> Unique?</h2>
 
