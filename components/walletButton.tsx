@@ -82,7 +82,7 @@ const WalletButton = ({ onConnect }: WalletButtonProps) => {
           if (onConnect) onConnect("loggedIn");
           toast.success("Glad to have you back!");
         } catch (err) {
-          toast.error("Login failed. Please register to get an account.");
+          toast.error(`Login failed. Please register to get an account. ${err}`);
           if (onConnect) onConnect("register");
         }
     };
