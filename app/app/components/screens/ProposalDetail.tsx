@@ -16,7 +16,7 @@ const ProposalDetail: React.FC<ProposalDetailProps> = ({
   fullDescription
 }) => {
   // const [status, setStatus] = useState("Active")
-
+  console.log("Proposal Details:", fullDescription);
 
   const status: string = "Active";
   return (

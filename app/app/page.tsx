@@ -2,7 +2,7 @@
 
 
 import React, { useState } from 'react'
-import { HomeNavTab } from "./lib/NavsAndLinks" 
+import { HomeNavTab } from "./lib/NavsAndLinks"
 import { ProposalsHome, IntendingProposals, CommunityPost, CommunityList } from './components'
 import Link from 'next/link'
 
@@ -15,8 +15,8 @@ const MainApp = () => {
       <section className='flex flex-col items-center bg-white px-[15px] rounded-[10px] overflow-hidden w-[calc(100%-370px)]'>
         <nav className='w-full flex justify-between static bg-white z-20 py-[15px] border-b-[1px] border-[#D5D5D5] mb-1'>
           {HomeNavTab.map((tab, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               onClick={() => setActiveScreen(tab)}
               className={`text-lg text-[#ABABAB] transition-colors duration-200 rounded-xl px-2 text-center w-[calc(100%/3-15px)] py-3 ${
                   activeScreen === tab
@@ -51,8 +51,8 @@ const MainApp = () => {
           </Link>
         </div>}
 
-        <article className='w-full flex justify-center relative items-center h-[calc(100vh-220px)] overflow-auto scrollbar-hide'>
-          {activeScreen === "Proposals" ? <ProposalsHome /> 
+        <article className='w-full flex justify-center relative items-center h-[calc(100vh-220px)] overflow-auto scrollbar-hide pb-5'>
+          {activeScreen === "Proposals" ? <ProposalsHome />
           : activeScreen === "Intending Proposals" ? <IntendingProposals />
           : activeScreen === "Community Post" && <CommunityPost />}
         </article>

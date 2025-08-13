@@ -5,6 +5,7 @@ import postPic from "@/public/appImages/postImage.png"
 import Link from 'next/link';
 import { BsChatFill } from 'react-icons/bs';
 import { BiSolidDislike, BiSolidLike } from 'react-icons/bi';
+import Dot from './Dot';
 
 export interface PostProps {
   id: number | string;
@@ -25,11 +26,7 @@ export interface PostProps {
   postDislikes: number;
 }
 
-const Dot = () => {
-  return (
-    <span className='h-[3px] w-[3px] rounded-full bg-[#C1B6B6]'></span>
-  )
-}
+
 
 
 const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, postComments, postCreationDate, postDislikes, postLikes, postStatus, postDetailsPage, postStartDate, postEndDate, postImage, postVotes}) => {
@@ -83,7 +80,7 @@ const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, p
 
         <section className='flex justify-between items-center'>
           <div className='flex items-center gap-x-3'>
-            <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BsChatFill className='text-xl text-[#1D54E1] flex items-center gap-x-2' /><span>{postComments} Comments</span></p>
+            <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BsChatFill className='text-xl text-[#1D54E1] flex items-center gap-x-2' /><span>{postComments} {!(postComments > 1) ? "Comment" : "Comments"}</span></p>
 
             <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BiSolidLike className='text-xl text-green-400 flex items-center gap-x-2' /><span>{postLikes} Likes</span></p>
 
