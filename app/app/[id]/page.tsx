@@ -10,6 +10,7 @@ import { ProposalComments, ProposalDetail } from "../components";
 import CurrentResults from "../components/CurrentResults";
 import { fetchProposalById } from "../hooks/useGetProposal";
 import { ApiProposal } from "../create-proposal/page";
+import { PostCommentModalProps } from "../types/types";
 
 
 
@@ -22,13 +23,15 @@ const Proposals = () => {
 
 
     type ProposalStatus = {
-      proposalData: ApiProposal | null; // Replace 'any' with the actual type if known
+      proposalData: ApiProposal | null;
+      proposalComments: PostCommentModalProps | null; // Replace 'any' with the actual type if known
       isLoading: boolean;
       error: Error | null;
     };
 
     const [proposalStatus, setProposalStatus] = useState<ProposalStatus>({
       proposalData: null,
+      proposalComments: null,
       isLoading: true,
       error: null,
     });
@@ -36,17 +39,25 @@ const Proposals = () => {
     useEffect(() => {
       if (!id) return;
 
-      setProposalStatus({ proposalData: null, isLoading: true, error: null });
+      setProposalStatus({ proposalData: null, proposalComments: null, isLoading: true, error: null });
 
       fetchProposalById(id.toString())
-        .then(({ proposalData, error }) => {
+        .then(({ proposalData, proposalComments, error }) => {
           setProposalStatus({
             proposalData,
+            proposalComments,
             isLoading: false,
             error,
           });
         });
     }, [id]);
+
+    useEffect(() => {
+      if (proposalStatus.proposalData) {
+        // eslint-disable-next-line no-console
+        // console.log("Proposal Details:", proposalStatus.proposalData.proposalDetails);
+      }
+    }, [proposalStatus.proposalData, proposalStatus.proposalComments]);
 
     const { proposalData, isLoading, error } = proposalStatus;
 
@@ -62,7 +73,7 @@ const Proposals = () => {
           </button>
         </Link>
 
-        <article className="w-full flex flex-col gap-x-3 relative h-[calc(100vh-180px)]">
+        <article className="w-full flex flex-col gap-x-3 relative h-[calc(100vh-190px)]">
 
           <nav className="w-full flex justify-between mb-4">
             {ProposalDetailsNav.map((tab, index) => (
@@ -95,7 +106,7 @@ const Proposals = () => {
                 postStartDate={proposalData.createdAt}
                 profilePic={true}
                 postStatus="active"
-                postComments={286}
+                postComments={Array.isArray(proposalStatus.proposalComments) ? proposalStatus.proposalComments.length : 0}
                 postDislikes={20}
                 postLikes={100}
                 postEndDate={proposalData.endDate}
@@ -108,8 +119,13 @@ const Proposals = () => {
                   noVotes={0}
                   abstainVotes={0}
                 />
-              ) : (
-                activeScreen === "Comments" && <ProposalComments />
+              ) :
+              (
+                activeScreen === "Comments" &&
+                <ProposalComments
+                  comments={Array.isArray(proposalStatus.proposalComments) ? proposalStatus.proposalComments : []}
+                  proposalId={proposalData.proposalId.toString()}
+                />
               )}
             </div>)
           }
@@ -117,9 +133,10 @@ const Proposals = () => {
       </section>
 
       <aside className="flex col-span-2 justify-end pl-4 overflow-auto h-[calc(100vh-80px)] px-3 w-[380px] scrollbar-hide">
-      {isLoading ? <div className="mt-3 w-full p-3 bg-white h-fit px-3 rounded-[10px]">Loading proposal vote details...</div> :
+      {isLoading ?
+        <div className="mt-3 w-full p-3 bg-white h-fit px-3 rounded-[10px]">Loading proposal vote details...</div> :
             error ? <div className="mt-3 w-full p-3 bg-red-400 h-fit px-3 rounded-[10px]">Error loading proposal vote details: {error.message}</div> :
-            !proposalData ? <div className="mt-3 w-full p-3 bg-yellow-200 px-3 h-fit rounded-[10px]">Cannot query undefined, try a valid proposal</div> : <CurrentResults title={proposalData.proposalTitle} proposalID={proposalData.proposalId} yesVotes={0} noVotes={0} abstainVotes={0} totalVotes={0 + 0 + 0} />}
+            !proposalData ? <div className="mt-3 w-full p-3 bg-yellow-200 px-3 h-fit rounded-[10px] overflow-y-auto">Cannot query undefined, try a valid proposal</div> : <CurrentResults title={proposalData.proposalTitle} proposalID={proposalData.proposalId} yesVotes={0} noVotes={0} abstainVotes={0} totalVotes={0 + 0 + 0} />}
       </aside>
     </main>
   );

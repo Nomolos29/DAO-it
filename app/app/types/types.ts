@@ -10,6 +10,36 @@ export interface Vote {
   tokensLocked: bigint;
 }
 
+export interface CommentProps {
+  postID: number | string;
+  username: string;
+  profilePic?: string;
+  comment: string;
+  postBy?: string;
+  postDetailsPage?: boolean;
+  commentCreationDate: Date | number;
+  postStatus?: "active" | "pending" | "ended";
+  postVotes?: number;
+  postComments: number;
+  commentLikes: number;
+  commentDislikes: number;
+}
+
+export interface ProposalCommentsProps extends PostCommentProps {
+  comments: PostCommentModalProps[];
+}
+
+export interface PostCommentProps {
+  proposalId: number | string;
+}
+
+export interface PostCommentModalProps extends PostCommentProps {
+  commentId: number | string,
+  commentText: null,
+  createdAt: Date,
+  userId: number | string,
+}
+
 export interface Proposal {
   id: number | string;
   title: string;
