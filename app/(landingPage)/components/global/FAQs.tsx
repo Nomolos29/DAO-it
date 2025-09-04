@@ -55,12 +55,12 @@ const FAQs = () => {
 
   return (
     <section className="w-full flex justify-center bg-[url('/LandingPage/FaqBg.svg')] bg-fixed bg-cover bg-top">
-      <div className="px-10 max-w-screen-2xl w-full max-h-[500px] flex gap-x-20 justify-between bg-transparent py-16">
-        <div className="flex flex-col items-start w-2/6">
-          <p className="text-[30px] text-[#002887] font-medium">Got Questions?</p>
-          <h2 className="text-[36px] font-semibold mb-6">We got answers</h2>
+      <div className="px-4 sm:px-6 md:px-10 max-w-screen-2xl w-full max-h-[600px] md:max-h-[500px] flex flex-col md:flex-row gap-6 md:gap-x-20 justify-between bg-transparent py-8 md:py-16">
+        <div className="flex flex-col items-center md:items-start w-full md:w-2/6">
+          <p className="text-2xl md:text-[30px] text-[#002887] font-medium">Got Questions?</p>
+          <h2 className="text-3xl md:text-[36px] font-semibold mb-4 md:mb-6">We got answers</h2>
         </div>
-        <div className="flex flex-col gap-y-4 w-full px-5 transition-all overflow-y-scroll duration-500">
+        <div className="flex flex-col gap-y-4 w-full px-2 md:px-5 transition-all overflow-y-scroll duration-500">
           {faqs.map((faq, index) => (
             <div
               key={index}
@@ -69,19 +69,19 @@ const FAQs = () => {
                 activeIndex === index ? "bg-blue-800 text-white" : "bg-gray-100 text-black"
               }`}
             >
-              <div className="flex justify-between items-center px-6 h-20">
-                <p className="text-xl font-medium">{faq.question}</p>
-                <span>{activeIndex === index ? "-" : "+"}</span>
+              <div className="flex justify-between items-center px-4 md:px-6 h-16 md:h-20">
+                <p className="text-base md:text-xl font-medium">{faq.question}</p>
+                <span className="text-xl">{activeIndex === index ? "-" : "+"}</span>
               </div>
 
               <div
-                className={`px-6 transition-all duration-300 ease-in-out overflow-hidden ${
+                className={`px-4 md:px-6 transition-all duration-300 ease-in-out overflow-hidden ${
                   activeIndex === index
-                    ? "max-h-[200px] opacity-100 py-5"
+                    ? "max-h-[200px] opacity-100 py-3 md:py-5"
                     : "max-h-0 opacity-0 py-0"
                 }`}
               >
-                <p className="text-base">{faq.answer}</p>
+                <p className="text-sm md:text-base">{faq.answer}</p>
               </div>
             </div>
           ))}

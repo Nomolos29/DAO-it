@@ -40,19 +40,19 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="pt-16 pb-4 bg-[#003CB1] bg-[url(/LandingPage/FooterBg.png)] bg-fit bg-no-repeat bg-center text-white">
-      <div className="flex flex-col max-w-screen-2xl w-full gap-8 px-4 mx-auto  md:flex-row lg:px-10">
-        <div className="md:w-[55%]">
+    <footer className="pt-10 md:pt-16 pb-4 bg-[#003CB1] bg-[url(/LandingPage/FooterBg.png)] bg-fit bg-no-repeat bg-center text-white">
+      <div className="flex flex-col max-w-screen-2xl w-full gap-8 px-4 mx-auto md:flex-row lg:px-10">
+        <div className="w-full md:w-[55%]">
           {/* <Link href="/">
-            <img src={logo} alt="logo" width={0} height={0} className="w-[50%]" />
+            <img src={logo} alt="logo" width={0} height={0} className="w-[50%] md:w-[50%]" />
           </Link> */}
-          <p className="max-w-md mb-4 text-sm">
+          <p className="max-w-md mb-4 text-sm sm:text-base">
             DAOit is a decentralized governance platform designed for
             educational institutions, leveraging blockchain technology to
             facilitate democratic decision-making, financial inclusion, and
             collaborative learning.
           </p>
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 mb-6 md:mb-0">
             {socialIcons.map(({ icon: Icon, label, path }) => (
               <a
                 key={label}
@@ -60,7 +60,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="text-xl hover:text-black"
+                className="text-xl sm:text-2xl hover:text-black"
               >
                 <Icon />
               </a>
@@ -68,16 +68,16 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8 md:flex-row md:gap-20 md:w-[45%]">
+        <div className="flex flex-wrap gap-8 sm:gap-10 md:flex-row md:gap-6 lg:gap-20 w-full md:w-[45%]">
           {sections.map((section) => (
-            <div key={section.title} className="flex-1">
-              <h3 className="mb-4 font-bold">{section.title}</h3>
+            <div key={section.title} className="w-[45%] sm:w-auto flex-1">
+              <h3 className="mb-3 md:mb-4 font-bold text-base sm:text-lg">{section.title}</h3>
               <ul className="space-y-2">
                 {section.links.map(({ label, path }) => (
                   <li key={label}>
                     <Link
                       href={path}
-                      className="text-sm"
+                      className="text-xs sm:text-sm hover:underline"
                     >
                       {label}
                     </Link>
@@ -89,7 +89,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="px-4 mt-8 max-w-screen-2xl text-sm text-[#F2F2F2] lg:px-10">
+      <div className="px-4 mt-6 md:mt-8 max-w-screen-2xl text-xs sm:text-sm text-center md:text-left text-[#F2F2F2] lg:px-10">
         All rights reserved © DAOit
       </div>
     </footer>

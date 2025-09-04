@@ -15,6 +15,7 @@ interface HeaderProps {
 
 const Header = ({isGlobal}:HeaderProps) => {
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   
   const isActive = usePathname();
 
@@ -32,6 +33,9 @@ const Header = ({isGlobal}:HeaderProps) => {
     };
   }, [isGlobal]);
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const menu = "hover:text-black py-6 px-3"
 
@@ -87,8 +91,83 @@ const Header = ({isGlobal}:HeaderProps) => {
         {/* Use the WalletButhrefn component here */}
         {/* <WalletButton /> */}
 
-        <Button />
+        <div className="flex items-center">
+          <Button />
+          <button
+            onClick={toggleMenu}
+            className="ml-4 md:hidden text-black focus:outline-none"
+          >
+            {isMenuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
+      
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 bg-white/95 pt-20 px-4 top-16">
+          <div className="flex flex-col items-center gap-y-6">
+            <nav className="flex flex-col items-center gap-y-6 w-full">
+              <Link
+                href="/developer"
+                className={`text-lg font-medium ${
+                  isActive === "/developer" ? "text-black font-bold" : "text-gray-600"
+                }`}
+                onClick={toggleMenu}
+              >
+                Developer
+              </Link>
+              <Link
+                href="/community"
+                className={`text-lg font-medium ${
+                  isActive === "/community" ? "text-black font-bold" : "text-gray-600"
+                }`}
+                onClick={toggleMenu}
+              >
+                Community
+              </Link>
+              <Link
+                href="/how-it-works"
+                className={`text-lg font-medium ${
+                  isActive === "/how-it-works" ? "text-black font-bold" : "text-gray-600"
+                }`}
+                onClick={toggleMenu}
+              >
+                How it works
+              </Link>
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

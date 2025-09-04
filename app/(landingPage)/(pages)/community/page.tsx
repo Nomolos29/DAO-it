@@ -22,22 +22,21 @@ const Community = () => {
         <InnerPageHeroHeader highLightText='Building' rightSideHeading='Together' paragraph='Join the Movement for Transparent and Collaborative Education. "Shape the future of learning through innovation and collective decision-making”.' />
 
         <main className='flex flex-col items-center w-full max-w-screen-2xl py-10 gap-y-10'>
-            <section className="flex justify-center items-center text-center flex-col pt-16 w-[1180px]">
+            <section className="flex justify-center items-center text-center flex-col pt-16 w-full px-4 md:w-[1180px]">
                 <h1 className="text-2xl md:text-5xl font-semibold text-[#102325]">
-                    Join the Daoit Communtity
+                    Join the Daoit Community
                 </h1>
-                <p className="mt-4 text-lg w-4/6 md:2/3">
-                    Looking to learn more about Doait? No worries, get access to the best resource available on order to get educated and become part of the community. 
+                <p className="mt-4 text-base md:text-lg w-full md:w-4/6">
+                    Looking to learn more about Daoit? No worries, get access to the best resource available in order to get educated and become part of the community.
                 </p>
-                <div className="mt-6 flex gap-6">
-                    <Button text='Join us on Discord' href='#' />
-
-                    <Button text='Join us on X' href='#' />
+                <div className="mt-6 flex flex-col md:flex-row gap-4 md:gap-6 w-full md:w-auto justify-center">
+                    <Button text='Join us on Discord' href='#' className="w-full md:w-auto" />
+                    <Button text='Join us on X' href='#' className="w-full md:w-auto" />
                 </div>
             </section>
 
             <section className="flex justify-center w-full">
-                <div className='flex flex-col items-center pt-28 pb-10 w-full max-w-screen-2xl mx-auto px-5 py-10 gap-y-20'>
+                <div className='flex flex-col items-center pb-10 w-full max-w-screen-2xl mx-auto px-5 py-10 gap-y-20'>
                     {Features.map((feature, index) => (
                         <div key={index} className="w-full md:w-1/3 flex flex-col text-center">
                             <h2 className="text-xl md:text-2xl text-[#102325]">{feature.title}</h2>

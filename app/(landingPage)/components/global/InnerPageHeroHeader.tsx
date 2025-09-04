@@ -15,21 +15,23 @@ const InnerPageHeroHeader:React.FC<InnerPageHeroHeaderProps> = ({leftSideHeading
   return (
     <header className="flex flex-col justify-center items-center relative overflow-hidden bg-[url(/LandingPage/heroBGImage.png)] bg-fit bg-no-repeat bg-cover w-full">
       <Header />
-      <main className="flex flex-col-reverse md:flex-row text-center md:text-left justify-between max-w-screen-2xl w-full py-10 md:px-10 md:pt-28 md:pb-40">
-        <section className="flex justify-center gap-y-10 flex-col w-[calc(100vw-30px)] md:w-1/2">
-          <h1 className="text-2xl md:text-3xl font-medium text-[#102325] w-full md:w-4/6">{leftSideHeading || ''}
+      <main className="flex flex-col md:flex-row text-center md:text-left justify-between max-w-screen-2xl w-full py-6 px-4 md:px-10 lg:px-20 md:pt-28 md:pb-40">
+        <section className="flex justify-center gap-y-6 md:gap-y-10 flex-col w-full md:w-1/2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-[#102325] w-full md:w-4/6 lg:w-3/6">{leftSideHeading || ''}
             <span className="text-[#1D54E1]"> {highLightText}</span> {rightSideHeading || ''}
           </h1>
-          <Button href={buttonHref} text={buttonText} />
+          <div className="flex justify-center md:justify-start">
+            <Button href={buttonHref} text={buttonText} fullWidth />
+          </div>
         </section>
 
-        <div className="w-1/2 flex justify-end">
-            <p className='w-[75%]'>{paragraph}</p>
+        <div className="w-full md:w-1/2 flex justify-center md:justify-end mt-6 md:mt-0">
+            <p className='w-full sm:w-[85%] md:w-[75%] lg:w-[65%] text-sm sm:text-base'>{paragraph}</p>
         </div>
       </main>
 
       <svg
-        className="absolute lg:bottom-[-25%]  left-0 w-full transform -rotate-3 scale-x-[-1]"
+        className="absolute lg:bottom-[-25%] xl:bottom-[-30%] left-0 w-full transform -rotate-3 scale-x-[-1]"
         viewBox="0 0 1140 350"
         preserveAspectRatio="none"
       >

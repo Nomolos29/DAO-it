@@ -25,22 +25,22 @@ const WhatMakesUniqueContent = [
 
 const WhatMakesDaoitUnique = () => {
   return (
-    <section className='flex justify-center w-full bg-[url(/LandingPage/what-makes-daoit-unique/what-makes-it-unique.png)] bg-center bg-contain bg-no-repeat px-5 md:px-10 pt-[22%] pb-[15%]'>
-        <main className='flex flex-col max-w-screen-2xl w-full border-[4px] bg-gradient-to-tr from-white/10 to-white/20 border-white rounded-[18px] p-[36px] gap-y-10'>
-            <h2 className='text-[24px] font-medium'>What Makes <span className='text-[#003CB1]'>DAOit</span> Unique?</h2>
+    <section className='flex justify-center w-full bg-[url(/LandingPage/what-makes-daoit-unique/what-makes-it-unique.png)] bg-center bg-contain bg-no-repeat px-4 sm:px-5 md:px-10 pt-[22%] pb-[15%]'>
+        <main className='flex flex-col max-w-screen-2xl w-full border-[4px] bg-gradient-to-tr from-white/10 to-white/20 border-white rounded-[18px] p-4 sm:p-6 md:p-[36px] gap-y-6 md:gap-y-10'>
+            <h2 className='text-xl sm:text-[24px] font-medium'>What Makes <span className='text-[#003CB1]'>DAOit</span> Unique?</h2>
 
-            <div className='flex gap-x-4'>
+            <div className='flex flex-col md:flex-row gap-y-6 md:gap-y-0 md:gap-x-4'>
                 {WhatMakesUniqueContent.map((item, index) => (
                     <div key={index} className='flex justify-between gap-x-5'>
-                        <div className='flex flex-col justify-between gap-x-4 h-[240px]'>
-                            <img src={item.icon} alt={`${item.heading} icon`} className='w-12 h-12' />
-                            <div className='flex flex-col gap-y-2 justify-between h-full mt-6'>
-                                <h3 className='text-[20px] font-semibold text-[#2E3035]'>{item.heading}</h3>
-                                <p className='text-[16px] text-[#5B5E65]'>{item.details}</p>
+                        <div className='flex flex-col justify-between gap-x-4 h-auto md:h-[240px]'>
+                            <img src={item.icon} alt={`${item.heading} icon`} className='w-10 h-10 md:w-12 md:h-12' />
+                            <div className='flex flex-col gap-y-2 justify-between h-full mt-4 md:mt-6'>
+                                <h3 className='text-base sm:text-lg md:text-[20px] font-semibold text-[#2E3035]'>{item.heading}</h3>
+                                <p className='text-sm md:text-[16px] text-[#5B5E65]'>{item.details}</p>
                             </div>
                         </div>
 
-                        {WhatMakesUniqueContent.length != (index+1) &&  <div className='w-[1px] h-full bg-[#D6CDCD]' />}
+                        {WhatMakesUniqueContent.length != (index+1) && <div className='hidden md:block w-[1px] h-full bg-[#D6CDCD]' />}
                     </div>
                 ))}
             </div>
