@@ -8,14 +8,14 @@ interface DisplayCardProps {
 }
 
 const DisplayCard = ({image, heading, description, listItem}: DisplayCardProps) => (
-    <main className='flex items-center gap-x-10 w-full h-full border-[4px] border-white rounded-xl p-6 bg-[#F7F3FF]'>
-        <img src={image} alt={heading} className='w-1/4 h-full' />
-        <div className='text-[#5B5E65] text-lg w-3/4 flex flex-col gap-y-2'>
-            <h3 className='text-[30px] font-medium text-[#2E3035]'>{heading}</h3>
-            <p>{description}</p>
+    <main className='flex flex-col md:flex-row items-center gap-y-4 md:gap-x-10 w-full h-full border-[4px] border-white rounded-xl p-4 md:p-6 bg-[#F7F3FF]'>
+        <img src={image} alt={heading} className='w-1/2 md:w-1/4 h-auto md:h-full' />
+        <div className='text-[#5B5E65] text-base md:text-lg w-full md:w-3/4 flex flex-col gap-y-2'>
+            <h3 className='text-xl sm:text-2xl md:text-[30px] font-medium text-[#2E3035] text-center md:text-left'>{heading}</h3>
+            <p className='text-center md:text-left'>{description}</p>
             <ul className='list-disc ml-4'>
                 {listItem.map((item, idx) => (
-                    <li key={idx}>{item}</li>
+                    <li key={idx} className='text-sm md:text-base'>{item}</li>
                 ))}
             </ul>
         </div>
@@ -25,9 +25,9 @@ const DisplayCard = ({image, heading, description, listItem}: DisplayCardProps) 
 
 const WhoIsDaoitFor = () => {
   return (
-    <section className='flex justify-center flex-col items-center w-full bg-[url(/LandingPage/WhoIsDaoitFor.png)] bg-center bg-contain bg-no-repeat pt-40 pb-60'>
-        <h2 className='text-[48px] font-semibold text-center py-[4%]'>Who is DAOit for?</h2>
-        <main className='grid grid-cols-2 gap-3 h-[570px] max-w-screen-2xl w-full px-4 md:px-10'>
+    <section className='flex justify-center flex-col items-center w-full bg-[url(/LandingPage/WhoIsDaoitFor.png)] bg-center bg-contain bg-no-repeat pt-20 md:pt-40 pb-30 md:pb-60'>
+        <h2 className='text-3xl md:text-[48px] font-semibold text-center py-[4%]'>Who is DAOit for?</h2>
+        <main className='grid grid-cols-1 md:grid-cols-2 gap-3 h-auto md:h-[570px] max-w-screen-2xl w-full px-4 md:px-10'>
             <div className='flex flex-col grid-cols-1 gap-3'>
                 <div className='h-fit'>
                     <DisplayCard
@@ -43,7 +43,7 @@ const WhoIsDaoitFor = () => {
                     }
                   />
                 </div>
-                <div className='h-1/2'>
+                <div className='h-auto md:h-1/2'>
                     <DisplayCard
                     image="/LandingPage/who-is-daoit-for/PolicyMaker.png"
                     heading="Policy Makers & NGOs"
@@ -59,7 +59,7 @@ const WhoIsDaoitFor = () => {
                 </div>
             </div>
             <div className='flex flex-col grid-cols-1 h-full gap-3'>
-                <div className='h-2/5'>
+                <div className='h-auto md:h-2/5'>
                     <DisplayCard
                     image="/LandingPage/who-is-daoit-for/Students.png"
                     heading="Students"
@@ -73,7 +73,7 @@ const WhoIsDaoitFor = () => {
                     }
                   />
                 </div>
-                <div className='h-3/5'>
+                <div className='h-auto md:h-3/5'>
                     <DisplayCard
                     image="/LandingPage/who-is-daoit-for/Researcher.png"
                     heading="Researchers & Data Analyts"
