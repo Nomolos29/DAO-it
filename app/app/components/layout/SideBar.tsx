@@ -10,9 +10,10 @@ import { useActiveWallet, useDisconnect } from "thirdweb/react";
 
 interface SideBarProps {
   isConnected: boolean;
+  onMobileMenuClose?: () => void;
 }
 
-const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
+const SideBar: React.FC<SideBarProps> = ({isConnected, onMobileMenuClose}) => {
   const pathname = usePathname();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -27,7 +28,7 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
   };
 
   return (
-    <div className="max-h-[100vh] h-full bg-white w-[240px] overflow-hidden py-[25px] px-[20px]">
+    <div className="max-h-[100vh] h-full bg-white w-[240px] overflow-hidden py-[25px] px-[20px] lg:h-screen">
       <nav className="flex flex-col justify-between h-full relative">
         <div className="flex flex-col gap-y-10">
           <svg width="180" height="39" viewBox="0 0 180 39" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,6 +51,7 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
               <Link
                 key={index}
                 href={navItem.navLink}
+                onClick={() => onMobileMenuClose?.()}
                 className={`flex items-center gap-x-3 ${
                   pathname === navItem.navLink
                     ? "font-semibold bg-[#1D54E1] text-white"
@@ -59,7 +61,7 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
                 <span className="text-xl">
                   <navItem.navIcon />
                 </span>
-                <span className="group-hover:font-medium text-md                                                                                                                                                                                    ">
+                <span className="group-hover:font-medium text-md">
                   {navItem.navTitle}
                 </span>
               </Link>

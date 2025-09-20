@@ -8,24 +8,26 @@ const HeroSection = () => {
     <div className="flex flex-col justify-center items-center overflow-hidden relative bg-[url(/LandingPage/heroBGImage.png)] bg-fit bg-no-repeat bg-cover w-full">
       <Header />
       {/* <div className="absolute inset-0 bg-header-pattern bg-no-repeat bg-left-top transform scale-x-[-1] bg-[length:150%]"></div> */}
-      <main className="flex flex-col-reverse md:flex-row items-center text-center md:text-left justify-between max-w-screen-2xl w-full py-10 md:px-10 md:pb-36 md:pt-20">
-        <section className="flex justify-center gap-y-7 flex-col w-[calc(100vw-30px)] md:w-1/2 z-[1]">
-          <h1 className="text-3xl md:text-5xl font-bold text-[#102325]">
+      <main className="flex flex-col-reverse lg:flex-row items-center text-center lg:text-left justify-between max-w-screen-2xl w-full py-10 px-4 md:px-10 lg:pb-36 lg:pt-20">
+        <section className="flex justify-center gap-y-7 flex-col w-full lg:w-1/2 z-[1]">
+          <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold text-[#102325]">
             <span className="text-[#1D54E1]">Building</span> a Collaborative Learning Community through Open & Inclusive Decision-Making
           </h1>
-          <p className="text-lg md:text-xl">
+          <p className="text-sm md:text-lg lg:text-xl leading-relaxed">
           Join our Educational Decentralized Autonomous Organization (DAO)  to Learn, Collaborate, and Grow. We are Focus on  Empowering Students, Educators, and Administrators In a Transparent, Open and Collaborative Decision-making Process.
           </p>
-          <Button />
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full sm:w-auto">
+            <Button />
+          </div>
           {/* <WalletButton /> */}
         </section>
 
-        <div className="w-[90%] md:w-[40%] relative z-[1]">
+        <div className="w-[90%] sm:w-[70%] lg:w-[40%] relative z-[1] mb-8 lg:mb-0">
           <img src="/LandingPage/heroImageNew.png" alt="Hero Image" width={0} height={0} className="w-full" />
 
           <div>
-            <div className="w-[65px] h-[65px] border-[12px] border-[#EAE4FA] bg-[#D6D5FF] rounded-full absolute top-[-5px] left-[-5px] z-10" />
-            <div className="w-[65px] h-[65px] border-[12px] border-[#EAE4FA] bg-[#D6D5FF] rounded-full absolute bottom-[-10px] right-[-10px] z-10" />
+            <div className="w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] border-[8px] sm:border-[12px] border-[#EAE4FA] bg-[#D6D5FF] rounded-full absolute top-[-5px] left-[-5px] z-10" />
+            <div className="w-[45px] h-[45px] sm:w-[65px] sm:h-[65px] border-[8px] sm:border-[12px] border-[#EAE4FA] bg-[#D6D5FF] rounded-full absolute bottom-[-10px] right-[-10px] z-10" />
           </div>
         </div>
       </main>

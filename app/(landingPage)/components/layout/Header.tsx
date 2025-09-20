@@ -15,7 +15,8 @@ interface HeaderProps {
 
 const Header = ({isGlobal}:HeaderProps) => {
   const [isScrolled, setIsScrolled] = React.useState(false);
-  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
   const isActive = usePathname();
 
   useEffect(() => {
@@ -37,10 +38,10 @@ const Header = ({isGlobal}:HeaderProps) => {
 
   return (
     <header className={`items-center transition-all w-full duration-300 justify-center py-5 md:py-0 top-0 z-50 ${isGlobal && isScrolled ? "bg-white/70 delay-300 backdrop-blur-md shadow fixed flex translate-y-0" : !isGlobal && !isScrolled ? "flex" : "fixed translate-y-[-100%]"}`}>
-      <div className="max-w-screen-2xl w-full flex justify-between items-center px-5 md:px-10">
+      <div className="max-w-screen-2xl w-full flex justify-between items-center px-5 md:px-10 relative">
         <div className="text-xl font-bold">
           <Link href="/">
-            <svg width="180" height="39" viewBox="0 0 180 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="180" height="39" viewBox="0 0 180 39" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-32 md:w-auto">
                 <g clipPath="url(#clip0_264_3887)">
                 <path d="M7.61714 4.58789C5.66596 4.92187 4.00776 5.77148 2.64253 7.14258C1.47651 8.30859 0.662058 9.72656 0.263621 11.2969C-0.111379 12.7559 -0.0879418 14.6602 0.322214 16.043C0.486277 16.5996 0.790964 17.332 0.855417 17.332C0.884714 17.332 1.00776 17.2383 1.11909 17.1211C1.42964 16.793 2.36714 16.0605 2.92378 15.709C4.30073 14.8359 5.86518 14.2559 7.44721 14.0273C8.26167 13.9043 9.8437 13.9043 10.6582 14.0273C12.9667 14.3613 15.1113 15.3809 16.8398 16.9629C17.0625 17.168 17.2617 17.332 17.2851 17.332C17.3437 17.332 17.6542 16.541 17.8066 16.0137C18.1113 14.9414 18.2226 13.2656 18.0527 12.2344C17.7656 10.459 17.0683 8.93555 15.9199 7.59961C14.5371 5.98242 12.5273 4.89258 10.33 4.56445C9.77339 4.48242 8.16792 4.49414 7.61714 4.58789Z" fill="#1D54E1"/>
                 <path d="M19.3945 4.61082C18.4922 4.77489 17.168 5.21434 17.168 5.35496C17.168 5.38426 17.2617 5.50731 17.3789 5.61864C17.707 5.92918 18.4395 6.86668 18.791 7.42332C19.6641 8.80028 20.2441 10.3647 20.4727 11.9468C20.5957 12.7612 20.5957 14.3432 20.4727 15.1577C20.1387 17.4663 19.1191 19.6108 17.5371 21.3393C17.332 21.562 17.168 21.7612 17.168 21.7846C17.168 21.8432 17.959 22.1538 18.4863 22.3061C19.5586 22.6108 21.2344 22.7221 22.2656 22.5522C24.041 22.2651 25.5645 21.5679 26.9004 20.4194C28.5176 19.0366 29.6074 17.0268 29.9355 14.8296C30.082 13.8628 29.9941 12.3042 29.7363 11.2964C28.9277 8.11473 26.3848 5.57176 23.2031 4.76317C22.0957 4.48192 20.4785 4.41746 19.3945 4.61082Z" fill="#1D54E1"/>
@@ -57,6 +58,7 @@ const Header = ({isGlobal}:HeaderProps) => {
           </Link>
         </div>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-x-5">
           <Link
             href="/developer"
@@ -84,10 +86,71 @@ const Header = ({isGlobal}:HeaderProps) => {
           </Link>
         </nav>
 
-        {/* Use the WalletButhrefn component here */}
-        {/* <WalletButton /> */}
+        {/* Desktop Button */}
+        <div className="hidden md:block">
+          <Button />
+        </div>
 
-        <Button />
+        {/* Mobile Menu Button */}
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center justify-center w-10 h-10 rounded-md hover:bg-gray-100 transition-colors"
+          aria-label="Toggle mobile menu"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+            />
+          </svg>
+        </button>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="absolute top-full left-0 right-0 bg-white shadow-lg border-t md:hidden">
+            <nav className="flex flex-col py-4">
+              <Link
+                href="/developer"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`px-5 py-3 hover:bg-gray-50 ${
+                  isActive === "/developer" ? "bg-blue-50 text-blue-600 font-bold" : ""
+                }`}
+              >
+                Developer
+              </Link>
+              <Link
+                href="/community"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`px-5 py-3 hover:bg-gray-50 ${
+                  isActive === "/community" ? "bg-blue-50 text-blue-600 font-bold" : ""
+                }`}
+              >
+                Community
+              </Link>
+              <Link
+                href="/how-it-works"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`px-5 py-3 hover:bg-gray-50 ${
+                  isActive === "/how-it-works" ? "bg-blue-50 text-blue-600 font-bold" : ""
+                }`}
+              >
+                How it works
+              </Link>
+              <div className="px-5 py-3">
+                <Button />
+              </div>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

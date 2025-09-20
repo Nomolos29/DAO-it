@@ -55,12 +55,12 @@ const FAQs = () => {
 
   return (
     <section className="w-full flex justify-center bg-[url('/LandingPage/FaqBg.svg')] bg-fixed bg-cover bg-top">
-      <div className="px-10 max-w-screen-2xl w-full max-h-[500px] flex gap-x-20 justify-between bg-transparent py-16">
-        <div className="flex flex-col items-start w-2/6">
-          <p className="text-[30px] text-[#002887] font-medium">Got Questions?</p>
-          <h2 className="text-[36px] font-semibold mb-6">We got answers</h2>
+      <div className="px-4 md:px-10 max-w-screen-2xl w-full max-h-none lg:max-h-[500px] flex flex-col lg:flex-row gap-8 lg:gap-x-20 justify-between bg-transparent py-16">
+        <div className="flex flex-col items-start w-full lg:w-2/6">
+          <p className="text-xl md:text-2xl lg:text-[30px] text-[#002887] font-medium">Got Questions?</p>
+          <h2 className="text-2xl md:text-3xl lg:text-[36px] font-semibold mb-6">We got answers</h2>
         </div>
-        <div className="flex flex-col gap-y-4 w-full px-5 transition-all overflow-y-scroll duration-500">
+        <div className="flex flex-col gap-y-4 w-full px-0 lg:px-5 transition-all overflow-y-auto lg:overflow-y-scroll duration-500 max-h-[400px] lg:max-h-none">
           {faqs.map((faq, index) => (
             <div
               key={index}

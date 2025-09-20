@@ -17,7 +17,7 @@ const IntendingProposals = () => {
   }
 
   return (
-    <main className="w-full px-2 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
+    <main className="w-full px-2 md:px-4 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
       <div className="flex flex-col w-full h-[10px] gap-y-5">
         <div className="flex w-full gap-y-3">
           <div className="flex flex-col w-full gap-3">

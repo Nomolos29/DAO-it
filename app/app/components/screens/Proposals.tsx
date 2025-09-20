@@ -59,29 +59,28 @@ const ProposalsHome = () => {
   const reversedProposals = [...proposals].reverse();
 
   return (
-    <main className="w-full px-2 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
+    <main className="w-full px-2 md:px-4 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
       <div className="flex flex-col w-full h-[10px] gap-y-5">
         <div className="flex w-full gap-y-3 pb-5">
           <div className="flex flex-col w-full gap-3">
             {reversedProposals?.map((proposal) => (
               <Post
-                key={proposal.id}
-                id={proposal.id}
-                title={proposal.title}
-                postBy={proposal.id}
+                key={proposal.proposalId}
+                id={proposal.proposalId}
+                title={proposal.proposalTitle}
+                postBy={proposal.userId}
                 postImage={true}
                 // postType="proposal"
                 postComments={
-                  // Array.isArray(proposalStatus.proposalComments) ? proposalStatus.proposalComments.length :
-                  0
+                  Array.isArray(proposal.comments) ? proposal.comments.length : 0
                 }
                 postStatus={"active"}
                 postDislikes={20}
                 profilePic={true}
                 postLikes={100}
-                description={proposal.summary}
-                postCreationDate={proposal.startDate}
-                postStartDate={proposal.startDate}
+                description={proposal.proposalDetails}
+                postCreationDate={proposal.createdAt}
+                postStartDate={proposal.createdAt}
                 postEndDate={proposal.endDate}
               />
             ))}

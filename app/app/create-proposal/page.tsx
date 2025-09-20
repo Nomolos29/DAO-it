@@ -23,6 +23,7 @@ export interface ApiProposal {
   proposalStatus: string;
   privateStatus: string;
   proposalType: string;
+  comments: ApiComment[];
   abdoptionOption: string;
   fundRaiserOption: string;
   imageFilePath: string[];
@@ -31,6 +32,16 @@ export interface ApiProposal {
   reactions: string[]; // Specify proper type if reactions have structure
   userId: string;
 }
+
+export interface ApiComment {
+  commentId: string,
+  commentText: string,
+  createdAt: string,
+  userId: string,
+  proposalId: string,
+  reactions: boolean[]
+}
+
 
 // Types definitions
 export interface ProposalState {

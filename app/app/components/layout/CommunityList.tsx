@@ -18,16 +18,16 @@ const CommunitySection: React.FC<CommunitySectionProps> = ({
   showMoreText,
 }) => {
   return (
-    <div className="w-full flex flex-col gap-y-1 p-[15px] bg-white rounded-xl">
-      <h2 className="text-lg font-medium text-[#232426] pb-4 pt-2 mb-4 border-b-[1px] border-[#D5D5D5]">{title}</h2>
+    <div className="w-full flex flex-col gap-y-1 p-3 md:p-[15px] bg-white rounded-xl">
+      <h2 className="text-base md:text-lg font-medium text-[#232426] pb-4 pt-2 mb-4 border-b-[1px] border-[#D5D5D5]">{title}</h2>
       <div className="space-y-4 w-full">
         {communities.map((community, index) => (
-          <div key={index} className="flex justify-between items-center w-full">
-            <div>
-              <h3 className="text-[#232426] pb-1 text-md">{community.name}</h3>
-              <p className="text-sm text-[#5B5E65]">{community.members}</p>
+          <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 w-full">
+            <div className="flex-1">
+              <h3 className="text-[#232426] pb-1 text-sm md:text-md">{community.name}</h3>
+              <p className="text-xs md:text-sm text-[#5B5E65]">{community.members}</p>
             </div>
-            <button type="button" className={`text-md flex items-center justify-center ${community.status == "joined" ? "bg-[#1D54E1] text-white hover:bg-[#1d55e14f]" : "bg-white border-[#D5D5D5] text-[#1D54E1] border hover:bg-[#1D54E11A] hover:border-[#1d55e14f]"} transition-all duration-200 w-[106px] h-[36px] rounded-[5px] gap-x-3`}>
+            <button type="button" className={`text-sm md:text-md flex items-center justify-center ${community.status == "joined" ? "bg-[#1D54E1] text-white hover:bg-[#1d55e14f]" : "bg-white border-[#D5D5D5] text-[#1D54E1] border hover:bg-[#1D54E11A] hover:border-[#1d55e14f]"} transition-all duration-200 w-full sm:w-[106px] h-[36px] rounded-[5px] gap-x-3`}>
               {community.status == "joined" ? "Joined" : "Join"}
 
               {community.status == "joined" ? (

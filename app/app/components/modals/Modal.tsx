@@ -14,11 +14,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, bgBlured, bgDarkened, ch
 
   return (
     <div
-      className={`fixed inset-0 w-screen ${bgDarkened && "bg-black/30"} ${bgBlured && "bg-black/30 backdrop-blur-[10px]"} flex justify-center items-center z-50`}
+      className={`fixed inset-0 w-screen ${bgDarkened && "bg-black/30"} ${bgBlured && "bg-black/30 backdrop-blur-[10px]"} flex justify-center items-center z-50 p-4`}
       onClick={onClose} // Close modal when clicking outside
     >
       <div
-        className={`relative bg-white p-[30px] rounded-lg ${bgDarkened && "shadow-lg"} ${bgBlured && "border-[#ABABABB2] border"}`}
+        className={`relative bg-white p-4 md:p-[30px] rounded-lg w-full max-w-lg md:max-w-2xl lg:max-w-4xl max-h-[90vh] overflow-y-auto ${bgDarkened && "shadow-lg"} ${bgBlured && "border-[#ABABABB2] border"}`}
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
       >
         {/* Close Icon (X) */}

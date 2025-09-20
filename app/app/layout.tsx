@@ -29,6 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isConnected, setIsConnected] = useState<"login" | "register" | "loggedIn">("login");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const pathname = usePathname();
 
@@ -40,28 +41,44 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
-              <main className="max-w-screen-2xl w-full flex justify-center h-screen">
+              <main className="max-w-screen-2xl w-full flex justify-center min-h-screen">
                 {isConnected === "loggedIn" ? (
                   <main className="flex w-full justify-center h-full overscroll-y-auto">
                     {pathname === "/app/create-proposal" ? (
                       <div className="flex flex-col w-full relative">
                         <FullHeader displayWallet />
 
-                        <main className="w-full pt-[90px]">
+                        <main className="w-full pt-[90px] px-4 md:px-0">
                           {children}
                         </main>
                       </div>
                     ) : (
-                      <div className="flex w-full">
-                        <aside className="">
-                          <SideBar isConnected={isConnected === "loggedIn"} />
+                      <div className="flex w-full relative">
+                        {/* Mobile Menu Overlay */}
+                        {isMobileMenuOpen && (
+                          <div
+                            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          />
+                        )}
+
+                        {/* Sidebar */}
+                        <aside className={`
+                          fixed lg:relative lg:translate-x-0 z-50 lg:z-auto
+                          transition-transform duration-300 ease-in-out
+                          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                        `}>
+                          <SideBar
+                            isConnected={isConnected === "loggedIn"}
+                            onMobileMenuClose={() => setIsMobileMenuOpen(false)}
+                          />
                         </aside>
 
-                        <div className="flex flex-col relative w-full h-screen">
+                        <div className="flex flex-col relative w-full h-screen lg:ml-0">
                           <header className="w-full absolute z-30">
-                            <Header />
+                            <Header onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
                           </header>
-                          <article className="gray h-screen overflow-hidden pt-[80px] p-3">
+                          <article className="gray h-screen overflow-hidden pt-[80px] p-3 lg:pl-6">
                             {children}
                           </article>
                         </div>
@@ -69,7 +86,7 @@ export default function RootLayout({
                     )}
                   </main>
                 ) : isConnected === "login" ? (
-                  <div className="w-full">
+                  <div className="w-full px-4 md:px-0">
                     {/* <FullHeader /> */}
                     <AuthLanding onWalletConnected={(action) => setIsConnected(action)} />
                   </div>

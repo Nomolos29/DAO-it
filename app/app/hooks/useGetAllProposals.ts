@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { ApiProposal, ProposalState } from "../create-proposal/page";
 import { apiFetchWithAuth } from "../lib/apiFetch";
+import { comment } from "postcss";
 
 export const useGetAllProposals = () => {
-  const [proposals, setProposals] = useState<ProposalState[]>([]);
+  const [proposals, setProposals] = useState<ApiProposal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -13,7 +14,7 @@ export const useGetAllProposals = () => {
         setIsLoading(true);
 
         // Make the API call
-        const result = await apiFetchWithAuth("/Proposal/GetAllProposals", {
+        const result = await apiFetchWithAuth("/Proposal/GetAllEntities", {
           method: "GET",
         });
 
@@ -31,8 +32,8 @@ export const useGetAllProposals = () => {
             throw new Error(`HTTP error! status: ${result.status}`);
           }
           const data: ApiProposal[] = await result.json();
-          const transformed = data.map(transformProposal);
-          setProposals(transformed);
+          // const transformed = data.map(transformProposal);
+          setProposals(data);
           setIsLoading(false);
           return;
         }
@@ -51,18 +52,23 @@ export const useGetAllProposals = () => {
 };
 
 // Transformation function
-function transformProposal(apiProposal: ApiProposal): ProposalState {
+function transformProposal(apiProposal: ApiProposal): ApiProposal {
   return {
-    id: apiProposal.proposalId,
-    title: apiProposal.proposalTitle,
-    summary: apiProposal.proposalSummary,
-    proposalContent: apiProposal.proposalDetails,
-    visibility: apiProposal.proposalStatus,
+    proposalId: apiProposal.proposalId,
+    proposalTitle: apiProposal.proposalTitle,
+    proposalSummary: apiProposal.proposalSummary,
+    proposalDetails: apiProposal.proposalDetails,
+    proposalStatus: apiProposal.proposalStatus,
     proposalType: apiProposal.proposalType,
-    startDate: apiProposal.createdAt,
+    createdAt: apiProposal.createdAt,
     endDate: apiProposal.endDate,
-    walletAddress: apiProposal.userId,
-    targetLocation: apiProposal.privateStatus
+    userId: apiProposal.userId,
+    privateStatus: apiProposal.privateStatus,
+    comments: apiProposal.comments,
+    abdoptionOption: apiProposal.abdoptionOption,
+    fundRaiserOption: apiProposal.fundRaiserOption,
+    imageFilePath: apiProposal.imageFilePath,
+    reactions: apiProposal.reactions
     // Map any additional fields here
   };
 }
