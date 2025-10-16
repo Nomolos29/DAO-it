@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import FullHeader from "./components/layout/FullHeader";
 import AuthLanding from "./(auth)/AuthLanding";
+import { ProposalsProvider } from "./context/ProposalsContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
+            <ProposalsProvider>
               <main className="max-w-screen-2xl w-full flex justify-center h-screen">
                 {isConnected === "loggedIn" ? (
                   <main className="flex w-full justify-center h-full overscroll-y-auto">
@@ -75,6 +77,7 @@ export default function RootLayout({
                   </div>
                 ) : (<TutorialPage loggedIn={(action) => setIsConnected(action)} />)}
               </main>
+            </ProposalsProvider>
           </ThirdwebProvider>
         </QueryClientProvider>
         <ToastContainer

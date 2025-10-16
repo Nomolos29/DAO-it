@@ -1,6 +1,8 @@
 import openai from '../lib/openai';
 import { SentimentAnalysis } from '../types/sentiment';
 import { generateMockComments } from '../utils/mockComments';
+import { uploadSentimentToIPFS } from '../actions/ipfs-actions';
+import type { DAOSentimentData } from '../lib/ipfs-service';
 
 export async function analyzeSentiment(
   proposalId: string,
@@ -64,7 +66,7 @@ Please provide a JSON response with exactly this structure:
       },
       keyThemes: Array.isArray(result.keyThemes) ? result.keyThemes : [
         'Implementation Strategy',
-        'Resource Allocation', 
+        'Resource Allocation',
         'Timeline Concerns',
         'Community Impact',
         'Technical Approach'
@@ -79,7 +81,20 @@ Please provide a JSON response with exactly this structure:
       comments: comments,
       timestamp: new Date().toISOString()
     };
-    
+
+    // Upload sentiment analysis to IPFS
+    const sentimentData: DAOSentimentData = {
+      proposalCID: proposalId,
+      overallSentiment: analysis.overallSentiment,
+      sentimentScore: analysis.sentimentScore,
+      breakdown: analysis.breakdown,
+      keyThemes: analysis.keyThemes,
+      insights: analysis.insights,
+      generatedAt: Date.now(),
+    };
+
+    await uploadSentimentToIPFS(sentimentData);
+
     return analysis;
   } catch (error) {
     console.error('Sentiment analysis error:', error);

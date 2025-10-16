@@ -29,7 +29,8 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
     const [activeModal, setActiveModal] = useState<"default" | "questions" | "passed" | "failed">("questions");
 
     const register = useRegister();
-    const login = useLogin();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { mutate: _login } = useLogin();
 
     const buttonStyle = "h-[50px] w-[203px] flex items-center justify-center rounded-[10px]";
 
@@ -76,12 +77,14 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
 
         if ((correctAnswers / questions.length * 100) >= 80) {
             register.mutate(undefined, {
-                onSuccess: () => {
+                onSuccess: (data) => {
+                    console.log("✅ Registration successful:", data);
                     setHasRegistered(true);
+                    // Don't auto-login here, let user click "Create my account" button
                 },
                 onError: (error) => {
-                    console.log("Registration failed:", error);
-                    alert("Registration failed!");
+                    console.error("❌ Registration failed:", error);
+                    alert(`Registration failed: ${error.message}`);
                 }
             });
         }
@@ -95,14 +98,15 @@ const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, questions, onQui
 
     const handleSendResult = () => {
         if (hasRegistered) {
-            login.mutate(undefined, {
-                onSuccess: () => {
-                    onLoginSuccess?.("loggedIn"); // 🔥 bubble up to layout
-                },
-            });
+            console.log("✅ User already registered, logging in directly...");
+            // User was just registered, data is already in localStorage
+            // No need to fetch from IPFS again (avoids rate limiting)
+            onLoginSuccess?.("loggedIn"); // 🔥 bubble up to layout
+            onQuizComplete(true);
+        } else {
+            console.error("❌ Cannot login - user not registered yet");
+            alert("Please complete registration first");
         }
-
-        onQuizComplete(true)
     }
 
     return (

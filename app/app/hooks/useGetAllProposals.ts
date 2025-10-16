@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { ApiProposal, ProposalState } from "../create-proposal/page";
-import { apiFetchWithAuth } from "../lib/apiFetch";
+import { ProposalState } from "../create-proposal/page";
+import { listProposalsFromIPFS } from "../actions/ipfs-actions";
+import type { DAOProposalData } from "../lib/ipfs-service";
 
 export const useGetAllProposals = () => {
   const [proposals, setProposals] = useState<ProposalState[]>([]);
@@ -12,32 +13,16 @@ export const useGetAllProposals = () => {
       try {
         setIsLoading(true);
 
-        // Make the API call
-        const result = await apiFetchWithAuth("/Proposal/GetAllProposals", {
-          method: "GET",
-        });
+        // Fetch from IPFS (active proposals)
+        const result = await listProposalsFromIPFS('active');
 
-        // Handle case where apiFetchWithAuth already parses JSON
-        if (Array.isArray(result)) {
-          const transformed = result.map(transformProposal);
-          setProposals(transformed);
-          setIsLoading(false);
-          return;
+        if (!result.success || !result.data) {
+          throw new Error(result.error || 'Failed to fetch proposals');
         }
 
-        // Handle case where we get a Response object
-        if (result instanceof Response) {
-          if (!result.ok) {
-            throw new Error(`HTTP error! status: ${result.status}`);
-          }
-          const data: ApiProposal[] = await result.json();
-          const transformed = data.map(transformProposal);
-          setProposals(transformed);
-          setIsLoading(false);
-          return;
-        }
-
-        throw new Error('Unexpected response format');
+        const transformed = result.data.map((proposal) => transformProposal(proposal));
+        setProposals(transformed);
+        setIsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err : new Error(String(err)));
         setIsLoading(false);
@@ -51,18 +36,17 @@ export const useGetAllProposals = () => {
 };
 
 // Transformation function
-function transformProposal(apiProposal: ApiProposal): ProposalState {
+function transformProposal(ipfsProposal: DAOProposalData): ProposalState {
   return {
-    id: apiProposal.proposalId,
-    title: apiProposal.proposalTitle,
-    summary: apiProposal.proposalSummary,
-    proposalContent: apiProposal.proposalDetails,
-    visibility: apiProposal.proposalStatus,
-    proposalType: apiProposal.proposalType,
-    startDate: apiProposal.createdAt,
-    endDate: apiProposal.endDate,
-    walletAddress: apiProposal.userId,
-    targetLocation: apiProposal.privateStatus
-    // Map any additional fields here
+    id: ipfsProposal.proposalId, // Use UUID as the proposal ID for routing
+    title: ipfsProposal.title,
+    summary: ipfsProposal.summary,
+    proposalContent: ipfsProposal.content,
+    visibility: ipfsProposal.visibility,
+    proposalType: ipfsProposal.proposalType,
+    startDate: ipfsProposal.createdAt,
+    endDate: ipfsProposal.endDate,
+    walletAddress: ipfsProposal.proposer,
+    targetLocation: '',
   };
 }

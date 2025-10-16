@@ -1,18 +1,10 @@
-// hooks/useRegister.ts
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import {
-  useConnect,
-  useActiveAccount,
-} from "thirdweb/react";
-import { signMessage } from "thirdweb/utils";
-import { createWallet } from "thirdweb/wallets"; // ✅ Correct way now
-import { apiFetch } from "../lib/apiFetch";
-import Message from "../lib/Message";
-import { YourUserType } from "../types/types";
+import { useConnect, useActiveAccount } from "thirdweb/react";
+import { createWallet } from "thirdweb/wallets";
+import { uploadUserToIPFS, getUserFromIPFS } from "../actions/ipfs-actions";
+import type { DAOUserData } from "../lib/ipfs-service";
 
 export const useRegister = () => {
-  const router = useRouter();
   const connect = useConnect();
   const account = useActiveAccount();
 
@@ -21,39 +13,63 @@ export const useRegister = () => {
       let currentAccount = account;
 
       if (!currentAccount) {
-        const metamask = createWallet("io.metamask"); // ✅ Create instance
-        const connectedWallet = await connect.connect(metamask); // connect
+        const metamask = createWallet("io.metamask");
+        const connectedWallet = await connect.connect(metamask);
 
         if (!connectedWallet) throw new Error("Failed to connect wallet.");
 
-        currentAccount = connectedWallet.getAccount(); // ✅ Use getAccount on returned wallet
+        currentAccount = connectedWallet.getAccount();
       }
 
-        if (!currentAccount) {
-            throw new Error("No wallet connected");
-        }
+      if (!currentAccount) {
+        throw new Error("No wallet connected");
+      }
 
-      const message = Message
-      const signature = await signMessage({
-        message,
-        account: currentAccount,
-      });
+      // Check if user already exists
+      console.log("🔍 Checking if wallet is already registered:", currentAccount.address);
+      const existingUser = await getUserFromIPFS(currentAccount.address);
 
-      const { token, user } = await apiFetch<{ token: string; user: YourUserType }>("/Authentication/register-wallet", {
-        method: "POST",
-        body: JSON.stringify({
-          walletAddress: currentAccount.address,
-          signature,
-          message,
-        }),
-      });
+      if (existingUser.success && existingUser.data) {
+        console.log("⚠️ User already registered with this wallet!");
+        throw new Error("This wallet is already registered. Please login instead.");
+      }
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      console.log("✅ Wallet not registered yet, proceeding with registration...");
 
-      router.push("/app");
+      // Create user data for IPFS
+      const userData: DAOUserData = {
+        walletAddress: currentAccount.address,
+        profile: {},
+        activity: {
+          proposalsCreated: [],
+          votesCount: 0,
+          commentsCount: 0,
+          joinedAt: Date.now(),
+        },
+        metadata: {
+          version: '1.0.0',
+          lastUpdated: Date.now(),
+        },
+      };
 
-      return { token, user };
+      // Upload to IPFS
+      const result = await uploadUserToIPFS(userData);
+
+      if (!result.success || !result.cid) {
+        throw new Error(result.error || 'Failed to register user on IPFS');
+      }
+
+      // Store user data in localStorage
+      localStorage.setItem("walletAddress", currentAccount.address);
+      localStorage.setItem("userCID", result.cid);
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      console.log("✅ User registered and saved to localStorage");
+
+      // Don't navigate here - let the QuizModal handle the login flow
+      // router.push("/app");
+
+      return { cid: result.cid, userData };
     },
   });
 };

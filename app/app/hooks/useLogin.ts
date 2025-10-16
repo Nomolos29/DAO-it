@@ -1,15 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useActiveAccount, useActiveWallet } from "thirdweb/react";
-import { signMessage } from "thirdweb/utils";
-import { apiFetch } from "../lib/apiFetch";
-import Message from "../lib/Message";
-
-
+import { getUserFromIPFS } from "../actions/ipfs-actions";
 
 export const useLogin = () => {
   const account = useActiveAccount();
   const wallet = useActiveWallet();
-
 
   return useMutation({
     mutationFn: async () => {
@@ -17,30 +12,25 @@ export const useLogin = () => {
         throw new Error("Wallet not connected");
       }
 
-      // 1. Create message and signature
-      const message = Message
-      const signature = await signMessage({ account, message });
+      console.log("🔐 Login attempt for wallet:", account.address);
 
-      console.log("Signature:", signature);
-      // 2. Call backend login endpoint
-      const response = await apiFetch("/Authentication/wallet-login", {
-        method: "POST",
-        body: JSON.stringify({
-          walletAddress: account.address,
-          signature,
-          message,
-        }),
-      });
+      // Fetch user from IPFS
+      const result = await getUserFromIPFS(account.address);
 
+      console.log("📥 Login - getUserFromIPFS result:", result);
 
-      const { accessToken, refreshToken } = response as { accessToken: string; refreshToken: string };
+      if (!result.success || !result.data) {
+        console.log("❌ Login failed - user not found in IPFS");
+        throw new Error(result.error || "User not found. Please register first.");
+      }
 
+      console.log("✅ Login successful - user found:", result.data.walletAddress);
 
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      // Store user data in localStorage
+      localStorage.setItem("walletAddress", account.address);
+      localStorage.setItem("user", JSON.stringify(result.data));
 
-      // router.push("/app");
-      return { response };
+      return { userData: result.data };
     }
   });
 };

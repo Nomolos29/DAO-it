@@ -395,7 +395,10 @@ const CreateProposal = () => {
 
       setSubmitStatus({ loading: false, error: null });
 
-      // Run sentiment analysis
+      // Show success immediately
+      setShowSuccess(true);
+
+      // Run sentiment analysis in background (optional - doesn't block success)
       setIsAnalyzing(true);
 
       try {
@@ -409,13 +412,11 @@ const CreateProposal = () => {
         setSentimentAnalysis(analysis);
         saveSentimentAnalysis(analysis);
       } catch (error) {
-        toast.error(`Sentiment analysis failed: ${error}`);
+        console.warn('Sentiment analysis skipped:', error instanceof Error ? error.message : 'OpenAI quota exceeded');
+        // Don't show error toast - sentiment is optional
       } finally {
         setIsAnalyzing(false);
       }
-
-
-      setShowSuccess(true);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       setSubmitStatus({ loading: false, error: errorMessage });
