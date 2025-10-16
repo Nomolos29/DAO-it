@@ -9,8 +9,8 @@ import Post from "../components/Post";
 import { ProposalComments, ProposalDetail } from "../components";
 import CurrentResults from "../components/CurrentResults";
 import { fetchProposalById } from "../hooks/useGetProposal";
-import { ApiProposal } from "../create-proposal/page";
-import { PostCommentModalProps } from "../types/types";
+import { useGetProposalVotes } from "../hooks/useGetProposalVotes";
+import type { DAOProposalData, DAOCommentData } from "../lib/ipfs-service";
 
 
 
@@ -21,17 +21,23 @@ const Proposals = () => {
       ? param.id[0]
       : param.id || undefined;
 
+    // Map IPFS status to component status
+    const mapStatusToComponentStatus = (status: "active" | "executed" | "rejected"): "active" | "pending" | "ended" => {
+      if (status === "active") return "active";
+      if (status === "executed") return "ended";
+      return "ended"; // rejected also maps to ended
+    };
 
     type ProposalStatus = {
-      proposalData: ApiProposal | null;
-      proposalComments: PostCommentModalProps | null; // Replace 'any' with the actual type if known
+      proposalData: DAOProposalData | null;
+      proposalComments: DAOCommentData[];
       isLoading: boolean;
       error: Error | null;
     };
 
     const [proposalStatus, setProposalStatus] = useState<ProposalStatus>({
       proposalData: null,
-      proposalComments: null,
+      proposalComments: [],
       isLoading: true,
       error: null,
     });
@@ -39,7 +45,7 @@ const Proposals = () => {
     useEffect(() => {
       if (!id) return;
 
-      setProposalStatus({ proposalData: null, proposalComments: null, isLoading: true, error: null });
+      setProposalStatus({ proposalData: null, proposalComments: [], isLoading: true, error: null });
 
       fetchProposalById(id.toString())
         .then(({ proposalData, proposalComments, error }) => {
@@ -54,12 +60,14 @@ const Proposals = () => {
 
     useEffect(() => {
       if (proposalStatus.proposalData) {
-        // eslint-disable-next-line no-console
         // console.log("Proposal Details:", proposalStatus.proposalData.proposalDetails);
       }
     }, [proposalStatus.proposalData, proposalStatus.proposalComments]);
 
     const { proposalData, isLoading, error } = proposalStatus;
+
+    // Fetch vote counts from blockchain
+    const { yesVotes, noVotes, abstainVotes, isLoading: votesLoading } = useGetProposalVotes(proposalData?.proposalId);
 
 
 
@@ -96,17 +104,17 @@ const Proposals = () => {
             !proposalData ? <div>Proposal not found</div> :
             (<div className="h-full flex flex-col gap-y-3 overflow-auto scrollbar-hide">
               <Post
-                id={proposalData.proposalId.toString()}
-                title={proposalData.proposalTitle}
+                id={proposalData.proposalId}
+                title={proposalData.title}
                 postImage={true}
-                postBy="Amarachi2944"
+                postBy={proposalData.proposer}
                 postDetailsPage
-                description={proposalData.proposalDetails}
+                description={proposalData.summary}
                 postCreationDate={proposalData.createdAt}
                 postStartDate={proposalData.createdAt}
                 profilePic={true}
-                postStatus="active"
-                postComments={Array.isArray(proposalStatus.proposalComments) ? proposalStatus.proposalComments.length : 0}
+                postStatus={mapStatusToComponentStatus(proposalData.metadata.status)}
+                postComments={proposalStatus.proposalComments.length}
                 postDislikes={20}
                 postLikes={100}
                 postEndDate={proposalData.endDate}
@@ -114,17 +122,17 @@ const Proposals = () => {
               {activeScreen === "Proposal details" ?
               (
                 <ProposalDetail
-                  fullDescription={proposalData.proposalDetails}
-                  yesVotes={0}
-                  noVotes={0}
-                  abstainVotes={0}
+                  fullDescription={proposalData.content}
+                  yesVotes={Number(yesVotes)}
+                  noVotes={Number(noVotes)}
+                  abstainVotes={Number(abstainVotes)}
                 />
               ) :
               (
                 activeScreen === "Comments" &&
                 <ProposalComments
-                  comments={Array.isArray(proposalStatus.proposalComments) ? proposalStatus.proposalComments : []}
-                  proposalId={proposalData.proposalId.toString()}
+                  comments={proposalStatus.proposalComments}
+                  proposalId={proposalData.proposalId}
                 />
               )}
             </div>)
@@ -133,10 +141,10 @@ const Proposals = () => {
       </section>
 
       <aside className="flex col-span-2 justify-end pl-4 overflow-auto h-[calc(100vh-80px)] px-3 w-[380px] scrollbar-hide">
-      {isLoading ?
+      {isLoading || votesLoading ?
         <div className="mt-3 w-full p-3 bg-white h-fit px-3 rounded-[10px]">Loading proposal vote details...</div> :
             error ? <div className="mt-3 w-full p-3 bg-red-400 h-fit px-3 rounded-[10px]">Error loading proposal vote details: {error.message}</div> :
-            !proposalData ? <div className="mt-3 w-full p-3 bg-yellow-200 px-3 h-fit rounded-[10px] overflow-y-auto">Cannot query undefined, try a valid proposal</div> : <CurrentResults title={proposalData.proposalTitle} proposalID={proposalData.proposalId} yesVotes={0} noVotes={0} abstainVotes={0} totalVotes={0 + 0 + 0} />}
+            !proposalData ? <div className="mt-3 w-full p-3 bg-yellow-200 px-3 h-fit rounded-[10px] overflow-y-auto">Cannot query undefined, try a valid proposal</div> : <CurrentResults title={proposalData.title} proposalID={proposalData.proposalId} yesVotes={Number(yesVotes)} noVotes={Number(noVotes)} abstainVotes={Number(abstainVotes)} totalVotes={Number(yesVotes + noVotes + abstainVotes)} />}
       </aside>
     </main>
   );

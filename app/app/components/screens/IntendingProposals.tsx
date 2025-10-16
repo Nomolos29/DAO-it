@@ -1,10 +1,8 @@
-
-
-import { useGetAllProposals } from "@/app/app/hooks/useGetAllProposals";
+import { useProposalsContext } from "@/app/app/context/ProposalsContext";
 import Post from "../Post";
 
 const IntendingProposals = () => {
-  const { proposals, isLoading, error } = useGetAllProposals();
+  const { proposals, isLoading, error } = useProposalsContext();
 
   // Handle loading state
   if (isLoading) {

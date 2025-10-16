@@ -1,12 +1,10 @@
 import { useActiveAccount } from "thirdweb/react";
-import {
-  prepareContractCall,
-  sendAndConfirmTransaction,
-} from "thirdweb";
+import { prepareContractCall, sendAndConfirmTransaction } from "thirdweb";
 import { daoitContract, tokenContract, PROPOSAL_DEPOSIT } from "../lib/constants";
-import { apiFetch } from "../lib/apiFetch";
 import { ProposalState } from "../create-proposal/page";
 import { toast } from "react-toastify";
+import { uploadProposalToIPFS } from "../actions/ipfs-actions";
+import type { DAOProposalData } from "../lib/ipfs-service";
 
 export const useCreateProposal = () => {
   const account = useActiveAccount();
@@ -17,24 +15,24 @@ export const useCreateProposal = () => {
     title,
     summary,
     visibility,
-    targetLocation,
+    targetLocation: _targetLocation, // eslint-disable-line @typescript-eslint/no-unused-vars
     proposalType,
     proposalContent,
     startDate,
     endDate,
-    // destinationAddress,
-    walletAddress,
+    walletAddress: _walletAddress, // eslint-disable-line @typescript-eslint/no-unused-vars
   }: ProposalState): Promise<void> => {
     try {
       if (!account) throw new Error("No wallet connected");
 
-      // Step 1: Approve DAO contract to transfer PROPOSAL_DEPOSIT tokens on user's behalf
+      // Step 1: Approve DAO contract to transfer PROPOSAL_DEPOSIT tokens
+      toast.info("Step 1/3: Approving token spending...");
       const approveTx = prepareContractCall({
         contract: tokenContract,
         method: "function approve(address spender, uint256 amount)",
         params: [
-          process.env.NEXT_PUBLIC_DAO_CONTRACT_ADDRESS || "", // DAO contract needs approval
-          PROPOSAL_DEPOSIT,      // amount to approve
+          process.env.NEXT_PUBLIC_DAO_CONTRACT_ADDRESS || "",
+          PROPOSAL_DEPOSIT,
         ],
       });
 
@@ -42,62 +40,54 @@ export const useCreateProposal = () => {
         account,
         transaction: approveTx,
       });
+      toast.success("✅ Token approval confirmed!");
 
-      // Step 2: Call propose() on DAO contract
+      // Step 2: Submit to blockchain FIRST using the UUID from the form
+      toast.info("Step 2/3: Submitting proposal to blockchain...");
       const proposalTx = await prepareContractCall({
         contract: daoitContract,
-        method:
-          "function propose(string memory id, string memory title, string memory summary)",
-        params: [id, title, summary],
+        method: "function propose(string memory id, string memory title, string memory summary)",
+        params: [id, title, summary], // Use UUID from form as the ID!
       });
 
       await sendAndConfirmTransaction({
         account,
         transaction: proposalTx,
       });
+      toast.success("✅ Proposal submitted to blockchain!");
 
-       // Step 3: Prepare FormData for backend
-      const formData = new FormData();
-      formData.append("ProposalId", id);
-      formData.append("ProposalTitle", title);
-      formData.append("ProposalSummary", summary);
-      formData.append("ProposalDetails", proposalContent);
-      formData.append("ProposalStatus", visibility);
-      formData.append("PrivateStatus", targetLocation);
-      formData.append("ProposalType", proposalType);
-      formData.append("CreatedAt", startDate);
-      formData.append("EndDate", endDate);
-      formData.append("UserId", walletAddress);
-
-      // ✅ Step 4: Get access and refresh tokens from localStorage
-      const accessToken = localStorage.getItem("accessToken");
-      const refreshToken = localStorage.getItem("refreshToken");
-
-      if (!accessToken || !refreshToken) {
-        throw new Error("Missing authentication tokens");
-      }
-
-      // ✅ Step 5: Send API request with Authorization headers
-      const response = await apiFetch("/Proposal/CreateProposal", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
+      // Step 3: Only if blockchain succeeds, upload to IPFS with the same UUID
+      toast.info("Step 3/3: Uploading full content to IPFS...");
+      const proposalData: DAOProposalData = {
+        proposalId: id, // Include the UUID in the data!
+        proposer: account.address,
+        title,
+        summary,
+        content: proposalContent,
+        proposalType,
+        visibility,
+        createdAt: startDate,
+        endDate,
+        metadata: {
+          version: '1.0.0',
+          status: 'active',
         },
-      }) as Response;
+      };
 
-      if (!response.ok) {
-        const data = await response;
-        console.error("API Error:", data.status);
-        // throw new Error(`API Error: ${data.status || response.statusText}`);
+      const ipfsResult = await uploadProposalToIPFS(proposalData);
+
+      if (!ipfsResult.success) {
+        console.error('IPFS upload failed:', ipfsResult.error);
+        toast.error(`Failed to upload to IPFS: ${ipfsResult.error}`);
+        throw new Error('IPFS upload failed');
       }
 
-      toast.success("Proposal created successfully!");
-
+      toast.success("🎉 Proposal created successfully!");
 
     } catch (err) {
       console.error("Error creating proposal:", err);
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      toast.error(`Failed to create proposal: ${errorMsg}`);
       throw err;
     }
   };

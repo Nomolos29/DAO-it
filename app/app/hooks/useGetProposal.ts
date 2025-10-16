@@ -1,32 +1,35 @@
-import { apiFetchWithAuth } from "../lib/apiFetch";
 import { toast } from "react-toastify";
-import { ApiProposal } from "../create-proposal/page"; // or define it here
-import { PostCommentModalProps } from "../types/types";
+import { getProposalByIdFromIPFS, getCommentsFromIPFS } from "../actions/ipfs-actions";
+import type { DAOProposalData, DAOCommentData } from "../lib/ipfs-service";
 
 export async function fetchProposalById(proposalId: string): Promise<{
-  proposalData: ApiProposal | null;
-  proposalComments: PostCommentModalProps | null;
+  proposalData: DAOProposalData | null;
+  proposalComments: DAOCommentData[];
   error: Error | null;
 }> {
   try {
-    const response = await apiFetchWithAuth(`/Proposal/GetProposal/${proposalId}`, {
-      method: "GET"
-    });
+    // Fetch proposal from IPFS using UUID
+    const proposalResult = await getProposalByIdFromIPFS(proposalId);
 
-    const comments = await apiFetchWithAuth(`/proposal/${proposalId}/Comment/GetAllComment`, {
-      method: "GET"
-    });
+    if (!proposalResult.success || !proposalResult.data) {
+      throw new Error(proposalResult.error || 'Proposal not found');
+    }
 
-    const json = await response;
-    const commentsJson = await comments;
+    // Fetch comments from IPFS (comments still use CID/proposalId)
+    const commentsResult = await getCommentsFromIPFS(proposalId);
+
+    const comments = commentsResult.success && commentsResult.data
+      ? commentsResult.data
+      : [];
+
     return {
-      proposalData: json as ApiProposal,
-      proposalComments: commentsJson as PostCommentModalProps,
+      proposalData: proposalResult.data,
+      proposalComments: comments,
       error: null,
     };
   } catch (error) {
     const err = error instanceof Error ? error : new Error("Unknown error");
     toast.error(`Error fetching proposal: ${err.message}`);
-    return { proposalData: null, error: err, proposalComments: null };
+    return { proposalData: null, proposalComments: [], error: err };
   }
 }

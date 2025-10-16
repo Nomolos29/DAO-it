@@ -1,14 +1,8 @@
-import { useGetAllProposals } from "@/app/app/hooks/useGetAllProposals";
+import { useProposalsContext } from "@/app/app/context/ProposalsContext";
 import Post from "../Post";
-// import { PostCommentModalProps } from "../../types/types";
-// import { ApiProposal } from "../../create-proposal/page";
-// import { useState } from "react";
-
-// import { useEffect, useState } from "react";
-// import { Proposal } from "../../types/types";
 
 const ProposalsHome = () => {
-  const { proposals, isLoading, error } = useGetAllProposals();
+  const { proposals, isLoading, error } = useProposalsContext();
 
   // type ProposalStatus = {
   //   proposalData: ApiProposal | null;
