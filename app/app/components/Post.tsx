@@ -1,3 +1,5 @@
+"use client";
+
 import Image from 'next/image';
 import React from 'react'
 import userpic from "@/public/appImages/userPic.png"
@@ -6,6 +8,9 @@ import Link from 'next/link';
 import { BsChatFill } from 'react-icons/bs';
 import { BiSolidDislike, BiSolidLike } from 'react-icons/bi';
 import Dot from './Dot';
+import { useToggleProposalReaction } from '../hooks/useToggleProposalReaction';
+import { useActiveAccount } from 'thirdweb/react';
+import { toast } from 'react-toastify';
 
 export interface PostProps {
   id: number | string;
@@ -24,22 +29,45 @@ export interface PostProps {
   postComments: number;
   postLikes: number;
   postDislikes: number;
+  userLiked?: boolean;
+  userDisliked?: boolean;
 }
 
 
 
 
-const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, postComments, postCreationDate, postDislikes, postLikes, postStatus, postDetailsPage, postStartDate, postEndDate, postImage, postVotes}) => {
+const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, postComments, postCreationDate, postDislikes, postLikes, postStatus, postDetailsPage, postStartDate, postEndDate, postImage, postVotes, userLiked, userDisliked}) => {
 
   const currentDate = new Date();
   const postEndDateObj = new Date(postEndDate);
   const postCreationDateObj = new Date(postCreationDate);
   const postStartDateObj = new Date(postStartDate);
 
+  const account = useActiveAccount();
+  const { mutate: toggleReaction, isPending } = useToggleProposalReaction();
+
   // console.log(postCreationDate);
 
   const postCreationDateString = Math.floor((Number(currentDate) - Number(postCreationDateObj)) / (1000 * 60 * 60 * 24));
   const postValidityTime = Math.floor((Number(postEndDateObj) - Number(postStartDateObj)) / (1000 * 60 * 60 * 24));
+
+  const handleReactionClick = (e: React.MouseEvent, type: 'like' | 'dislike') => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!account) {
+      toast.error('Please connect your wallet to react');
+      return;
+    }
+
+    toggleReaction({
+      proposalId: String(id),
+      reactionType: type,
+    });
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => handleReactionClick(e, 'like');
+  const handleDislikeClick = (e: React.MouseEvent) => handleReactionClick(e, 'dislike');
 
   return (
     <main className={`${!postDetailsPage && "border-[#D5D5D5] border  p-[15px]"} rounded-[10px] flex flex-col gap-y-[19px]`} key={`post-${id}`}>
@@ -82,9 +110,25 @@ const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, p
           <div className='flex items-center gap-x-3'>
             <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BsChatFill className='text-xl text-[#1D54E1] flex items-center gap-x-2' /><span>{postComments} {!(postComments > 1) ? "Comment" : "Comments"}</span></p>
 
-            <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BiSolidLike className='text-xl text-green-400 flex items-center gap-x-2' /><span>{postLikes} Likes</span></p>
+            <button
+              type="button"
+              onClick={handleLikeClick}
+              disabled={isPending}
+              className={`text-[#5B5E65] flex items-center gap-x-2 text-md transition-all hover:scale-105 disabled:opacity-50 ${isPending ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              <BiSolidLike className={`text-xl flex items-center gap-x-2 transition-colors ${userLiked ? 'text-green-600' : 'text-green-400'}`} />
+              <span>{postLikes} Likes</span>
+            </button>
 
-            <p className='text-[#5B5E65] flex items-center gap-x-2 text-md'><BiSolidDislike className='text-xl text-red-400 flex items-center gap-x-2' /><span>{postDislikes} Dislikes</span></p>
+            <button
+              type="button"
+              onClick={handleDislikeClick}
+              disabled={isPending}
+              className={`text-[#5B5E65] flex items-center gap-x-2 text-md transition-all hover:scale-105 disabled:opacity-50 ${isPending ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              <BiSolidDislike className={`text-xl flex items-center gap-x-2 transition-colors ${userDisliked ? 'text-red-600' : 'text-red-400'}`} />
+              <span>{postDislikes} Dislikes</span>
+            </button>
           </div>
 
           {!postDetailsPage && <div className='flex items-center gap-x-3'>

@@ -185,11 +185,14 @@ export async function uploadCommentToIPFS(commentData: DAOCommentData): Promise<
 
 export async function getCommentsFromIPFS(proposalId: string): Promise<{ success: boolean; data?: DAOCommentData[]; error?: string }> {
   try {
+    console.log('🔍 [getCommentsFromIPFS] Fetching comments for proposal:', proposalId);
     const ipfs = getIPFSService();
     const data = await ipfs.getCommentsByProposal(proposalId);
+    console.log('✅ [getCommentsFromIPFS] Comments fetched:', data?.length || 0);
+    console.log('📊 [getCommentsFromIPFS] Comments data:', data);
     return { success: true, data };
   } catch (error) {
-    console.error('Error getting comments:', error);
+    console.error('❌ [getCommentsFromIPFS] Error getting comments:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
@@ -232,6 +235,46 @@ export async function toggleCommentReaction(
     return { success: true, data };
   } catch (error) {
     console.error('Error toggling reaction:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
+
+export async function toggleProposalReaction(
+  proposalId: string,
+  userAddress: string,
+  reactionType: 'like' | 'dislike',
+  forceChange: boolean = false
+): Promise<{ success: boolean; counts?: { like: number; dislike: number }; needsConfirmation?: boolean; currentReaction?: 'like' | 'dislike'; error?: string }> {
+  try {
+    console.log('🔄 [Server Action] toggleProposalReaction:', { proposalId, userAddress, reactionType, forceChange });
+    const ipfs = getIPFSService();
+    const result = await ipfs.toggleProposalReaction(proposalId, userAddress, reactionType, forceChange);
+    console.log('✅ [Server Action] Reaction toggled, result:', result);
+    return { success: true, ...result };
+  } catch (error) {
+    console.error('❌ [Server Action] Error toggling proposal reaction:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
+
+export async function getProposalReactionCounts(proposalId: string): Promise<{ success: boolean; counts?: { like: number; dislike: number }; error?: string }> {
+  try {
+    const ipfs = getIPFSService();
+    const counts = await ipfs.getProposalReactionCounts(proposalId);
+    return { success: true, counts };
+  } catch (error) {
+    console.error('Error getting proposal reaction counts:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
+
+export async function getUserReactionForProposal(proposalId: string, userAddress: string): Promise<{ success: boolean; reaction?: 'like' | 'dislike' | null; error?: string }> {
+  try {
+    const ipfs = getIPFSService();
+    const reaction = await ipfs.getUserReactionForProposal(proposalId, userAddress);
+    return { success: true, reaction };
+  } catch (error) {
+    console.error('Error getting user reaction:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }

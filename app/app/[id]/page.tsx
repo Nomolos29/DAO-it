@@ -10,12 +10,16 @@ import { ProposalComments, ProposalDetail } from "../components";
 import CurrentResults from "../components/CurrentResults";
 import { fetchProposalById } from "../hooks/useGetProposal";
 import { useGetProposalVotes } from "../hooks/useGetProposalVotes";
-import type { DAOProposalData, DAOCommentData } from "../lib/ipfs-service";
+import { useActiveAccount } from "thirdweb/react";
+import { getProposalReactionCounts, getUserReactionForProposal } from "../actions/ipfs-actions";
+import { useQuery } from "@tanstack/react-query";
+import { ProposalDetailsSkeleton, CurrentResultsSkeleton } from "../components/skeletons";
 
 
 
 const Proposals = () => {
   const [activeScreen, setActiveScreen] = useState<string>("Proposal details");
+    const account = useActiveAccount();
     const param = useParams();
     const id: string | undefined = Array.isArray(param.id)
       ? param.id[0]
@@ -28,48 +32,63 @@ const Proposals = () => {
       return "ended"; // rejected also maps to ended
     };
 
-    type ProposalStatus = {
-      proposalData: DAOProposalData | null;
-      proposalComments: DAOCommentData[];
-      isLoading: boolean;
-      error: Error | null;
-    };
+    // Use React Query for caching proposal data
+    const { data: proposalStatus, isLoading, error } = useQuery({
+      queryKey: ['proposal', id],
+      queryFn: async () => {
+        if (!id) throw new Error('No proposal ID');
 
-    const [proposalStatus, setProposalStatus] = useState<ProposalStatus>({
-      proposalData: null,
-      proposalComments: [],
-      isLoading: true,
-      error: null,
+        // Fetch proposal and comments
+        const { proposalData, proposalComments, error } = await fetchProposalById(id.toString());
+
+        if (error || !proposalData) {
+          throw error || new Error('Proposal not found');
+        }
+
+        // Fetch reaction counts separately
+        const countsResult = await getProposalReactionCounts(id.toString());
+        const reactionCounts = countsResult.success && countsResult.counts
+          ? countsResult.counts
+          : { like: 0, dislike: 0 };
+
+        // Fetch user's reaction if logged in
+        let userReaction: 'like' | 'dislike' | null = null;
+        if (account) {
+          const userReactionResult = await getUserReactionForProposal(id.toString(), account.address);
+          userReaction = userReactionResult.success && userReactionResult.reaction
+            ? userReactionResult.reaction
+            : null;
+        }
+
+        return {
+          proposalData,
+          proposalComments,
+          reactionCounts,
+          userReaction,
+        };
+      },
+      staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+      enabled: !!id, // Only run if ID exists
     });
 
     useEffect(() => {
-      if (!id) return;
-
-      setProposalStatus({ proposalData: null, proposalComments: [], isLoading: true, error: null });
-
-      fetchProposalById(id.toString())
-        .then(({ proposalData, proposalComments, error }) => {
-          setProposalStatus({
-            proposalData,
-            proposalComments,
-            isLoading: false,
-            error,
-          });
-        });
-    }, [id]);
-
-    useEffect(() => {
-      if (proposalStatus.proposalData) {
-        // console.log("Proposal Details:", proposalStatus.proposalData.proposalDetails);
+      if (proposalStatus?.proposalData) {
+        console.log("📋 [Proposal Page] Proposal Data:", proposalStatus.proposalData);
+        console.log("💬 [Proposal Page] Comments Count:", proposalStatus.proposalComments?.length || 0);
+        console.log("💬 [Proposal Page] Comments Data:", proposalStatus.proposalComments);
       }
-    }, [proposalStatus.proposalData, proposalStatus.proposalComments]);
+    }, [proposalStatus]);
 
-    const { proposalData, isLoading, error } = proposalStatus;
+    const proposalData = proposalStatus?.proposalData || null;
 
     // Fetch vote counts from blockchain
     const { yesVotes, noVotes, abstainVotes, isLoading: votesLoading } = useGetProposalVotes(proposalData?.proposalId);
 
-
+    // Use reaction data from separate storage
+    const userLiked = proposalStatus?.userReaction === 'like';
+    const userDisliked = proposalStatus?.userReaction === 'dislike';
+    const proposalLikes = proposalStatus?.reactionCounts?.like || 0;
+    const proposalDislikes = proposalStatus?.reactionCounts?.dislike || 0;
 
   return (
     <main className="flex w-full">
@@ -99,10 +118,16 @@ const Proposals = () => {
             ))}
           </nav>
 
-          {isLoading ? <div>Loading proposal...</div> :
-            error ? <div>Error loading proposal: {error.message}</div> :
-            !proposalData ? <div>Proposal not found</div> :
-            (<div className="h-full flex flex-col gap-y-3 overflow-auto scrollbar-hide">
+          {isLoading ? (
+            <div className="h-full flex flex-col gap-y-3 overflow-auto scrollbar-hide">
+              <ProposalDetailsSkeleton />
+            </div>
+          ) : error ? (
+            <div>Error loading proposal: {error.message}</div>
+          ) : !proposalData ? (
+            <div>Proposal not found</div>
+          ) : (
+            <div className="h-full flex flex-col gap-y-3 overflow-auto scrollbar-hide">
               <Post
                 id={proposalData.proposalId}
                 title={proposalData.title}
@@ -114,37 +139,54 @@ const Proposals = () => {
                 postStartDate={proposalData.createdAt}
                 profilePic={true}
                 postStatus={mapStatusToComponentStatus(proposalData.metadata.status)}
-                postComments={proposalStatus.proposalComments.length}
-                postDislikes={20}
-                postLikes={100}
+                postComments={proposalStatus?.proposalComments?.length ?? 0}
+                postDislikes={proposalDislikes}
+                postLikes={proposalLikes}
                 postEndDate={proposalData.endDate}
+                userLiked={userLiked}
+                userDisliked={userDisliked}
               />
-              {activeScreen === "Proposal details" ?
-              (
+              {activeScreen === "Proposal details" && (
                 <ProposalDetail
                   fullDescription={proposalData.content}
                   yesVotes={Number(yesVotes)}
                   noVotes={Number(noVotes)}
                   abstainVotes={Number(abstainVotes)}
                 />
-              ) :
-              (
-                activeScreen === "Comments" &&
+              )}
+
+              {activeScreen === "Comments" && proposalStatus && (
                 <ProposalComments
                   comments={proposalStatus.proposalComments}
                   proposalId={proposalData.proposalId}
                 />
               )}
-            </div>)
-          }
+            </div>
+          )}
         </article>
       </section>
 
       <aside className="flex col-span-2 justify-end pl-4 overflow-auto h-[calc(100vh-80px)] px-3 w-[380px] scrollbar-hide">
-      {isLoading || votesLoading ?
-        <div className="mt-3 w-full p-3 bg-white h-fit px-3 rounded-[10px]">Loading proposal vote details...</div> :
-            error ? <div className="mt-3 w-full p-3 bg-red-400 h-fit px-3 rounded-[10px]">Error loading proposal vote details: {error.message}</div> :
-            !proposalData ? <div className="mt-3 w-full p-3 bg-yellow-200 px-3 h-fit rounded-[10px] overflow-y-auto">Cannot query undefined, try a valid proposal</div> : <CurrentResults title={proposalData.title} proposalID={proposalData.proposalId} yesVotes={Number(yesVotes)} noVotes={Number(noVotes)} abstainVotes={Number(abstainVotes)} totalVotes={Number(yesVotes + noVotes + abstainVotes)} />}
+        {isLoading || votesLoading ? (
+          <CurrentResultsSkeleton />
+        ) : error ? (
+          <div className="mt-3 w-full p-3 bg-red-400 h-fit px-3 rounded-[10px]">
+            Error loading proposal vote details: {error.message}
+          </div>
+        ) : !proposalData ? (
+          <div className="mt-3 w-full p-3 bg-yellow-200 px-3 h-fit rounded-[10px] overflow-y-auto">
+            Cannot query undefined, try a valid proposal
+          </div>
+        ) : (
+          <CurrentResults
+            title={proposalData.title}
+            proposalID={proposalData.proposalId}
+            yesVotes={Number(yesVotes)}
+            noVotes={Number(noVotes)}
+            abstainVotes={Number(abstainVotes)}
+            totalVotes={Number(yesVotes + noVotes + abstainVotes)}
+          />
+        )}
       </aside>
     </main>
   );

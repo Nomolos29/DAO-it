@@ -1,5 +1,6 @@
 import { useProposalsContext } from "@/app/app/context/ProposalsContext";
 import Post from "../Post";
+import { PostSkeleton } from "../skeletons";
 
 const ProposalsHome = () => {
   const { proposals, isLoading, error } = useProposalsContext();
@@ -38,7 +39,19 @@ const ProposalsHome = () => {
 
 
   if (isLoading) {
-    return <div>Loading proposals...</div>;
+    return (
+      <main className="w-full px-2 flex flex-col min-h-screen overflow-auto scrollbar-hide pt-[140px] h-full">
+        <div className="flex flex-col w-full h-[10px] gap-y-5">
+          <div className="flex w-full gap-y-3 pb-5">
+            <div className="flex flex-col w-full gap-3">
+              {[1, 2, 3].map((i) => (
+                <PostSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   }
 
 
@@ -65,14 +78,11 @@ const ProposalsHome = () => {
                 postBy={proposal.id}
                 postImage={true}
                 // postType="proposal"
-                postComments={
-                  // Array.isArray(proposalStatus.proposalComments) ? proposalStatus.proposalComments.length :
-                  0
-                }
+                postComments={proposal.commentCount || 0}
                 postStatus={"active"}
-                postDislikes={20}
+                postDislikes={proposal.totalDislikes || 0}
                 profilePic={true}
-                postLikes={100}
+                postLikes={proposal.totalLikes || 0}
                 description={proposal.summary}
                 postCreationDate={proposal.startDate}
                 postStartDate={proposal.startDate}

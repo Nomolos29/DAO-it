@@ -193,14 +193,14 @@ const PostComment:React.FC<PostCommentProps> = ({
   const isSubmitting = isPending || isUploading;
 
   return (
-    <div className="flex flex-col w-full h-fit pb-6 bg-white max-w-4xl mx-auto shadow-md shadow-gray-200 rounded-lg overflow-hidden">
+    <div className="flex flex-col w-full h-fit bg-white shadow-md shadow-gray-200 rounded-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <h3 className="text-lg font-semibold text-gray-900">Add Comment</h3>
+      <div className="bg-white border-b border-gray-200 p-3">
+        <h3 className="text-base font-semibold text-gray-900">Add Comment</h3>
       </div>
 
       {/* Comment Input */}
-      <div className="bg-white p-4">
+      <div className="bg-white p-3">
         <div className="border border-gray-200 rounded-lg focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
           {/* Formatting toolbar */}
           <div className="border-b border-gray-200 p-2 flex items-center justify-between">

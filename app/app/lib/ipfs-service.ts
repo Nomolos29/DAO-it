@@ -12,6 +12,7 @@ export const DAO_FILE_GROUPS = {
   COMMENTS: 'daoit-comments',
   NOTIFICATIONS: 'daoit-notifications',
   MEDIA: 'daoit-media',
+  REACTIONS: 'daoit-reactions', // Separate group for reactions
 } as const;
 
 export type DAOFileGroup = typeof DAO_FILE_GROUPS[keyof typeof DAO_FILE_GROUPS];
@@ -56,13 +57,33 @@ export interface DAOProposalData {
   createdAt: string;
   endDate: string;
 
+  // Proposal-level reactions (like/dislike)
+  reactions?: {
+    like: string[];     // Users who liked
+    dislike: string[];  // Users who disliked
+  };
+
   metadata: {
     version: string;
     status: 'active' | 'executed' | 'rejected';
+    currentCID?: string;  // Track current CID for updates
+    previousCID?: string; // Track previous CID for cleanup
   };
 }
 
 export type ReactionType = 'like' | 'love' | 'laugh' | 'sad' | 'angry' | 'celebrate';
+
+// Proposal Reaction - Stored separately from proposal content
+export interface DAOProposalReaction {
+  proposalId: string;
+  userAddress: string;
+  reactionType: 'like' | 'dislike';
+  timestamp: number;
+  hasBeenChanged: boolean; // Track if user has changed their reaction
+  metadata: {
+    version: string;
+  };
+}
 
 export interface DAOCommentAttachment {
   cid: string;
@@ -183,6 +204,20 @@ export class DAOIPFSService {
   }
 
   // ==================== CORE HELPERS ====================
+
+  async unpinFile(cid: string): Promise<void> {
+    try {
+      console.log('🗑️ [IPFS Service] Unpinning file:', cid);
+      await this.pinata.files.public.delete([cid]);
+      console.log('✅ [IPFS Service] File unpinned:', cid);
+
+      // Remove from cache
+      this.proposalCache.delete(cid);
+    } catch (error) {
+      console.error('❌ [IPFS Service] Error unpinning file:', cid, error);
+      // Don't throw - unpinning failures shouldn't block the operation
+    }
+  }
 
   private async ensureGroup(groupName: DAOFileGroup): Promise<string> {
     if (this.groupCache.has(groupName)) {
@@ -510,7 +545,156 @@ export class DAOIPFSService {
     if (!proposal) throw new Error('Proposal not found');
 
     proposal.metadata.status = newStatus;
+    proposal.metadata.previousCID = cid;
     await this.uploadProposal(proposal);
+  }
+
+  // ==================== PROPOSAL REACTIONS (SEPARATE STORAGE) ====================
+
+  async toggleProposalReaction(
+    proposalId: string,
+    userAddress: string,
+    reactionType: 'like' | 'dislike',
+    forceChange: boolean = false // Used when user confirms they want to change
+  ): Promise<{ like: number; dislike: number; hasBeenChanged?: boolean; needsConfirmation?: boolean; currentReaction?: 'like' | 'dislike' }> {
+    console.log('👍 [IPFS Service] Toggling reaction:', { proposalId, userAddress, reactionType, forceChange });
+
+    const normalizedAddress = userAddress.toLowerCase();
+    const groupId = await this.ensureGroup(DAO_FILE_GROUPS.REACTIONS);
+
+    // Check if user already has a reaction for this proposal
+    const existingReactions = await this.pinata.files.public
+      .list()
+      .group(groupId)
+      .keyvalues({
+        type: 'proposal-reaction',
+        proposalId: proposalId,
+        userAddress: normalizedAddress,
+      });
+
+    let existingReactionData: DAOProposalReaction | null = null;
+
+    // Get existing reaction data if any
+    if (existingReactions.files && existingReactions.files.length > 0) {
+      const file = existingReactions.files[0];
+      try {
+        const response = await this.pinata.gateways.public.get(file.cid);
+        existingReactionData = response.data as unknown as DAOProposalReaction;
+      } catch (error) {
+        console.error('❌ [IPFS Service] Error fetching existing reaction:', error);
+      }
+    }
+
+    // If user has an existing reaction and it's different, check if they can change
+    if (existingReactionData && existingReactionData.reactionType !== reactionType) {
+      if (existingReactionData.hasBeenChanged && !forceChange) {
+        // User already changed once - not allowed
+        throw new Error('You can only change your reaction once');
+      }
+
+      if (!forceChange) {
+        // Need confirmation to change
+        const counts = await this.getProposalReactionCounts(proposalId);
+        return {
+          ...counts,
+          needsConfirmation: true,
+          currentReaction: existingReactionData.reactionType,
+        };
+      }
+    }
+
+    // Delete existing reaction if any
+    if (existingReactions.files && existingReactions.files.length > 0) {
+      console.log('🗑️ [IPFS Service] Removing existing reactions:', existingReactions.files.length);
+      for (const file of existingReactions.files) {
+        await this.unpinFile(file.cid);
+      }
+    }
+
+    // Check if this is the same reaction (toggle off)
+    const isSameReaction = existingReactionData && existingReactionData.reactionType === reactionType;
+
+    if (!isSameReaction) {
+      // Add new reaction
+      const hasBeenChanged = existingReactionData !== null; // True if this is a change from existing
+      const reactionData: DAOProposalReaction = {
+        proposalId,
+        userAddress: normalizedAddress,
+        reactionType,
+        timestamp: Date.now(),
+        hasBeenChanged,
+        metadata: {
+          version: '1.0.0',
+        },
+      };
+
+      await this.pinata.upload.public
+        .json(reactionData)
+        .name(`reaction-${proposalId}-${normalizedAddress}`)
+        .keyvalues({
+          type: 'proposal-reaction',
+          proposalId: proposalId,
+          userAddress: normalizedAddress,
+          reactionType: reactionType,
+          hasBeenChanged: hasBeenChanged.toString(),
+        })
+        .group(groupId);
+
+      console.log('✅ [IPFS Service] Reaction added/changed');
+    } else {
+      console.log('✅ [IPFS Service] Reaction toggled off');
+    }
+
+    // Return aggregated counts
+    const counts = await this.getProposalReactionCounts(proposalId);
+    return { ...counts, hasBeenChanged: existingReactionData?.hasBeenChanged };
+  }
+
+  async getProposalReactionCounts(proposalId: string): Promise<{ like: number; dislike: number }> {
+    const groupId = await this.ensureGroup(DAO_FILE_GROUPS.REACTIONS);
+
+    const reactions = await this.pinata.files.public
+      .list()
+      .group(groupId)
+      .keyvalues({
+        type: 'proposal-reaction',
+        proposalId: proposalId,
+      });
+
+    let likeCount = 0;
+    let dislikeCount = 0;
+
+    if (reactions.files) {
+      for (const file of reactions.files) {
+        const reactionType = file.keyvalues?.reactionType;
+        if (reactionType === 'like') likeCount++;
+        if (reactionType === 'dislike') dislikeCount++;
+      }
+    }
+
+    console.log('📊 [IPFS Service] Reaction counts for', proposalId, ':', { like: likeCount, dislike: dislikeCount });
+    return { like: likeCount, dislike: dislikeCount };
+  }
+
+  async getUserReactionForProposal(proposalId: string, userAddress: string): Promise<'like' | 'dislike' | null> {
+    const normalizedAddress = userAddress.toLowerCase();
+    const groupId = await this.ensureGroup(DAO_FILE_GROUPS.REACTIONS);
+
+    const userReaction = await this.pinata.files.public
+      .list()
+      .group(groupId)
+      .keyvalues({
+        type: 'proposal-reaction',
+        proposalId: proposalId,
+        userAddress: normalizedAddress,
+      });
+
+    if (userReaction.files && userReaction.files.length > 0) {
+      const reactionType = userReaction.files[0].keyvalues?.reactionType;
+      return reactionType as 'like' | 'dislike' | null;
+    }
+
+    return null;
   }
 
   // ==================== COMMENTS ====================

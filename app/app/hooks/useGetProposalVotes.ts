@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { readContract } from "thirdweb";
 import { daoitContract } from "../lib/constants";
+import daoitAbi from "../abi/daoi.json";
 
 interface ProposalVotes {
   yesVotes: bigint;
@@ -19,16 +20,6 @@ interface BlockchainProposal {
   noVotes: bigint;
   abstainVotes: bigint;
   status: number;
-  proposalType: number;
-  token: string;
-  destination: string;
-  author: string;
-  targetAmount: bigint;
-  endDate: bigint;
-  raisedAmount: bigint;
-  signatories: string[];
-  userContribution: bigint;
-  contributorCount: bigint;
 }
 
 export const useGetProposalVotes = (proposalId: string | undefined): ProposalVotes => {
@@ -51,12 +42,21 @@ export const useGetProposalVotes = (proposalId: string | undefined): ProposalVot
         console.log('🗳️ Fetching votes for proposal:', proposalId);
 
         // Call smart contract to get proposal details including vote counts
-        // @ts-expect-error - Complex contract type from Thirdweb
+        // Find the getProposal function from the ABI
+        const getProposalAbi = daoitAbi.find(
+          (item) => item.type === 'function' && item.name === 'getProposal'
+        );
+
+        if (!getProposalAbi) {
+          throw new Error('getProposal function not found in ABI');
+        }
+
         const proposal = (await readContract({
           contract: daoitContract,
-          method: "function getProposal(string proposalId) view returns (tuple(string id, string title, string summary, uint256 creationTime, uint256 yesVotes, uint256 noVotes, uint256 abstainVotes, uint8 status, uint8 proposalType, address token, address destination, address author, uint256 targetAmount, uint256 endDate, uint256 raisedAmount, address[3] signatories, uint256 userContribution, uint256 contributorCount))",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          method: getProposalAbi as any,
           params: [proposalId],
-        }) as unknown) as BlockchainProposal;
+        })) as unknown as BlockchainProposal;
 
         console.log('✅ Votes fetched from blockchain:', {
           yes: proposal.yesVotes.toString(),
