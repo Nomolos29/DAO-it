@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import Modal, { ModalProps } from "./Modal";
 import { GiPartyPopper } from 'react-icons/gi';
+import { useVote } from "../../hooks/useVote";
+import { VoteOption } from "../../types/types";
+import { toast } from "react-toastify";
 
 export interface VoteModalProps {
     title: string;
@@ -16,17 +19,58 @@ type FullVoteModalProps = VoteModalProps & ModalProps & {
 
 const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, proposalID, VoteStatus }) => {
   const [voteType, setVoteType] = useState<string>("");
+  const [voteAmount, setVoteAmount] = useState<string>("1");
   const [activeModal, setActiveModal] = useState<'vote' | 'confirmation' | 'completion'>('vote');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { vote } = useVote();
 
   const handleShowConfirmationModal = () => {
     if (!voteType) return;
     setActiveModal('confirmation');
   }
 
-  const handleVoteCompletion = () => {
-    setActiveModal('completion');
-    VoteStatus(true);
-    setVoteType("");
+  const handleVoteCompletion = async () => {
+    if (!voteType || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // Convert vote type to VoteOption enum
+      let voteOption: VoteOption;
+      switch (voteType) {
+        case "yes":
+          voteOption = VoteOption.Yes;
+          break;
+        case "no":
+          voteOption = VoteOption.No;
+          break;
+        case "abstain":
+          voteOption = VoteOption.Abstain;
+          break;
+        default:
+          throw new Error("Invalid vote type");
+      }
+
+      // Convert vote amount to BigInt
+      const votes = BigInt(voteAmount);
+
+      toast.info("Submitting your vote to the blockchain...");
+
+      // Call the smart contract vote function with proposal UUID
+      await vote(proposalID.toString(), voteOption, votes);
+
+      toast.success("Vote submitted successfully!");
+      setActiveModal('completion');
+      VoteStatus(true);
+      setVoteType("");
+      setVoteAmount("1");
+    } catch (error) {
+      console.error("Error voting:", error);
+      const errorMsg = error instanceof Error ? error.message : "Failed to submit vote";
+      toast.error(`Voting failed: ${errorMsg}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const handleCloseAllModals = () => {
@@ -62,13 +106,31 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
             </fieldset>
           </div>
 
+          <div className="w-full flex flex-col gap-y-2">
+            <label htmlFor="voteAmount" className="text-sm font-medium text-gray-700">
+              Vote Credits (number of tokens to use)
+            </label>
+            <input
+              type="number"
+              id="voteAmount"
+              min="1"
+              value={voteAmount}
+              onChange={(e) => setVoteAmount(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D54E1]"
+              placeholder="Enter vote amount"
+            />
+            <p className="text-xs text-gray-500">
+              Your voting power is quadratic: {voteAmount} token = {BigInt(voteAmount) * BigInt(voteAmount)} voting credits
+            </p>
+          </div>
+
           <button
             type="button"
-            className="bg-[#1D54E1] text-white w-full h-[54px] flex justify-center items-center rounded-lg"
+            className="bg-[#1D54E1] text-white w-full h-[54px] flex justify-center items-center rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleShowConfirmationModal}
-            disabled={!voteType}
+            disabled={!voteType || !voteAmount || Number(voteAmount) < 1}
           >
-            Submit your vote
+            Continue
           </button>
         </main>
       </Modal>
@@ -86,15 +148,17 @@ const VoteModal: React.FC<FullVoteModalProps> = ({ isOpen, onClose, title, propo
           <div className="flex flex-col w-full gap-y-3">
             <button
               type='button'
-              className="bg-[#1D54E1] text-white px-4 py-[15px] rounded-[10px]"
+              className="bg-[#1D54E1] text-white px-4 py-[15px] rounded-[10px] disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleVoteCompletion}
+              disabled={isSubmitting}
             >
-              Submit your vote
+              {isSubmitting ? "Submitting..." : "Submit your vote"}
             </button>
             <button
               type='button'
-              className="bg-gray-200 text-gray-800 w-full px-4 py-[15px] rounded-[10px]"
+              className="bg-gray-200 text-gray-800 w-full px-4 py-[15px] rounded-[10px] disabled:opacity-50"
               onClick={() => setActiveModal('vote')}
+              disabled={isSubmitting}
             >
               Go back
             </button>

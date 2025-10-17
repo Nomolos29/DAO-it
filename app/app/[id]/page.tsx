@@ -181,6 +181,7 @@ const Proposals = () => {
           <CurrentResults
             title={proposalData.title}
             proposalID={proposalData.proposalId}
+            creationDate={proposalData.createdAt}
             yesVotes={Number(yesVotes)}
             noVotes={Number(noVotes)}
             abstainVotes={Number(abstainVotes)}
