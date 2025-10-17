@@ -1,13 +1,13 @@
 import { useActiveAccount } from "thirdweb/react";
 import { prepareContractCall, sendAndConfirmTransaction } from "thirdweb";
-import { daoitContract, tokenContract } from "../lib/constants";
+import { daoitContract } from "../lib/constants";
 import { VoteOption } from "../types/types";
 
 export const useVote = () => {
   const account = useActiveAccount();
 
   const vote = async (
-    proposalId: bigint,
+    proposalId: string,
     option: VoteOption,
     votes: bigint
   ): Promise<void> => {
@@ -16,23 +16,12 @@ export const useVote = () => {
         throw new Error("No wallet connected");
       }
 
-      const tokensToLock = votes * votes;
-
-      const approveTx = await prepareContractCall({
-        contract: tokenContract,
-        method:
-          "function approve(address spender, uint256 amount) returns (bool)",
-        params: [daoitContract.address, tokensToLock],
-      });
-
-      await sendAndConfirmTransaction({
-        account,
-        transaction: approveTx,
-      });
+      // No need for approval anymore - it's handled on login by useAutoApproval
+      console.log('🗳️ Submitting vote:', { proposalId, option, votes: votes.toString() });
 
       const voteTx = await prepareContractCall({
         contract: daoitContract,
-        method: "function vote(uint256 proposalId, uint8 option, uint256 v)",
+        method: "function vote(string proposalId, uint8 option, uint256 v)",
         params: [proposalId, option, votes],
       });
 
@@ -40,8 +29,10 @@ export const useVote = () => {
         account,
         transaction: voteTx,
       });
+
+      console.log('✅ Vote submitted successfully');
     } catch (err) {
-      console.error("Error voting:", err);
+      console.error("❌ Error voting:", err);
       throw err;
     }
   };

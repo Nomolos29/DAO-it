@@ -1,6 +1,6 @@
 import { useActiveAccount } from "thirdweb/react";
 import { prepareContractCall, sendAndConfirmTransaction } from "thirdweb";
-import { daoitContract, tokenContract, PROPOSAL_DEPOSIT } from "../lib/constants";
+import { daoitContract } from "../lib/constants";
 import { ProposalState } from "../create-proposal/page";
 import { toast } from "react-toastify";
 import { uploadProposalToIPFS } from "../actions/ipfs-actions";
@@ -25,25 +25,9 @@ export const useCreateProposal = () => {
     try {
       if (!account) throw new Error("No wallet connected");
 
-      // Step 1: Approve DAO contract to transfer PROPOSAL_DEPOSIT tokens
-      toast.info("Step 1/3: Approving token spending...");
-      const approveTx = prepareContractCall({
-        contract: tokenContract,
-        method: "function approve(address spender, uint256 amount)",
-        params: [
-          process.env.NEXT_PUBLIC_DAO_CONTRACT_ADDRESS || "",
-          PROPOSAL_DEPOSIT,
-        ],
-      });
-
-      await sendAndConfirmTransaction({
-        account,
-        transaction: approveTx,
-      });
-      toast.success("✅ Token approval confirmed!");
-
-      // Step 2: Submit to blockchain FIRST using the UUID from the form
-      toast.info("Step 2/3: Submitting proposal to blockchain...");
+      // No need for approval anymore - it's handled on login by useAutoApproval
+      // Step 1: Submit to blockchain FIRST using the UUID from the form
+      toast.info("Step 1/2: Submitting proposal to blockchain...");
       const proposalTx = await prepareContractCall({
         contract: daoitContract,
         method: "function propose(string memory id, string memory title, string memory summary)",
@@ -56,8 +40,8 @@ export const useCreateProposal = () => {
       });
       toast.success("✅ Proposal submitted to blockchain!");
 
-      // Step 3: Only if blockchain succeeds, upload to IPFS with the same UUID
-      toast.info("Step 3/3: Uploading full content to IPFS...");
+      // Step 2: Only if blockchain succeeds, upload to IPFS with the same UUID
+      toast.info("Step 2/2: Uploading full content to IPFS...");
       const proposalData: DAOProposalData = {
         proposalId: id, // Include the UUID in the data!
         proposer: account.address,

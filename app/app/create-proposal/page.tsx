@@ -45,6 +45,9 @@ export interface ProposalState {
   endDate: string;
   walletAddress: string;
   destinationAddress?: string;
+  commentCount?: number;
+  totalLikes?: number;
+  totalDislikes?: number;
 }
 
 interface SectionData {

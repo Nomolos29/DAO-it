@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import FullHeader from "./components/layout/FullHeader";
 import AuthLanding from "./(auth)/AuthLanding";
 import { ProposalsProvider } from "./context/ProposalsContext";
+import { AppInitializer } from "./components/AppInitializer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -42,6 +43,7 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           <ThirdwebProvider>
             <ProposalsProvider>
+              <AppInitializer />
               <main className="max-w-screen-2xl w-full flex justify-center h-screen">
                 {isConnected === "loggedIn" ? (
                   <main className="flex w-full justify-center h-full overscroll-y-auto">

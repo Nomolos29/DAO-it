@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SideBarMenu } from "../../lib/NavsAndLinks";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { RiSettings3Line } from "react-icons/ri";
 import { IoIosArrowDropdownCircle } from "react-icons/io";
 import { useState } from "react";
@@ -14,6 +14,7 @@ interface SideBarProps {
 
 const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
   const pathname = usePathname();
+  const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const {disconnect }= useDisconnect();
@@ -22,6 +23,8 @@ const SideBar: React.FC<SideBarProps> = ({isConnected}) => {
   const handleDisconnect = () => {
     if(wallet && wallet.id) {
        disconnect(wallet);
+       // Redirect to landing page after logout
+       router.push('/');
     }
 
   };
