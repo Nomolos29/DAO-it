@@ -3,16 +3,18 @@
 import React, { useState } from 'react'
 import VoteModal, { VoteModalProps } from './modals/VoteModal';
 import { IoInformationCircle } from 'react-icons/io5';
+import { isProposalActive, getProposalStatus } from '../lib/proposalUtils';
 
 interface CurrentResultsProps extends VoteModalProps {
   yesVotes: number;
   noVotes: number;
   abstainVotes: number;
   totalVotes: number;
+  creationDate: Date | string | number;
 }
 
 
-const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVotes, noVotes, abstainVotes, totalVotes}) => {
+const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVotes, noVotes, abstainVotes, totalVotes, creationDate}) => {
 
   const [openVoteModal, setOpenVoteModal] = useState<boolean>(false);
   const [hasVoted, setHasVoted] = useState<boolean>(false)
@@ -21,7 +23,10 @@ const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVot
     setHasVoted(voted);
     setOpenVoteModal(false);
   }
-  
+
+  // Check if proposal is active
+  const isActive = isProposalActive(creationDate);
+  const statusInfo = getProposalStatus(creationDate);
 
   // setHasVoted(false);
 
@@ -71,12 +76,19 @@ const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVot
           )})}
         </div>
 
-        <button 
+        <button
           type='button'
-          disabled={hasVoted}
+          disabled={hasVoted || !isActive}
           onClick={() => setOpenVoteModal(true)}
-          className={`w-full p-4 ${hasVoted ? "bg-[#999CA3]" : "bg-[#1B1B1B]"} rounded-[10px] text-white`}
-        >{hasVoted ? "You already voted" : "Vote now"}</button>
+          className={`w-full p-4 ${hasVoted || !isActive ? "bg-[#999CA3]" : "bg-[#1B1B1B]"} rounded-[10px] text-white`}
+        >
+          {hasVoted
+            ? "You already voted"
+            : !isActive
+              ? (statusInfo.status === "pending" ? `Voting opens in ${statusInfo.daysRemaining} ${statusInfo.daysRemaining === 1 ? 'day' : 'days'}` : "Voting has ended")
+              : "Vote now"
+          }
+        </button>
       </section>
 
 
@@ -84,6 +96,20 @@ const CurrentResults:React.FC<CurrentResultsProps> = ({title, proposalID, yesVot
         <IoInformationCircle className='text-2xl text-[#ABABAB]' />
         <p className='text-[#474747]'>You&apos;ve already cast your vote. Each user can vote only once per proposal.</p>
       </section>}
+
+      {!hasVoted && !isActive && statusInfo.status === "pending" && (
+        <section className='w-full rounded-[10px] flex flex-col bg-white gap-y-3 p-3 shadow-md shadow-[#00000017]'>
+          <IoInformationCircle className='text-2xl text-[#FFD336]' />
+          <p className='text-[#474747]'>This proposal is in the pending period. Voting will open in {statusInfo.daysRemaining} {statusInfo.daysRemaining === 1 ? 'day' : 'days'}.</p>
+        </section>
+      )}
+
+      {!hasVoted && !isActive && statusInfo.status === "ended" && (
+        <section className='w-full rounded-[10px] flex flex-col bg-white gap-y-3 p-3 shadow-md shadow-[#00000017]'>
+          <IoInformationCircle className='text-2xl text-[#FF0000]' />
+          <p className='text-[#474747]'>Voting for this proposal has ended. The results are final.</p>
+        </section>
+      )}
 
 
 

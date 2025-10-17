@@ -368,8 +368,8 @@ const CreateProposal = () => {
 
   const now = new Date()
   // const currentDate = now.toISOString().slice(0, 12);
-  const startDate = new Date(now.setDate(now.getDate() + 7)).toISOString().slice(0, 10);
-  const endDate = new Date(now.setDate(now.getDate() + 21)).toISOString().slice(0, 10);
+  const startDate = now.toISOString().slice(0, 10); // Creation date is NOW
+  const endDate = new Date(Date.now() + (21 * 24 * 60 * 60 * 1000)).toISOString().slice(0, 10); // 21 days from now
 
   // Submit the proposal to the blockchain
   const handleSubmit = async (): Promise<void> => {

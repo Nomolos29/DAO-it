@@ -11,6 +11,7 @@ import Dot from './Dot';
 import { useToggleProposalReaction } from '../hooks/useToggleProposalReaction';
 import { useActiveAccount } from 'thirdweb/react';
 import { toast } from 'react-toastify';
+import { getProposalStatus } from '../lib/proposalUtils';
 
 export interface PostProps {
   id: number | string;
@@ -36,20 +37,20 @@ export interface PostProps {
 
 
 
-const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, postComments, postCreationDate, postDislikes, postLikes, postStatus, postDetailsPage, postStartDate, postEndDate, postImage, postVotes, userLiked, userDisliked}) => {
+const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, postComments, postCreationDate, postDislikes, postLikes, postStatus, postDetailsPage, postStartDate, postImage, postVotes, userLiked, userDisliked}) => {
 
   const currentDate = new Date();
-  const postEndDateObj = new Date(postEndDate);
   const postCreationDateObj = new Date(postCreationDate);
-  const postStartDateObj = new Date(postStartDate);
 
   const account = useActiveAccount();
   const { mutate: toggleReaction, isPending } = useToggleProposalReaction();
 
-  // console.log(postCreationDate);
-
+  // Calculate days since creation
   const postCreationDateString = Math.floor((Number(currentDate) - Number(postCreationDateObj)) / (1000 * 60 * 60 * 24));
-  const postValidityTime = Math.floor((Number(postEndDateObj) - Number(postStartDateObj)) / (1000 * 60 * 60 * 24));
+
+  // Get proposal status and remaining days
+  const statusInfo = getProposalStatus(postStartDate);
+  const remainingDaysMessage = statusInfo.message;
 
   const handleReactionClick = (e: React.MouseEvent, type: 'like' | 'dislike') => {
     e.preventDefault();
@@ -134,8 +135,7 @@ const Post:React.FC<PostProps> = ({id, title, description, profilePic, postBy, p
           {!postDetailsPage && <div className='flex items-center gap-x-3'>
             {postVotes && <p className='flex gap-x-2 items-center text-[#5B5E65] text-md'><Dot /><span>{postVotes} {postVotes > 1 ? "votes" : "vote"}</span></p>}
 
-
-            <p className='flex gap-x-2 items-center text-[#5B5E65] text-md'><Dot /><span>Ends in {postValidityTime}{postValidityTime > 1 ? "days" : "day"}</span></p>
+            <p className='flex gap-x-2 items-center text-[#5B5E65] text-md'><Dot /><span>{remainingDaysMessage}</span></p>
           </div>}
         </section>
     </main>
